@@ -1,6 +1,12 @@
 package com.hd.misaleawianegager.di
 
 import android.text.method.SingleLineTransformationMethod
+import com.hd.misaleawianegager.data.local.AssetsTextServiceImp
+import com.hd.misaleawianegager.data.local.FileServiceImp
+import com.hd.misaleawianegager.data.local.WorkerTextServiceImp
+import com.hd.misaleawianegager.domain.local.AssetsTextService
+import com.hd.misaleawianegager.domain.local.FileService
+import com.hd.misaleawianegager.domain.local.WorkerTextService
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -32,7 +38,17 @@ object AppModule {
     @Provides
     fun bindDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 
+    @Singleton
+    @Provides
+    fun bindFileService() : FileService = FileServiceImp()
 
+    @Singleton
+    @Provides
+    fun bindAssetsService() : AssetsTextService = AssetsTextServiceImp()
+
+    @Singleton
+    @Provides
+    fun bindWorkerTextService(): WorkerTextService = WorkerTextServiceImp()
 
 
 }
