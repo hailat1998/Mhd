@@ -1,5 +1,11 @@
 package com.hd.misaleawianegager.presentation
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.hd.misaleawianegager.presentation.theme.MisaleawiAnegagerTheme
 import dagger.hilt.EntryPoint
 
@@ -28,6 +36,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+    companion object{
+
     }
 }
 

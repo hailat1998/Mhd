@@ -40,16 +40,17 @@ object AppModule {
 
     @Singleton
     @Provides
+    @Binds
     fun bindFileService() : FileService = FileServiceImp()
 
     @Singleton
     @Provides
+    @Binds
     fun bindAssetsService() : AssetsTextService = AssetsTextServiceImp()
 
     @Singleton
     @Provides
     fun bindWorkerTextService(): WorkerTextService = WorkerTextServiceImp()
-
 
 
 }
