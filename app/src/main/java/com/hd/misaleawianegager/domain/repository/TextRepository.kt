@@ -1,0 +1,16 @@
+package com.hd.misaleawianegager.domain.repository
+
+import android.content.Context
+import com.hd.misaleawianegager.utils.Resources
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+
+interface TextRepository {
+    fun readTextAsset(context: Context, type: Int, dispatcher: CoroutineDispatcher) : Flow<Resources<String>>
+
+    fun readTextFile(context: Context,type: Int) : Flow<Resources<String>>
+
+    fun writeTextFile(context: Context, type: Int, text: String) : Boolean
+
+    fun enqueueWork()
+}
