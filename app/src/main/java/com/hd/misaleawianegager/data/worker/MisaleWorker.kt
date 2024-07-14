@@ -4,53 +4,57 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorker
-import androidx.work.Worker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.hd.misaleawianegager.R
-import com.hd.misaleawianegager.data.local.WorkerTextServiceImp
 import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.presentation.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
+
+
+private const val CHANNEL_ID = "notification_channel"
 
 @HiltWorker
 class MisaleWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val workerTextService: WorkerTextService
-) : Worker(context, workerParams) {
+    private val workerTextService: WorkerTextService,
+    @ApplicationContext private val contextApp: Context
+) : CoroutineWorker(context, workerParams) {
 
-    override fun doWork(): Result {
-        val text = workerTextService.readSingleText(applicationContext)
-        showNotification(text)
+    override suspend fun doWork(): Result {
+        val text = workerTextService.readSingleText(contextApp)
+       showNotification(contextApp, text)
         return Result.success()
     }
 
-    private fun showNotification(t : String) {
-        val notificationManager = ContextCompat.getSystemService(applicationContext) as NotificationManager
-        val channelId = "notification_channel"
+
+    private fun showNotification(context: Context, message: String) {
+        val notificationManager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, "Daily Notification", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(CHANNEL_ID, "የቀኑ ሚሳለያዊ አነጋገር", NotificationManager.IMPORTANCE_DEFAULT)
             notificationManager.createNotificationChannel(channel)
         }
 
-        val intent = Intent(applicationContext, MainActivity::class.java).apply {
+        val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val notification = NotificationCompat.Builder(applicationContext, channelId)
-            .setContentTitle("Daily Notification")
-            .setContentText(t)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle("ሚሳለያዊ አነጋገር")
+            .setContentText(message)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)

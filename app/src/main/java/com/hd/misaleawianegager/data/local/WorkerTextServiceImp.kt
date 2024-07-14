@@ -13,7 +13,7 @@ class WorkerTextServiceImp : WorkerTextService {
 
     override fun readSingleText(context: Context): String {
         val assets = context.assets
-        val listAssets = assets.list("") ?: return ""
+        val listAssets = assets.list("text/") ?: return ""
         if (listAssets.isEmpty()) return ""
 
         val randomIndex = Random.nextInt(listAssets.size)

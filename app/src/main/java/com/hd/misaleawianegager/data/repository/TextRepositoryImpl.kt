@@ -41,6 +41,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     return flow{
 
     }
+
     }
 
     override fun writeTextFile(context: Context, type: Int, text: String): Boolean {
@@ -55,8 +56,8 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            "MyPeriodicWork",
-            ExistingPeriodicWorkPolicy.REPLACE,
+            "Daily Quote",
+            ExistingPeriodicWorkPolicy.UPDATE,
             periodicWorkRequest
         )
     }

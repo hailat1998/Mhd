@@ -26,12 +26,10 @@ object AppModule {
     @Provides
     fun bindIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
-
     @Singleton
     @MainDispatcher
     @Provides
     fun bindMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
-
 
     @Singleton
     @DefaultDispatcher
@@ -40,17 +38,15 @@ object AppModule {
 
     @Singleton
     @Provides
-    @Binds
-    fun bindFileService() : FileService = FileServiceImp()
+    fun provideFileService(): FileService = FileServiceImp()
 
     @Singleton
     @Provides
-    @Binds
-    fun bindAssetsService() : AssetsTextService = AssetsTextServiceImp()
+    fun provideAssetsService(): AssetsTextService = AssetsTextServiceImp()
 
     @Singleton
     @Provides
-    fun bindWorkerTextService(): WorkerTextService = WorkerTextServiceImp()
+    fun provideWorkerTextService(): WorkerTextService = WorkerTextServiceImp()
 
 
 }
