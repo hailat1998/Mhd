@@ -12,31 +12,24 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.FileReader
+import java.io.InputStreamReader
 
 class AssetsTextServiceImp : AssetsTextService {
-    override fun readTexts(context: Context, type : Int, dispatcher: CoroutineDispatcher): Flow<String?> {
+    override fun readTexts(context: Context, type : String, dispatcher: CoroutineDispatcher): Flow<String?> {
 
         return flow {
             val assets = context.assets
-            val list = assets.list(type.toString())
-            if (list != null) {
-                for (file in list) {
-                    val reader = BufferedReader(withContext(dispatcher) {
-                        FileReader(file)
-                    })
-                    var line: String?
-
-
-                    while (reader.readLine().also { line = it } != null) {
-
-                       line?.let { emit(it) }
-                    }
+            val assetFile = assets.open("text/$type")
+            val reader = BufferedReader(InputStreamReader(assetFile))
+            try {
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    emit(line)
                 }
-
+            } finally {
+                reader.close()
             }
-
-        }
-            .flowOn(dispatcher)
+        }.flowOn(dispatcher)
     }
 
     override fun readRandomTexts(context: Context): Flow<String> {

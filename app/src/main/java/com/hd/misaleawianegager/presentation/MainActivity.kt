@@ -57,34 +57,6 @@ fun MisaleApp(navHostController: NavHostController){
 }
 
 
-
-@Composable
-fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier){
-    NavHost(navController = navHostController, 
-        startDestination = MisaleScreen.Home.route,
-        modifier = modifier){
-          composable(MisaleScreen.Home.route){
-
-          }
-        composable(MisaleScreen.Fav.route){
-
-        }
-        composable(MisaleScreen.Recent.route){
-
-        }
-        composable(MisaleScreen.Search.route){
-
-        }
-        composable(MisaleScreen.Selected.route){
-
-        }
-        composable(MisaleScreen.Setting.route){
-
-        }
-
-    }
-}
-
 @Composable
 fun MisaleBottomAppBar(navController: NavController) {
     BottomAppBar(

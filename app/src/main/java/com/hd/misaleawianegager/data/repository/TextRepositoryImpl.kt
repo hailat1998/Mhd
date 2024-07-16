@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -25,7 +26,8 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
                                              @ApplicationContext private val context: Context):
     TextRepository {
 
-    override fun readTextAsset(context: Context, type: Int, dispatcher: CoroutineDispatcher): Flow<Resources<String>> {
+    override fun readTextAsset(context: Context, type: String, dispatcher: CoroutineDispatcher): Flow<Resources<String>> {
+        Log.i("FROM REPO", "reading")
         return flow{
        assetsTextService.readTexts(context , type, dispatcher).collect{data ->
            if(data == null){

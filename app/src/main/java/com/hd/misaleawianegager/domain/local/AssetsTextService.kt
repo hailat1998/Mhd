@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AssetsTextService {
 
-    fun readTexts(context : Context , type : Int, dispatcher: CoroutineDispatcher) : Flow<String?>
+    fun readTexts(context : Context , type : String, dispatcher: CoroutineDispatcher) : Flow<String?>
 
     fun readRandomTexts(context: Context) : Flow<String>
 
