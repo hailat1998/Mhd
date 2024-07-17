@@ -132,6 +132,11 @@ dependencies {
     /* *****************************************************
      **** Material
      ****************************************************** */
-    implementation("androidx.compose.material:material:1.6.8")
+    implementation(libs.androidx.material)
 
+    /* *****************************************************
+    **** Preference
+    ****************************************************** */
+
+    implementation(libs.datastore.preferences)
 }

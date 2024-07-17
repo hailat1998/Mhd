@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FileService {
 
-    fun readTexts(context : Context, type : Int) : Flow<Resources<String>>
+    fun readTexts(context : Context, type : Int) : Flow<String>
     fun writeTexts(context: Context, type : Int , text : String) : Boolean
 
 }

@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @Singleton
 class TextRepositoryImpl @Inject constructor(private val assetsTextService: AssetsTextService ,
                                             private val fileService: FileService ,
-                                             private val workerTextService: WorkerTextService,
+                                            private val workManager: WorkManager,
                                              @ApplicationContext private val context: Context):
     TextRepository {
 
@@ -41,9 +41,10 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
     override fun readTextFile(context: Context, type: Int): Flow<Resources<String>> {
     return flow{
-
+        fileService.readTexts(context, type ).collect{ it ->
+            emit(Resources.Success(it))
+        }
     }
-
     }
 
     override fun writeTextFile(context: Context, type: Int, text: String): Boolean {
@@ -53,7 +54,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
     override fun enqueueWork() {
 
-        val workManager = WorkManager.getInstance(context)
         val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(24, TimeUnit.HOURS)
             .build()
 

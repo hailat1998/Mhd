@@ -11,14 +11,14 @@ import java.io.IOException
 const val RECENT  = "/local/recent.txt"
 const val FAV = "local/fav.txt"
 class FileServiceImp : FileService {
-    override fun readTexts(context: Context, type: Int): Flow<Resources<String>> {
+    override fun readTexts(context: Context, type: Int): Flow<String>{
 
         val readType = if (type == 1) RECENT else FAV
 
         return flow {
             context.openFileInput(readType).bufferedReader().useLines { lines ->
                 lines.forEach { line ->
-                    emit(Resources.Success(line))
+                    emit(line)
                 }
             }
         }
