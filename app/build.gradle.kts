@@ -129,4 +129,9 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.converter.moshi)
 
+    /* *****************************************************
+     **** Material
+     ****************************************************** */
+    implementation("androidx.compose.material:material:1.6.8")
+
 }

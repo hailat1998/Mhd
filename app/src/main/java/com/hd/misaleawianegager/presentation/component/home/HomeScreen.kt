@@ -13,21 +13,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun HomeContent(homeState: HomeState){
+fun HomeContent(homeData: MutableList<String>){
 
     Scaffold { it ->
         Box(modifier = Modifier.fillMaxSize().padding(it),
             contentAlignment = Alignment.Center) {
-            if (homeState.loading) {
+            if (homeData.isEmpty()) {
                 CircularProgressIndicator()
             }else{
                 LazyColumn {
-                  items(homeState.list, {item -> item}){ it ->
+                  items(homeData, {item -> item}){ it ->
                      Text(text = it)
                   }
                 }
             }
-
         }
     }
 

@@ -21,8 +21,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier){
             val context = LocalContext.current
              val viewModel: HomeViewModel = hiltViewModel()
             viewModel.homeDataFeed(context)
-            val homeState by viewModel.homeStateFlow.collectAsStateWithLifecycle()
-            HomeContent(homeState = homeState)
+            HomeContent(homeData = viewModel.homeStateFlow)
         }
         composable(MisaleScreen.Fav.route){
 

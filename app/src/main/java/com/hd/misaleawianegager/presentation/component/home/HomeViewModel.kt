@@ -2,6 +2,10 @@ package com.hd.misaleawianegager.presentation.component.home
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
@@ -14,29 +18,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repository: TextRepository, @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher) : ViewModel() {
+class HomeViewModel @Inject constructor(private val repository: TextRepository,
+                                        @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher) : ViewModel() {
 
-    private var _homeStateFlow = MutableStateFlow<HomeState>(HomeState(loading = false))
-    val homeStateFlow get() = _homeStateFlow.asStateFlow()
+   val homeStateFlow by  mutableStateOf(listOf<String>().toMutableStateList())
 
 
     fun homeDataFeed(context: Context, ){
+        var count = 0
         viewModelScope.launch {
-            repository.readTextAsset(context, "01Ha.txt", coroutineDispatcher).collect{it ->
-
-                if(it.data == null){
-                    Log.i("From view", "if")
-                    if(_homeStateFlow.value.list.isEmpty()){
-                        _homeStateFlow.value = HomeState(loading = true)
-                    }
-                }else{
-                    Log.i("From view", "else")
-                    val homeState = _homeStateFlow.value
-                    homeState.list.add(it.data)
-                    homeState.loading = false
-                    _homeStateFlow.value = homeState
-                    Log.i("From view", "else ${homeState.list.size}")
-                }
+            repository.readTextAsset(context, "23Ye.txt", coroutineDispatcher).collect{it ->
+                homeStateFlow.add(it.data!!)
+                count++
+                Log.i("VIEWMODEL", "${count} it.data")
             }
         }
     }
