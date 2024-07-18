@@ -13,7 +13,10 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.core.view.WindowCompat
+import com.hd.misaleawianegager.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -42,6 +45,10 @@ fun MisaleawiAnegagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
+    selectedFont: Int = R.font.andikaafr_r,
+    fontSize: Int = 16,
+    letterSpace: Double = 0.5,
+    letterHeight:Int = 24 ,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -62,9 +69,11 @@ fun MisaleawiAnegagerTheme(
         }
     }
 
+   val fontFamily = FontFamily(Font(selectedFont))
+
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = selectedTypography(fontFamily,fontSize, letterSpace, letterHeight ),
         content = content
     )
 }

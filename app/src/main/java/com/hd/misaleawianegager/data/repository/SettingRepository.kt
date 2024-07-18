@@ -23,4 +23,14 @@ class SettingRepository @Inject constructor(private val dataStoreManager: DataSt
     suspend fun setLetterType(letterType: String) {
         dataStoreManager.setLetterType(letterType)
     }
+
+    suspend fun setLetterSpace(letterSpace: Double ){
+        dataStoreManager.setLetterSpace(letterSpace)
+    }
+
+    suspend fun setLineHeight(lineHeight: Int){
+        dataStoreManager.setLineHeight(lineHeight)
+    }
+
+
 }

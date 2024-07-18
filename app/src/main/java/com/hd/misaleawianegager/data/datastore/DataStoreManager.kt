@@ -1,9 +1,12 @@
 package com.hd.misaleawianegager.data.datastore
 
 import android.content.Context
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,6 +22,9 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
         val THEME_KEY = stringPreferencesKey("theme")
         val FONT_KEY = stringPreferencesKey("font")
         val LETTER_TYPE_KEY = stringPreferencesKey("letterType")
+        val LETTER_SPACE_KEY = doublePreferencesKey("letterSpace")
+        val FONT_SIZE_KEY = intPreferencesKey("font size")
+        val LINE_HEIGHT_KEY = intPreferencesKey("line height")
     }
 
     val theme: Flow<String> = context.dataStore.data
@@ -26,14 +32,30 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
             preferences[THEME_KEY] ?: "light"
         }
 
-    val font: Flow<String?> = context.dataStore.data
+    val font: Flow<String> = context.dataStore.data
         .map { preferences ->
             preferences[FONT_KEY] ?: "01Ha.txt"
         }
 
-    val letterType: Flow<String?> = context.dataStore.data
+    val letterType: Flow<String> = context.dataStore.data
         .map { preferences ->
             preferences[LETTER_TYPE_KEY] ?: "01Ha.txt"
+        }
+
+    val letterSpace: Flow<Double> = context.dataStore.data
+        .map{ preferences ->
+           preferences[LETTER_SPACE_KEY] ?: 0.5
+        }
+
+    val fontSize: Flow<Int> = context.dataStore.data
+        .map{ preferences ->
+            preferences[FONT_SIZE_KEY] ?: 16
+        }
+
+
+    val lineHeight: Flow<Int> = context.dataStore.data
+        .map { preferences ->
+            preferences[LINE_HEIGHT_KEY] ?: 24
         }
 
     suspend fun setTheme(theme: String) {
@@ -51,6 +73,25 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
     suspend fun setLetterType(letterType: String) {
         context.dataStore.edit { preferences ->
             preferences[LETTER_TYPE_KEY] = letterType
+        }
+    }
+
+    suspend fun setLetterSpace(letterSpace: Double ){
+        context.dataStore.edit { preferences ->
+            preferences[LETTER_SPACE_KEY] =  letterSpace
+        }
+    }
+
+
+    suspend fun setLineHeight(lineHeight: Int){
+        context.dataStore.edit { preferences ->
+            preferences[LINE_HEIGHT_KEY] =  lineHeight
+        }
+    }
+
+    suspend fun setFontSize(fontSize: Int){
+        context.dataStore.edit { preferences ->
+            preferences[FONT_SIZE_KEY] =  fontSize
         }
     }
 }
