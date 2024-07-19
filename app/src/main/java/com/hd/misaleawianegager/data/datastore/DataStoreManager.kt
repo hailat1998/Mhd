@@ -34,7 +34,7 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
 
     val font: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[FONT_KEY] ?: "01Ha.txt"
+            preferences[FONT_KEY] ?: " abyssinica_gentium"
         }
 
     val letterType: Flow<String> = context.dataStore.data

@@ -2,13 +2,16 @@ package com.hd.misaleawianegager.di
 
 import android.content.Context
 import androidx.work.WorkManager
+import com.hd.misaleawianegager.data.datastore.DataStoreManager
 import com.hd.misaleawianegager.data.local.AssetsTextServiceImp
 import com.hd.misaleawianegager.data.local.FileServiceImp
 import com.hd.misaleawianegager.data.local.WorkerTextServiceImp
+import com.hd.misaleawianegager.data.repository.SettingRepositoryImpl
 import com.hd.misaleawianegager.data.repository.TextRepositoryImpl
 import com.hd.misaleawianegager.domain.local.AssetsTextService
 import com.hd.misaleawianegager.domain.local.FileService
 import com.hd.misaleawianegager.domain.local.WorkerTextService
+import com.hd.misaleawianegager.domain.repository.SettingRepository
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import dagger.Binds
 import dagger.Module
@@ -59,6 +62,10 @@ object AppModule {
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
         return WorkManager.getInstance(context)
     }
+
+    @Provides
+    @Singleton
+    fun provideSettingRepo(dataStoreManager: DataStoreManager): SettingRepository = SettingRepositoryImpl(dataStoreManager)
 
 }
 

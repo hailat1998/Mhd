@@ -16,12 +16,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.hd.misaleawianegager.presentation.component.setting.SettingScreen
+import com.hd.misaleawianegager.presentation.component.setting.SettingViewModel
 import com.hd.misaleawianegager.presentation.theme.MisaleawiAnegagerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,33 +37,32 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
+            val viewModel = hiltViewModel<SettingViewModel>()
             MisaleawiAnegagerTheme {
-
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navHostController = rememberNavController()
+                val navHostController = rememberNavController()
           MisaleApp(navHostController = navHostController)
                 }
             }
         }
-    }
+
 }
 
 
 
 @Composable
 fun MisaleApp(navHostController: NavHostController){
-    Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController)} ) {
+   val showModalBottomSheet = remember{ mutableStateOf(false) }
+    Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
         MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it))
+        if(showModalBottomSheet.value){
+            SettingScreen(showModalBottomSheet)
+        }
     }
 }
 
 
 @Composable
-fun MisaleBottomAppBar(navController: NavController) {
+fun MisaleBottomAppBar(navController: NavController, showModalBottomSheet: MutableState<Boolean>) {
     BottomAppBar(
         modifier = Modifier.height(56.dp)
     ) {
@@ -66,7 +71,13 @@ fun MisaleBottomAppBar(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             DataProvider.icons.keys.forEach { key ->
-                IconButton(onClick = { /* Handle navigation or action here */ }) {
+                IconButton(onClick = {
+                    if(key == "setting"){
+                       showModalBottomSheet.value = !showModalBottomSheet.value
+                    }else{
+                        navController.navigate(key)
+                    }
+                }) {
                     Icon(imageVector = DataProvider.icons[key]!!, contentDescription = null)
                 }
             }
