@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,7 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
 
     companion object {
         val THEME_KEY = stringPreferencesKey("theme")
-        val FONT_KEY = stringPreferencesKey("font")
+        val FONT_KEY = intPreferencesKey("font")
         val LETTER_TYPE_KEY = stringPreferencesKey("letterType")
         val LETTER_SPACE_KEY = doublePreferencesKey("letterSpace")
         val FONT_SIZE_KEY = intPreferencesKey("font size")
@@ -29,12 +30,12 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
 
     val theme: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[THEME_KEY] ?: "light"
+            preferences[THEME_KEY] ?: "system"
         }
 
-    val font: Flow<String> = context.dataStore.data
+    val font: Flow<Int> = context.dataStore.data
         .map { preferences ->
-            preferences[FONT_KEY] ?: " abyssinica_gentium"
+            preferences[FONT_KEY] ?: R.font.abyssinica_gentium
         }
 
     val letterType: Flow<String> = context.dataStore.data
@@ -64,7 +65,7 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
         }
     }
 
-    suspend fun setFont(font: String) {
+    suspend fun setFont(font: Int) {
         context.dataStore.edit { preferences ->
             preferences[FONT_KEY] = font
         }

@@ -5,27 +5,27 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.presentation.component.setting.SettingScreen
 import com.hd.misaleawianegager.presentation.component.setting.SettingViewModel
 import com.hd.misaleawianegager.presentation.theme.MisaleawiAnegagerTheme
@@ -38,9 +38,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel = hiltViewModel<SettingViewModel>()
-            MisaleawiAnegagerTheme {
+
+
+            val fontSize = viewModel.fontSize.collectAsStateWithLifecycle().value
+            val letterSpace = viewModel.letterSpace.collectAsStateWithLifecycle().value
+            val lineHeight = viewModel.letterHeight.collectAsStateWithLifecycle().value
+            val theme = viewModel.theme.collectAsStateWithLifecycle()
+            val font = viewModel.font.collectAsStateWithLifecycle()
+
+
+            MisaleawiAnegagerTheme(
+                fontSize = fontSize,
+                letterSpace = letterSpace,
+                letterHeight = lineHeight,
+            ) {
                 val navHostController = rememberNavController()
-          MisaleApp(navHostController = navHostController)
+          MisaleApp(
+              navHostController = navHostController,
+              onEvent = viewModel::onEvent,
+              theme = theme,
+              font = font,
+              )
                 }
             }
         }
@@ -50,12 +68,20 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MisaleApp(navHostController: NavHostController){
+fun MisaleApp(
+    navHostController: NavHostController, onEvent: (SettingEvent) -> Unit,
+    theme: State<String?>,
+    font: State<Int?>
+             ){
    val showModalBottomSheet = remember{ mutableStateOf(false) }
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
         MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it))
         if(showModalBottomSheet.value){
-            SettingScreen(showModalBottomSheet)
+            SettingScreen(showModalBottomSheet,
+                onEvent = onEvent,
+                theme = theme,
+                font = font
+                )
         }
     }
 }
@@ -89,7 +115,7 @@ fun MisaleBottomAppBar(navController: NavController, showModalBottomSheet: Mutab
 @Composable
 fun S(){
     val navHostController = rememberNavController()
-    MisaleApp(navHostController = navHostController)
+    //MisaleApp(navHostController = navHostController)
 }
 
 

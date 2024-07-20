@@ -26,10 +26,10 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
                                              @ApplicationContext private val context: Context):
     TextRepository {
 
-    override fun readTextAsset(context: Context, type: String, dispatcher: CoroutineDispatcher): Flow<Resources<String>> {
+    override fun readTextAsset(context: Context, type: String): Flow<Resources<String>> {
         Log.i("FROM REPO", "reading")
         return flow{
-       assetsTextService.readTexts(context , type, dispatcher).collect{data ->
+       assetsTextService.readTexts(context , type).collect{data ->
            if(data == null){
                emit(Resources.Loading(true))
            }else{

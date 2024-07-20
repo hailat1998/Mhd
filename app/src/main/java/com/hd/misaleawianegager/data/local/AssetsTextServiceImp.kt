@@ -15,7 +15,7 @@ import java.io.FileReader
 import java.io.InputStreamReader
 
 class AssetsTextServiceImp : AssetsTextService {
-    override fun readTexts(context: Context, type : String, dispatcher: CoroutineDispatcher): Flow<String?> {
+    override fun readTexts(context: Context, type : String): Flow<String?> {
 
         return flow {
             val assets = context.assets
@@ -29,7 +29,7 @@ class AssetsTextServiceImp : AssetsTextService {
             } finally {
                 reader.close()
             }
-        }.flowOn(dispatcher)
+        }
     }
 
     override fun readRandomTexts(context: Context): Flow<String> {

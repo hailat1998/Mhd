@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation.component.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.domain.repository.SettingRepository
 import com.hd.misaleawianegager.presentation.theme.Font
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,16 +36,16 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     val theme = settingRepository.theme
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "light" )
 
-    val letterHeight = settingRepository.letterType
+    val letterHeight = settingRepository.letterHeight
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0 )
 
     val font = settingRepository.font
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "abyssinica_gentium" )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), R.font.abyssinica_gentium )
 
     val letterType = settingRepository.letterType
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "01Ha.txt" )
 
-   private fun setFont(font: String){
+   private fun setFont(font: Int){
        viewModelScope.launch {
            settingRepository.setFont(font)
        }

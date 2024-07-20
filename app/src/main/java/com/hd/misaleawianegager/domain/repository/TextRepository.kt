@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
 interface TextRepository {
-    fun readTextAsset(context: Context, type: String, dispatcher: CoroutineDispatcher) : Flow<Resources<String>>
+    fun readTextAsset(context: Context, type: String) : Flow<Resources<String>>
 
     fun readTextFile(context: Context,type: Int) : Flow<Resources<String>>
 

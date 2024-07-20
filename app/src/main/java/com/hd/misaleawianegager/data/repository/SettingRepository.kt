@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class SettingRepositoryImpl @Inject constructor(private val dataStoreManager: DataStoreManager) : SettingRepository{
     override val theme: Flow<String?> = dataStoreManager.theme
-    override val font: Flow<String?> = dataStoreManager.font
+    override val font: Flow<Int?> = dataStoreManager.font
     override val letterType: Flow<String?> = dataStoreManager.letterType
     override val letterSpace: Flow<Double> = dataStoreManager.letterSpace
     override val fontSize: Flow<Int> = dataStoreManager.fontSize
@@ -21,7 +21,7 @@ class SettingRepositoryImpl @Inject constructor(private val dataStoreManager: Da
         dataStoreManager.setTheme(theme)
     }
 
-    override suspend fun setFont(font: String) {
+    override suspend fun setFont(font: Int) {
         dataStoreManager.setFont(font)
     }
 
