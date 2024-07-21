@@ -33,7 +33,15 @@ fun selectedTypography(
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
-    )
+    ),
+//    labelMedium = TextStyle(
+//        fontFamily = FontFamily.Default,
+//        fontWeight = FontWeight.Medium,
+//        fontSize = 11.sp,
+//        lineHeight = 16.sp,
+//        letterSpacing = 0.5.sp
+//    )
+
 
 )
 

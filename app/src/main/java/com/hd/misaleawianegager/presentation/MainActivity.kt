@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
 
             MisaleawiAnegagerTheme(
+                theme = theme.value!! ,
                 fontSize = fontSize,
                 letterSpace = letterSpace,
                 letterHeight = lineHeight,

@@ -27,17 +27,18 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     }
 
 
+
     val letterSpace = settingRepository.letterSpace
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0.0 )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0.5 )
 
     val fontSize = settingRepository.fontSize
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0 )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 16)
 
     val theme = settingRepository.theme
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "light" )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "dark" )
 
     val letterHeight = settingRepository.letterHeight
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0 )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 26 )
 
     val font = settingRepository.font
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), R.font.abyssinica_gentium )
@@ -52,9 +53,12 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
    }
 
 
-    private fun setLetterSpace(space: Double){
-        viewModelScope.launch {
-            settingRepository.setLetterSpace(space)
+    private fun setLetterSpace(space: Double) {
+        if (letterSpace.value + space > 0 && letterSpace.value + space < 20) {
+
+            viewModelScope.launch {
+                settingRepository.setLetterSpace(space)
+            }
         }
     }
 
@@ -64,15 +68,19 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         }
     }
 
-    private fun setFontSize(size: Int){
-        viewModelScope.launch {
-            settingRepository.setFontSize(size)
+    private fun setFontSize(size: Int) {
+        if (fontSize.value + size in 1..49) {
+            viewModelScope.launch {
+                settingRepository.setFontSize(size)
+            }
         }
     }
 
-    private fun setLetterHeight(height: Int){
-        viewModelScope.launch {
-            settingRepository.setLineHeight(height)
+    private fun setLetterHeight(height: Int) {
+        if (letterHeight.value + height in 1..49) {
+            viewModelScope.launch {
+                settingRepository.setLineHeight(height)
+            }
         }
     }
 

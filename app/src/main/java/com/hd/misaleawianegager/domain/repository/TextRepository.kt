@@ -12,5 +12,7 @@ interface TextRepository {
 
     fun writeTextFile(context: Context, type: Int, text: String) : Boolean
 
-    fun enqueueWork()
+    fun search(context: Context, query: String): Flow<Resources<String>>
+
+    fun enqueueWork(): Flow<String>
 }

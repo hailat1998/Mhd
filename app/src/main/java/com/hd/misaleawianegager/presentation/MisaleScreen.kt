@@ -6,5 +6,5 @@ sealed class MisaleScreen(val route : String) {
     data object Recent: MisaleScreen("recent")
     data object Search: MisaleScreen("search")
     data object Setting: MisaleScreen("setting")
-    data object Selected: MisaleScreen("selected")
+    data object Detail: MisaleScreen("selected")
 }

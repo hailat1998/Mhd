@@ -11,4 +11,6 @@ interface AssetsTextService {
 
     fun readRandomTexts(context: Context) : Flow<String>
 
+    fun search(context: Context, query: String): Flow<String>
+
 }

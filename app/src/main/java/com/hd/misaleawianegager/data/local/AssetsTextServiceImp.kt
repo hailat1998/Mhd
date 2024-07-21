@@ -32,6 +32,26 @@ class AssetsTextServiceImp : AssetsTextService {
         }
     }
 
+    override fun search(context: Context, query: String): Flow<String> {
+        return flow {
+            val assets = context.assets
+            val textList = assets.list("text")
+
+            textList?.let { list ->
+                for (fileName in list) {
+                    val reader = BufferedReader(InputStreamReader(assets.open("text/$fileName")))
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        if (line!!.contains(query)) {
+                            emit(line!!)
+                        }
+                    }
+                    reader.close() // Close the reader to free up resources
+                }
+            }
+        }
+    }
+
     override fun readRandomTexts(context: Context): Flow<String> {
          return flow{
 

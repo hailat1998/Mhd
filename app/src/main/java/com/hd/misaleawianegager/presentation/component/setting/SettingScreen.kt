@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -47,38 +49,39 @@ fun SettingScreen(
     font: State<Int?>,
                  ) {
 
-
-
     ModalBottomSheet(onDismissRequest = { showModalBottomSheet.value = !showModalBottomSheet.value }) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .padding(10.dp), contentAlignment = Alignment.TopCenter
+                .padding(10.dp).background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f)), contentAlignment = Alignment.TopCenter
+
         ) {
-            LazyColumn {
+            LazyColumn(modifier = Modifier
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))) {
                 item {
-                    Text(text = "Theme", fontSize = 26.sp)
+                    Text(text = "Theme", style = MaterialTheme.typography.headlineMedium )
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
                     ) {
                         RadioButton(selected = theme.value == "system", onClick = { onEvent.invoke(SettingEvent.Theme("system")) })
-                        Text(text = "System")
+                        Text(text = "System", style = MaterialTheme.typography.headlineSmall)
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         RadioButton(selected = theme.value == "dark", onClick = { onEvent.invoke(SettingEvent.Theme("dark")) })
-                        Text(text = "Dark")
+                        Text(text = "Dark", style = MaterialTheme.typography.headlineSmall)
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         RadioButton(selected = theme.value == "light", onClick = { onEvent.invoke(SettingEvent.Theme("light")) })
-                        Text(text = "Light")
+                        Text(text = "Light" , style = MaterialTheme.typography.headlineSmall)
                     }
 
 
-                    Text(text = "Font", fontSize = 26.sp)
+                    Text(text = "Font", style = MaterialTheme.typography.headlineMedium)
                     var expanded by remember { mutableStateOf(false) }
                     var selected by remember { mutableStateOf(font.value) }
                     Box {
@@ -87,8 +90,14 @@ fun SettingScreen(
                                 expanded = expanded,
                                 onExpandedChange = { expanded = !expanded }) {
                                 selected?.let {
+                                    var font = ""
+                                    Font.entries.forEach{ it ->
+                                        if(it.ordinal == selected){
+                                          font = it.name
+                                        }
+                                    }
                                     TextField(
-                                        value = it.toString(),
+                                        value = font,
                                         onValueChange = {},
                                         readOnly = true,
                                         trailingIcon = {
@@ -107,6 +116,7 @@ fun SettingScreen(
                                             text = { Text(text = it.name) },
                                             onClick = { selected = it.ordinal
                                                         onEvent(SettingEvent.FontFamily(it.ordinal))
+                                                        expanded = false
                                             })
                                     }
                                 }
@@ -115,21 +125,21 @@ fun SettingScreen(
                     }
 
 
-                    Text(text = "FontSize", fontSize = 26.sp)
+                    Text(text = "FontSize",style = MaterialTheme.typography.headlineMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Chip(onClick = {onEvent.invoke(SettingEvent.FontSize(+3))}, colors = ChipDefaults.chipColors(backgroundColor = Color.Black)) {
-                            Text(text = "A+", fontSize = 30.sp, fontWeight = FontWeight.ExtraBold)
+                            Text(text = "A+", style = MaterialTheme.typography.displayLarge)
                         }
                         Chip(onClick = {onEvent.invoke(SettingEvent.FontSize(-3))}, colors = ChipDefaults.chipColors(backgroundColor = Color.Black)) {
-                            Text(text = "A-", fontSize = 30.sp, fontWeight = FontWeight.ExtraBold)
+                            Text(text = "A-", style = MaterialTheme.typography.displayLarge)
                         }
                     }
 
 
 
-                    Text(text = "LetterSpace", fontSize = 26.sp)
+                    Text(text = "LetterSpace", style = MaterialTheme.typography.headlineMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
@@ -141,7 +151,7 @@ fun SettingScreen(
                                 contentDescription = null,
                                 tint = Color.Black
                             )
-                            Text(text = "+")
+                            Text(text = "+" ,style = MaterialTheme.typography.headlineSmall)
                         }
                         Row(modifier = Modifier.clickable{
                             onEvent.invoke(SettingEvent.LetterSpace(-1.0))
@@ -151,13 +161,13 @@ fun SettingScreen(
                                 contentDescription = null,
                                 tint = Color.Black
                             )
-                            Text(text = "-")
+                            Text(text = "-", style = MaterialTheme.typography.headlineSmall)
                         }
                     }
 
 
 
-                    Text(text = "LineHeight", fontSize = 26.sp)
+                    Text(text = "LineHeight",style = MaterialTheme.typography.headlineMedium)
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -170,7 +180,7 @@ fun SettingScreen(
                                 contentDescription = null,
                                 tint = Color.Black
                             )
-                            Text(text = "+")
+                            Text(text = "+", style = MaterialTheme.typography.headlineSmall)
                         }
 
                         Row(modifier = Modifier.clickable{
@@ -181,7 +191,7 @@ fun SettingScreen(
                                 contentDescription = null,
                                 tint = Color.Black
                             )
-                            Text(text = "-")
+                            Text(text = "-", style = MaterialTheme.typography.headlineSmall)
                         }
                     }
                 }
@@ -194,6 +204,6 @@ fun SettingScreen(
 @Preview
 @Composable
 fun Sf(){
-    MisaleawiAnegagerTheme {
-    }
+    //MisaleawiAnegagerTheme {
+    //}
 }
