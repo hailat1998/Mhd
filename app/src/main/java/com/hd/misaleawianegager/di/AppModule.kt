@@ -46,7 +46,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideFileService(): FileService = FileServiceImp()
+    fun provideFileService(@ApplicationContext context: Context): FileService = FileServiceImp(context)
 
     @Singleton
     @Provides

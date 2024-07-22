@@ -57,8 +57,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     }
 
     override fun writeTextFile(context: Context, type: Int, text: String): Boolean {
-     //TODO : here in the code
-        return true
+        return fileService.writeTexts(context, type, text)
     }
 
     override fun enqueueWork(): Flow<String> {

@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
+import com.hd.misaleawianegager.domain.local.FileService
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,6 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: TextRepository,
+                                        private val fileService: FileService,
                                         @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
                    @ApplicationContext private val context: Context) : ViewModel() {
 
@@ -33,6 +35,9 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
             is HomeEvent.LoadLetter -> {
                 homeDataFeed(context, event.value)
             }
+            is HomeEvent.WriteText -> {
+                writeText(context, 1 , event.text)
+            }
         }
     }
 
@@ -44,6 +49,12 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
                list.add(it.data!!)
             }
             _homeStateFlow.value = list
+        }
+    }
+
+    private fun writeText(context: Context, type: Int, text: String){
+        viewModelScope.launch(coroutineDispatcher) {
+            fileService.writeTexts(context, type, text)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -25,10 +26,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.hd.misaleawianegager.presentation.component.fav.FavEvent
+import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.presentation.component.setting.SettingScreen
 import com.hd.misaleawianegager.presentation.component.setting.SettingViewModel
 import com.hd.misaleawianegager.presentation.theme.MisaleawiAnegagerTheme
+import com.hd.misaleawianegager.utils.LifeCycleObserver
+import com.hd.misaleawianegager.utils.favList
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -74,6 +79,7 @@ fun MisaleApp(
     theme: State<String?>,
     font: State<Int?>
              ){
+
    val showModalBottomSheet = remember{ mutableStateOf(false) }
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
         MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it))
@@ -85,6 +91,12 @@ fun MisaleApp(
                 )
         }
     }
+    val viewModel = hiltViewModel<MainViewModel>()
+    LifeCycleObserver(
+        onStart = {},
+        onPause = { viewModel.writeFavList(favList) },
+        onStop = { viewModel.writeFavList(favList) },
+    )
 }
 
 

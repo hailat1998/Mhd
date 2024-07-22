@@ -12,12 +12,13 @@ fun selectedTypography(
     selectedFontFamily: FontFamily,
     fontSize: Int, letterSpace: Double,
     letterHeight:Int) = Typography(
+//
     bodyLarge = TextStyle(
-        fontFamily = selectedFontFamily,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = fontSize.sp,
-        lineHeight = letterHeight.sp,
-        letterSpacing = letterSpace.sp
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
     )
     ,
     titleLarge = TextStyle(
