@@ -14,11 +14,14 @@ import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+
+private const val WORK_NAME = "DailyQuoteMisale"
 
 @Singleton
 class TextRepositoryImpl @Inject constructor(private val assetsTextService: AssetsTextService ,
@@ -61,24 +64,31 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     }
 
     override fun enqueueWork(): Flow<String> {
-
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(30 , TimeUnit.MINUTES)
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(30, TimeUnit.MINUTES)
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            "Daily Quote",
+            WORK_NAME,
             ExistingPeriodicWorkPolicy.UPDATE,
             periodicWorkRequest
         )
-       return  workManager.getWorkInfosForUniqueWorkLiveData("Daily Quote").asFlow().map{
-            if(it.first().state == WorkInfo.State.SUCCEEDED){
-                "SUCCESS"
-            }else if(it.first().state == WorkInfo.State.RUNNING){
-                "RUNNING"
+
+        return workManager.getWorkInfosForUniqueWorkLiveData(WORK_NAME).asFlow().map { workInfos ->
+            if (workInfos.isNotEmpty()) {
+                when (workInfos.first().state) {
+                    WorkInfo.State.SUCCEEDED -> "SUCCESS"
+                    WorkInfo.State.RUNNING -> "RUNNING"
+                    WorkInfo.State.ENQUEUED -> "ENQUEUED"
+                    WorkInfo.State.FAILED -> "FAILED"
+                    WorkInfo.State.BLOCKED -> "BLOCKED"
+                    WorkInfo.State.CANCELLED -> "CANCELLED"
+                    else -> "UNKNOWN"
+                }
             } else {
-                "FAILED"
+                "NO_WORK"
             }
+        }.catch { e ->
+            emit("ERROR: ${e.message}")
         }
-        println("work enqueued")
     }
 }

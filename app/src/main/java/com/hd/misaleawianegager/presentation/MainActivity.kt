@@ -84,7 +84,7 @@ fun MisaleApp(
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
         MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it))
         if(showModalBottomSheet.value){
-            SettingScreen(showModalBottomSheet,
+            SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,
                 theme = theme,
                 font = font
@@ -93,7 +93,7 @@ fun MisaleApp(
     }
     val viewModel = hiltViewModel<MainViewModel>()
     LifeCycleObserver(
-        onStart = {},
+        onStart = {viewModel.readFavList(favList)},
         onPause = { viewModel.writeFavList(favList) },
         onStop = { viewModel.writeFavList(favList) },
     )

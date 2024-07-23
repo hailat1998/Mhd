@@ -50,7 +50,9 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
 
     val fontSize: Flow<Int> = context.dataStore.data
         .map{ preferences ->
+
             preferences[FONT_SIZE_KEY] ?: 16
+
         }
 
 

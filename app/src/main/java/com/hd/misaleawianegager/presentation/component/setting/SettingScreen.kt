@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
@@ -129,7 +130,7 @@ fun SettingScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Chip(onClick = {onEvent.invoke(SettingEvent.FontSize(+3))}, colors = ChipDefaults.chipColors(backgroundColor = Color.Black)) {
+                        Chip(onClick = {onEvent.invoke(SettingEvent.FontSize(3))}, colors = ChipDefaults.chipColors(backgroundColor = Color.Black)) {
                             Text(text = "A+", style = MaterialTheme.typography.displayLarge)
                         }
                         Chip(onClick = {onEvent.invoke(SettingEvent.FontSize(-3))}, colors = ChipDefaults.chipColors(backgroundColor = Color.Black)) {
@@ -140,16 +141,18 @@ fun SettingScreen(
 
 
                     Text(text = "LetterSpace", style = MaterialTheme.typography.headlineMedium)
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Row(modifier = Modifier.clickable{
-                            onEvent.invoke(SettingEvent.LetterSpace(+1.0))
+                            onEvent.invoke(SettingEvent.LetterSpace(1.0))
                         }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.space_bar_24px),
                                 contentDescription = null,
-                                tint = Color.Black
+                                tint = Color.Black,
+                                modifier = Modifier.size(50.dp)
                             )
                             Text(text = "+" ,style = MaterialTheme.typography.headlineSmall)
                         }
@@ -159,7 +162,8 @@ fun SettingScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.space_bar_24px),
                                 contentDescription = null,
-                                tint = Color.Black
+                                tint = Color.Black,
+                                modifier = Modifier.size(50.dp)
                             )
                             Text(text = "-", style = MaterialTheme.typography.headlineSmall)
                         }
@@ -173,12 +177,13 @@ fun SettingScreen(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Row(modifier = Modifier.clickable{
-                            onEvent.invoke(SettingEvent.LineHeight(+2))
+                            onEvent.invoke(SettingEvent.LineHeight(2))
                         }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.height_24px),
                                 contentDescription = null,
-                                tint = Color.Black
+                                tint = Color.Black,
+                                modifier = Modifier.size(50.dp)
                             )
                             Text(text = "+", style = MaterialTheme.typography.headlineSmall)
                         }
@@ -189,7 +194,8 @@ fun SettingScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.height_24px),
                                 contentDescription = null,
-                                tint = Color.Black
+                                tint = Color.Black,
+                                modifier = Modifier.size(50.dp)
                             )
                             Text(text = "-", style = MaterialTheme.typography.headlineSmall)
                         }

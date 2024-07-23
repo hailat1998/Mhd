@@ -44,7 +44,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), R.font.abyssinica_gentium )
 
     val letterType = settingRepository.letterType
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "01Ha.txt" )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "ሀ" )
 
    private fun setFont(font: Int){
        viewModelScope.launch {
@@ -54,7 +54,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
 
 
     private fun setLetterSpace(space: Double) {
-        if (letterSpace.value + space > 0 && letterSpace.value + space < 20) {
+        if (letterSpace.value + space in 0.1 .. 2.0) {
 
             viewModelScope.launch {
                 settingRepository.setLetterSpace(space)
@@ -69,7 +69,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     }
 
     private fun setFontSize(size: Int) {
-        if (fontSize.value + size in 1..49) {
+        if (fontSize.value + size in 5..49) {
             viewModelScope.launch {
                 settingRepository.setFontSize(size)
             }
@@ -77,7 +77,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     }
 
     private fun setLetterHeight(height: Int) {
-        if (letterHeight.value + height in 1..49) {
+        if (letterHeight.value + height in 10..40) {
             viewModelScope.launch {
                 settingRepository.setLineHeight(height)
             }

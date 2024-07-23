@@ -41,14 +41,14 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier){
             }
         }
         composable(MisaleScreen.Fav.route){
-            val viewModel = hiltViewModel<FavViewModel>()
-            val list = viewModel.favStateFlow.collectAsStateWithLifecycle()
+           // val viewModel = hiltViewModel<FavViewModel>()
+           // val list = viewModel.favStateFlow.collectAsStateWithLifecycle()
            // Log.i("FROM NAV" , list.size.toString())
             LaunchedEffect(Unit) {
                 delay(1000L)
                 //Log.i("FROM NAVLA" , list.size.toString())
             }
-            FavScreen(favList = list) { from, text ->
+            FavScreen(favList) { from, text ->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text"))
             }
         }

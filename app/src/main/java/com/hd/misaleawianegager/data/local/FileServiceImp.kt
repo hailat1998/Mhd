@@ -49,7 +49,7 @@ class FileServiceImp @Inject constructor(@ApplicationContext context: Context) :
         Log.i("FILESERVICE" , "writing text")
 
         try {
-            context.openFileOutput(writeType,  Context.MODE_APPEND ).use {
+            context.openFileOutput(writeType,  if(type == 1 )Context.MODE_APPEND else Context.MODE_PRIVATE).use {
                 it.write(text.plus("\n").toByteArray())
             }
         }catch(e : IOException){

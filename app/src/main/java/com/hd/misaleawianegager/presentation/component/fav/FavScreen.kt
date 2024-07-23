@@ -12,12 +12,12 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 
 @Composable
-fun FavScreen(favList: State<List<String>> , toDetail:(from: String, s: String) -> Unit){
+fun FavScreen(favList: List<String> , toDetail:(from: String, s: String) -> Unit){
     Scaffold {
         Box(modifier = Modifier
             .padding(it)
             .fillMaxSize()){
-            val list = favList.value.distinct()
+            val list = favList.distinct()
             LazyColumn {
                 items(list, {item -> item}){ text ->
                     Text(text = text )
