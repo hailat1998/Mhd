@@ -7,16 +7,15 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.hd.misaleawianegager.R
-import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.presentation.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 private const val CHANNEL_ID = "notification_channel"
@@ -25,13 +24,15 @@ private const val CHANNEL_ID = "notification_channel"
 class MisaleWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val workerTextService: WorkerTextService,
-    @ApplicationContext private val contextApp: Context
-) : CoroutineWorker(context, workerParams) {
+//      workerTextService: WorkerTextService,
+//     @ApplicationContext contextApp: Context
+) : Worker(context, workerParams) {
 
-    override suspend fun doWork(): Result {
-        val text = workerTextService.readSingleText(contextApp)
-       showNotification(contextApp, text)
+
+    override  fun doWork(): Result {
+        //  val text = workerTextService.readSingleText(applicationContext)
+        Log.i("WORKER" , "doing work")
+       showNotification(applicationContext, "text")
         return Result.success()
     }
 
@@ -40,7 +41,13 @@ class MisaleWorker @AssistedInject constructor(
         val notificationManager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, "የቀኑ ሚሳለያዊ አነጋገር", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "የቀኑ ሚሳለያዊ አነጋገር",
+                NotificationManager.IMPORTANCE_HIGH // Set importance to high
+            ).apply {
+                description = "Channel for Misale notifications"
+            }
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -58,9 +65,12 @@ class MisaleWorker @AssistedInject constructor(
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE) // Set the notification category
+            .setDefaults(NotificationCompat.DEFAULT_ALL) // Use all default notification settings
             .setAutoCancel(true)
             .build()
 
         notificationManager.notify(1, notification)
     }
+
 }

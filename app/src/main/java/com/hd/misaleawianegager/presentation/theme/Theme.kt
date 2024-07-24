@@ -1,17 +1,15 @@
 package com.hd.misaleawianegager.presentation.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -42,13 +40,13 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun MisaleawiAnegagerTheme(
-    theme: String ,
+    theme: String,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     selectedFont: Int = R.font.andikaafr_r,
-    fontSize: Int = 16,
-    letterSpace: Double = 0.5,
-    letterHeight:Int = 24 ,
+    fontSize: State<Int> ,
+    letterSpace: State<Double> ,
+    letterHeight: State<Int> ,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when (theme) {
@@ -65,11 +63,18 @@ fun MisaleawiAnegagerTheme(
         }
     }
 
-   val fontFamily = FontFamily(Font(selectedFont))
+    var fontFamily = FontFamily(Font(selectedFont))
+
+    var typography = selectedTypography(fontFamily, fontSize.value, letterSpace.value, letterHeight.value)
+
+    LaunchedEffect( selectedFont ,  fontSize.value ,  letterSpace.value , letterHeight.value) {
+        fontFamily = FontFamily(Font(selectedFont))
+        typography = selectedTypography(fontFamily, fontSize.value, letterSpace.value, letterHeight.value)
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = selectedTypography(fontFamily,fontSize, letterSpace, letterHeight ),
+        typography = selectedTypography(fontFamily, fontSize.value, letterSpace.value, letterHeight.value),
         content = content
     )
 }

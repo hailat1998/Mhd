@@ -22,32 +22,28 @@ import com.hd.misaleawianegager.presentation.component.recent.RecentViewModel
 import com.hd.misaleawianegager.presentation.component.search.SearchScreen
 import com.hd.misaleawianegager.presentation.component.search.SearchViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
+import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.favList
 import kotlinx.coroutines.Delay
 import kotlinx.coroutines.delay
 
 @Composable
-fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier){
+fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
+                      letterType: String, onEvent: (SettingEvent) -> Unit){
     NavHost(navController = navHostController,
         startDestination = MisaleScreen.Home.route,
         modifier = modifier){
         composable(MisaleScreen.Home.route){
-              val scope = rememberCoroutineScope()
              val viewModel: HomeViewModel = hiltViewModel()
+            viewModel.onEvent(HomeEvent.LoadLetter(letterType))
             val list = viewModel.homeStateFlow.collectAsStateWithLifecycle()
-            HomeContent(homeData = list, loadLetter = viewModel::onEvent ){ home , arg ->
+            HomeContent(homeData = list, loadLetter = viewModel::onEvent, onEvent,  ){ home , arg ->
                   viewModel.onEvent(HomeEvent.WriteText(arg))
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg"))
             }
         }
         composable(MisaleScreen.Fav.route){
-           // val viewModel = hiltViewModel<FavViewModel>()
-           // val list = viewModel.favStateFlow.collectAsStateWithLifecycle()
-           // Log.i("FROM NAV" , list.size.toString())
-            LaunchedEffect(Unit) {
-                delay(1000L)
-                //Log.i("FROM NAVLA" , list.size.toString())
-            }
+
             FavScreen(favList) { from, text ->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text"))
             }

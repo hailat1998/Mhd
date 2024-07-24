@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.asFlow
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -29,6 +31,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
                                             private val workManager: WorkManager,
                                              @ApplicationContext private val context: Context):
     TextRepository {
+
 
     override fun readTextAsset(context: Context, type: String): Flow<Resources<String>> {
         Log.i("FROM REPO", "reading")
@@ -64,14 +67,19 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     }
 
     override fun enqueueWork(): Flow<String> {
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(30, TimeUnit.MINUTES)
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(3, TimeUnit.MINUTES)
             .build()
-
+        Log.i("FROM REPO" , "working on work")
         workManager.enqueueUniquePeriodicWork(
             WORK_NAME,
             ExistingPeriodicWorkPolicy.UPDATE,
             periodicWorkRequest
         )
+
+
+//        val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().build()
+//
+//        workManager.enqueueUniqueWork("WORKMISALE" ,   ExistingWorkPolicy.REPLACE , oneTimeWorkRequest)
 
         return workManager.getWorkInfosForUniqueWorkLiveData(WORK_NAME).asFlow().map { workInfos ->
             if (workInfos.isNotEmpty()) {

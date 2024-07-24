@@ -10,15 +10,16 @@ import com.hd.misaleawianegager.R
 // Set of Material typography styles to start with
 fun selectedTypography(
     selectedFontFamily: FontFamily,
-    fontSize: Int, letterSpace: Double,
+    fontSize: Int,
+    letterSpace: Double,
     letterHeight:Int) = Typography(
-//
+
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+        fontSize = fontSize.sp,
+        lineHeight = letterHeight.sp,
+        letterSpacing = letterSpace.sp
     )
     ,
     titleLarge = TextStyle(

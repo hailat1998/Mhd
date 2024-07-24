@@ -1,7 +1,8 @@
 package com.hd.misaleawianegager.presentation
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -10,24 +11,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.hd.misaleawianegager.presentation.component.fav.FavEvent
-import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.presentation.component.setting.SettingScreen
 import com.hd.misaleawianegager.presentation.component.setting.SettingViewModel
@@ -35,22 +39,49 @@ import com.hd.misaleawianegager.presentation.theme.MisaleawiAnegagerTheme
 import com.hd.misaleawianegager.utils.LifeCycleObserver
 import com.hd.misaleawianegager.utils.favList
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
         setContent {
             val viewModel = hiltViewModel<SettingViewModel>()
 
 
-            val fontSize = viewModel.fontSize.collectAsStateWithLifecycle().value
-            val letterSpace = viewModel.letterSpace.collectAsStateWithLifecycle().value
-            val lineHeight = viewModel.letterHeight.collectAsStateWithLifecycle().value
+            val fontSize = viewModel.fontSize.collectAsStateWithLifecycle()
+            val letterSpace = viewModel.letterSpace.collectAsStateWithLifecycle()
+            val lineHeight = viewModel.letterHeight.collectAsStateWithLifecycle()
             val theme = viewModel.theme.collectAsStateWithLifecycle()
             val font = viewModel.font.collectAsStateWithLifecycle()
+            val letterType = viewModel.letterType.collectAsStateWithLifecycle()
 
+            var showSplashScreen by remember { mutableStateOf(true) }
+
+            LaunchedEffect(Unit) {
+
+               delay(200L)
+
+                showSplashScreen = false
+
+
+            }
 
             MisaleawiAnegagerTheme(
                 theme = theme.value!! ,
@@ -59,30 +90,36 @@ class MainActivity : ComponentActivity() {
                 letterHeight = lineHeight,
             ) {
                 val navHostController = rememberNavController()
+                if(showSplashScreen){
+                    CircularProgressIndicator()
+                }else{
+                    val letterTypeLatest = letterType.value
           MisaleApp(
               navHostController = navHostController,
               onEvent = viewModel::onEvent,
               theme = theme,
               font = font,
+              letterTypeLatest!!
               )
                 }
             }
         }
-
+    }
 }
-
 
 
 @Composable
 fun MisaleApp(
-    navHostController: NavHostController, onEvent: (SettingEvent) -> Unit,
+    navHostController: NavHostController,
+    onEvent: (SettingEvent) -> Unit,
     theme: State<String?>,
-    font: State<Int?>
+    font: State<Int?>,
+    letterType: String
              ){
-
+    val viewModel = hiltViewModel<MainViewModel>()
    val showModalBottomSheet = remember{ mutableStateOf(false) }
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it))
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent)
         if(showModalBottomSheet.value){
             SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,
@@ -91,7 +128,7 @@ fun MisaleApp(
                 )
         }
     }
-    val viewModel = hiltViewModel<MainViewModel>()
+
     LifeCycleObserver(
         onStart = {viewModel.readFavList(favList)},
         onPause = { viewModel.writeFavList(favList) },

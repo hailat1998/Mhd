@@ -30,9 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.presentation.DataProvider
+import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 
 @Composable
-fun HomeContent(homeData: State<List<String>>,loadLetter: (HomeEvent) -> Unit, toDetail: ( from: String, s: String) -> Unit){
+fun HomeContent(homeData: State<List<String>>,
+                loadLetter: (HomeEvent) -> Unit,
+                onEvent: (SettingEvent) -> Unit,
+                toDetail: ( from: String, s: String) -> Unit,
+                  ){
 val showBottomSheet = remember{ mutableStateOf( false ) }
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = { showBottomSheet.value = true }) {
@@ -55,7 +60,7 @@ val showBottomSheet = remember{ mutableStateOf( false ) }
             }
         }
         if(showBottomSheet.value){
-            HomeBootSheet(dismissReq = showBottomSheet, loadLetter)
+            HomeBootSheet(dismissReq = showBottomSheet, loadLetter, onEvent)
         }
     }
 }
@@ -66,13 +71,16 @@ val showBottomSheet = remember{ mutableStateOf( false ) }
     ExperimentalMaterialApi::class
 )
 @Composable
-fun HomeBootSheet(dismissReq : MutableState<Boolean>, loadLetter: (HomeEvent) -> Unit) {
+fun HomeBootSheet(dismissReq : MutableState<Boolean>,
+                  loadLetter: (HomeEvent) -> Unit,
+                  onEvent: (SettingEvent) -> Unit) {
     ModalBottomSheet(onDismissRequest = {
         dismissReq.value = !dismissReq.value
     }) {
         FlowRow(modifier = Modifier.padding(8.dp)) {
          DataProvider.letterMap.keys.forEach { it ->
              Chip(onClick = {
+                 onEvent.invoke(SettingEvent.LetterType(DataProvider.letterMap[it]!!))
                  loadLetter.invoke(HomeEvent.LoadLetter(DataProvider.letterMap[it]!!))
                  dismissReq.value = !dismissReq.value },
                  colors = ChipDefaults.chipColors(backgroundColor = Color.Black)){

@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.setting
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.R
@@ -44,7 +45,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), R.font.abyssinica_gentium )
 
     val letterType = settingRepository.letterType
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "ሀ" )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "01Ha.txt" )
 
    private fun setFont(font: Int){
        viewModelScope.launch {
@@ -54,32 +55,35 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
 
 
     private fun setLetterSpace(space: Double) {
-        if (letterSpace.value + space in 0.1 .. 2.0) {
-
+        if (letterSpace.value + space in 0.1 .. 5.0) {
+     Log.i("SETTINGVIEWMODEL" , "$space")
             viewModelScope.launch {
-                settingRepository.setLetterSpace(space)
+                settingRepository.setLetterSpace(letterSpace.value + space)
             }
         }
     }
 
     private fun setTheme(theme: String){
+        Log.i("SETTINGVIEWMODEL" , "$theme")
         viewModelScope.launch {
             settingRepository.setTheme(theme)
         }
     }
 
     private fun setFontSize(size: Int) {
+        Log.i("SETTINGVIEWMODEL" , "$size")
         if (fontSize.value + size in 5..49) {
             viewModelScope.launch {
-                settingRepository.setFontSize(size)
+                settingRepository.setFontSize(fontSize.value + size)
             }
         }
     }
 
     private fun setLetterHeight(height: Int) {
+        Log.i("SETTINGVIEWMODEL" , "$height")
         if (letterHeight.value + height in 10..40) {
             viewModelScope.launch {
-                settingRepository.setLineHeight(height)
+                settingRepository.setLineHeight(letterHeight.value + height)
             }
         }
     }
@@ -89,5 +93,4 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
             settingRepository.setLetterType(type)
         }
     }
-
 }
