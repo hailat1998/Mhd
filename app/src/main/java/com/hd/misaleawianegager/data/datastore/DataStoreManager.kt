@@ -21,7 +21,7 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
 
     companion object {
         val THEME_KEY = stringPreferencesKey("theme")
-        val FONT_KEY = intPreferencesKey("font")
+        val FONT_KEY = stringPreferencesKey("font")
         val LETTER_TYPE_KEY = stringPreferencesKey("letterType")
         val LETTER_SPACE_KEY = doublePreferencesKey("letterSpace")
         val FONT_SIZE_KEY = intPreferencesKey("font size")
@@ -33,9 +33,9 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
             preferences[THEME_KEY] ?: "system"
         }
 
-    val font: Flow<Int> = context.dataStore.data
+    val font: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[FONT_KEY] ?: R.font.abyssinica_gentium
+            preferences[FONT_KEY] ?: "Default"
         }
 
     val letterType: Flow<String> = context.dataStore.data
@@ -67,7 +67,7 @@ class DataStoreManager @Inject constructor( @ApplicationContext private val cont
         }
     }
 
-    suspend fun setFont(font: Int) {
+    suspend fun setFont(font: String) {
         context.dataStore.edit { preferences ->
             preferences[FONT_KEY] = font
         }

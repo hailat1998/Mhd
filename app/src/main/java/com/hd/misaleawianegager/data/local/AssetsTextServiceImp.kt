@@ -13,8 +13,9 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.InputStreamReader
+import javax.inject.Inject
 
-class AssetsTextServiceImp : AssetsTextService {
+class AssetsTextServiceImp @Inject constructor() : AssetsTextService {
     override fun readTexts(context: Context, type : String): Flow<String?> {
 
         return flow {

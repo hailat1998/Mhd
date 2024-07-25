@@ -15,7 +15,7 @@ fun selectedTypography(
     letterHeight:Int) = Typography(
 
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = selectedFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = fontSize.sp,
         lineHeight = letterHeight.sp,
@@ -47,7 +47,7 @@ fun selectedTypography(
 
 )
 
-enum class Font(res: Int){
+enum class Font(val res: Int){
     abyssinica_gentium(R.font.abyssinica_gentium),
     andikaafr_r(R.font.andikaafr_r),
     charterbr_roman(R.font.charterbr_roman),
@@ -58,4 +58,7 @@ enum class Font(res: Int){
     washrasb(R.font.washrasb),
     wookianos(R.font.wookianos),
     yebse(R.font.yebse)
+
+
+
 }

@@ -7,9 +7,13 @@ import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.FileReader
 import java.io.InputStreamReader
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.random.Random
 
-class WorkerTextServiceImp : WorkerTextService {
+
+@Singleton
+class WorkerTextServiceImp @Inject constructor() : WorkerTextService {
 
     override fun readSingleText(context: Context): String {
         val assets = context.assets
@@ -20,7 +24,7 @@ class WorkerTextServiceImp : WorkerTextService {
         val randomFile = listAssets[randomIndex]
 
 
-        val inputStream = assets.open(randomFile)
+        val inputStream = assets.open("text/$randomFile")
         val reader = BufferedReader(InputStreamReader(inputStream))
 
 

@@ -1,7 +1,10 @@
 package com.hd.misaleawianegager.di
 
 import android.content.Context
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.WorkManager
+import androidx.work.Worker
+import androidx.work.WorkerFactory
 import com.hd.misaleawianegager.data.datastore.DataStoreManager
 import com.hd.misaleawianegager.data.local.AssetsTextServiceImp
 import com.hd.misaleawianegager.data.local.FileServiceImp
@@ -52,9 +55,9 @@ object AppModule {
     @Provides
     fun provideAssetsService(): AssetsTextService = AssetsTextServiceImp()
 
-    @Singleton
-    @Provides
-    fun provideWorkerTextService(): WorkerTextService = WorkerTextServiceImp()
+//    @Singleton
+//    @Provides
+//    fun provideWorkerTextService(): WorkerTextService = WorkerTextServiceImp()
 
 
     @Provides
@@ -66,6 +69,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSettingRepo(dataStoreManager: DataStoreManager): SettingRepository = SettingRepositoryImpl(dataStoreManager)
+
+    @Provides
+    @Singleton
+    fun provideWorkerFactory(workerFactory: HiltWorkerFactory): WorkerFactory =  workerFactory
+
 
 }
 
@@ -92,5 +100,18 @@ abstract class RepositoryModule {
     abstract fun bindTextRepository(
         impl: TextRepositoryImpl
     ): TextRepository
+
+}
+
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class WorkerServiceModule{
+
+    @Binds
+    @Singleton
+    abstract fun bindWorkerService(
+        impl : WorkerTextServiceImp
+    ) : WorkerTextService
 
 }

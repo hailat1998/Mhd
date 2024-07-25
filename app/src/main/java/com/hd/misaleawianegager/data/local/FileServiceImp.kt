@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
 const val RECENT  = "recent.txt"
 const val FAV = "fav.txt"
 
+@Singleton
 class FileServiceImp @Inject constructor(@ApplicationContext context: Context) : FileService {
 
     init{

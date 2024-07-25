@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingRepository {
     val theme: Flow<String?>
-    val font: Flow<Int?>
+    val font: Flow<String?>
     val letterSpace: Flow<Double>
     val letterType: Flow<String?>
     val fontSize: Flow<Int>
@@ -12,7 +12,7 @@ interface SettingRepository {
 
     suspend fun setTheme(theme: String)
 
-    suspend fun setFont(font: Int)
+    suspend fun setFont(font: String)
 
     suspend fun setLetterType(letterType: String)
 

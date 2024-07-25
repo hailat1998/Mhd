@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.theme
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -43,7 +44,7 @@ fun MisaleawiAnegagerTheme(
     theme: String,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    selectedFont: Int = R.font.andikaafr_r,
+    selectedFont: State<String?> ,
     fontSize: State<Int> ,
     letterSpace: State<Double> ,
     letterHeight: State<Int> ,
@@ -63,14 +64,30 @@ fun MisaleawiAnegagerTheme(
         }
     }
 
-    var fontFamily = FontFamily(Font(selectedFont))
-
-    var typography = selectedTypography(fontFamily, fontSize.value, letterSpace.value, letterHeight.value)
-
-    LaunchedEffect( selectedFont ,  fontSize.value ,  letterSpace.value , letterHeight.value) {
-        fontFamily = FontFamily(Font(selectedFont))
-        typography = selectedTypography(fontFamily, fontSize.value, letterSpace.value, letterHeight.value)
+    val fontFamily = when(selectedFont.value){
+        "abyssinica_gentium" -> FontFamily(Font(R.font.abyssinica_gentium))
+        "andikaafr_r" -> FontFamily(Font(R.font.andikaafr_r))
+        "charterbr_roman" -> FontFamily(Font(R.font.charterbr_roman))
+        "desta_gentium" -> FontFamily(Font(R.font.desta_gentium))
+        "gfzemen_regular" -> FontFamily(Font(R.font.gfzemen_regular))
+        "jiret" -> FontFamily(Font(R.font.jiret))
+        "nyala" -> FontFamily(Font(R.font.nyala))
+        "washrasb" -> FontFamily(Font(R.font.washrasb))
+        "wookianos" -> FontFamily(Font(R.font.wookianos))
+        "yebse" -> FontFamily(Font(R.font.yebse))
+        "serif" -> FontFamily.Serif
+        else -> FontFamily.Default
     }
+
+
+
+//    LaunchedEffect( selectedFont ) {
+//        Log.i("FROM THEME" , "called for font")
+//        fontFamily = FontFamily(Font(selectedFont))
+//           }
+//    LaunchedEffect(fontSize) {
+//        Log.i("FROM THEME" , "called for fontSize")
+//    }
 
     MaterialTheme(
         colorScheme = colorScheme,

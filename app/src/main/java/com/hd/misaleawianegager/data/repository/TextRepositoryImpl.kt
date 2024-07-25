@@ -12,6 +12,7 @@ import androidx.work.WorkManager
 import com.hd.misaleawianegager.data.worker.MisaleWorker
 import com.hd.misaleawianegager.domain.local.AssetsTextService
 import com.hd.misaleawianegager.domain.local.FileService
+import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,6 +30,7 @@ private const val WORK_NAME = "DailyQuoteMisale"
 class TextRepositoryImpl @Inject constructor(private val assetsTextService: AssetsTextService ,
                                             private val fileService: FileService ,
                                             private val workManager: WorkManager,
+                                             private val workerTextService: WorkerTextService,
                                              @ApplicationContext private val context: Context):
     TextRepository {
 
@@ -67,21 +69,26 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     }
 
     override fun enqueueWork(): Flow<String> {
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(3, TimeUnit.MINUTES)
-            .build()
-        Log.i("FROM REPO" , "working on work")
-        workManager.enqueueUniquePeriodicWork(
-            WORK_NAME,
-            ExistingPeriodicWorkPolicy.UPDATE,
-            periodicWorkRequest
-        )
+
+        val k = workerTextService.readSingleText(context)
+
+        Log.i("FROM REPO workservice " , k)
+
+//        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(20 , TimeUnit.MINUTES)
+//            .build()
+//        Log.i("FROM REPO" , "working on work")
+//        workManager.enqueueUniquePeriodicWork(
+//            WORK_NAME,
+//            ExistingPeriodicWorkPolicy.UPDATE,
+//            periodicWorkRequest
+//        )
+
+             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().build()
 
 
-//        val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().build()
-//
-//        workManager.enqueueUniqueWork("WORKMISALE" ,   ExistingWorkPolicy.REPLACE , oneTimeWorkRequest)
+              workManager.enqueueUniqueWork(WORK_NAME ,ExistingWorkPolicy.REPLACE , oneTimeWorkRequest)
 
-        return workManager.getWorkInfosForUniqueWorkLiveData(WORK_NAME).asFlow().map { workInfos ->
+           return workManager.getWorkInfosForUniqueWorkLiveData(WORK_NAME).asFlow().map { workInfos ->
             if (workInfos.isNotEmpty()) {
                 when (workInfos.first().state) {
                     WorkInfo.State.SUCCEEDED -> "SUCCESS"

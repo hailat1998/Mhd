@@ -47,157 +47,180 @@ fun SettingScreen(
     showModalBottomSheet: MutableState<Boolean>,
     onEvent: (SettingEvent) -> Unit,
     theme: State<String?>,
-    font: State<Int?>,
+    font: State<String?>,
                  ) {
 
-    ModalBottomSheet(onDismissRequest = { showModalBottomSheet.value = !showModalBottomSheet.value }) {
+
+    val fontList = listOf(
+        "abyssinica_gentium", "andikaafr_r", "charterbr_roman", "desta_gentium", "gfzemen_regular",
+        "jiret", "nyala", "washrasb", "wookianos", "yebse", "serif", "Default"
+    )
+
+    ModalBottomSheet(onDismissRequest = {
+        showModalBottomSheet.value = !showModalBottomSheet.value
+    }) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .padding(10.dp).background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f)), contentAlignment = Alignment.TopCenter
+                .padding(10.dp).background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f)),
+            contentAlignment = Alignment.TopCenter
 
         ) {
-            LazyColumn(modifier = Modifier
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))) {
+            LazyColumn(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+            ) {
                 item {
-                    Text(text = "Theme", style = MaterialTheme.typography.headlineMedium )
+                    Text(text = "Theme", style = MaterialTheme.typography.headlineMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth()
                             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
                     ) {
-                        RadioButton(selected = theme.value == "system", onClick = { onEvent.invoke(SettingEvent.Theme("system")) })
+                        RadioButton(
+                            selected = theme.value == "system",
+                            onClick = { onEvent.invoke(SettingEvent.Theme("system")) })
                         Text(text = "System", style = MaterialTheme.typography.headlineSmall)
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        RadioButton(selected = theme.value == "dark", onClick = { onEvent.invoke(SettingEvent.Theme("dark")) })
+                        RadioButton(
+                            selected = theme.value == "dark",
+                            onClick = { onEvent.invoke(SettingEvent.Theme("dark")) })
                         Text(text = "Dark", style = MaterialTheme.typography.headlineSmall)
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        RadioButton(selected = theme.value == "light", onClick = { onEvent.invoke(SettingEvent.Theme("light")) })
-                        Text(text = "Light" , style = MaterialTheme.typography.headlineSmall)
+                        RadioButton(
+                            selected = theme.value == "light",
+                            onClick = { onEvent.invoke(SettingEvent.Theme("light")) })
+                        Text(text = "Light", style = MaterialTheme.typography.headlineSmall)
                     }
 
 
                     Text(text = "Font", style = MaterialTheme.typography.headlineMedium)
                     var expanded by remember { mutableStateOf(false) }
-                    var selected by remember { mutableStateOf(font.value) }
+
                     Box {
                         Column {
                             ExposedDropdownMenuBox(
                                 expanded = expanded,
-                                onExpandedChange = { expanded = !expanded }) {
-                                selected?.let {
-                                    var font = ""
-                                    Font.entries.forEach{ it ->
-                                        if(it.ordinal == selected){
-                                          font = it.name
-                                        }
-                                    }
-                                    TextField(
-                                        value = font,
-                                        onValueChange = {},
-                                        readOnly = true,
-                                        trailingIcon = {
-                                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                                expanded = expanded
-                                            )
-                                        },
-                                        modifier = Modifier.menuAnchor()
-                                    )
-                                }
+                                onExpandedChange = { expanded = !expanded }
+                            ) {
+                                TextField(
+                                    value = font.value!!,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                    },
+                                    modifier = Modifier.menuAnchor()
+                                )
+
                                 ExposedDropdownMenu(
                                     expanded = expanded,
-                                    onDismissRequest = { expanded = false }) {
-                                    Font.entries.forEach { it ->
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    fontList.forEach { fontName ->
                                         DropdownMenuItem(
-                                            text = { Text(text = it.name) },
-                                            onClick = { selected = it.ordinal
-                                                        onEvent(SettingEvent.FontFamily(it.ordinal))
-                                                        expanded = false
-                                            })
+                                            text = { Text(text = fontName) },
+                                            onClick = {
+                                                onEvent(SettingEvent.FontFamily(fontName))
+                                                expanded = false
+                                            }
+                                        )
                                     }
                                 }
                             }
-                        }
-                    }
 
 
-                    Text(text = "FontSize",style = MaterialTheme.typography.headlineMedium)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Chip(onClick = {onEvent.invoke(SettingEvent.FontSize(3))}, colors = ChipDefaults.chipColors(backgroundColor = Color.Black)) {
-                            Text(text = "A+", style = MaterialTheme.typography.displayLarge)
-                        }
-                        Chip(onClick = {onEvent.invoke(SettingEvent.FontSize(-3))}, colors = ChipDefaults.chipColors(backgroundColor = Color.Black)) {
-                            Text(text = "A-", style = MaterialTheme.typography.displayLarge)
-                        }
-                    }
+                            Text(text = "FontSize", style = MaterialTheme.typography.headlineMedium)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Chip(
+                                    onClick = { onEvent.invoke(SettingEvent.FontSize(3)) },
+                                    colors = ChipDefaults.chipColors(backgroundColor = Color.Black)
+                                ) {
+                                    Text(text = "A+", style = MaterialTheme.typography.displayLarge)
+                                }
+                                Chip(
+                                    onClick = { onEvent.invoke(SettingEvent.FontSize(-3)) },
+                                    colors = ChipDefaults.chipColors(backgroundColor = Color.Black)
+                                ) {
+                                    Text(text = "A-", style = MaterialTheme.typography.displayLarge)
+                                }
+                            }
 
 
 
-                    Text(text = "LetterSpace", style = MaterialTheme.typography.headlineMedium)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Row(modifier = Modifier.clickable{
-                            onEvent.invoke(SettingEvent.LetterSpace(1.0))
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.space_bar_24px),
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.size(50.dp)
+                            Text(
+                                text = "LetterSpace",
+                                style = MaterialTheme.typography.headlineMedium
                             )
-                            Text(text = "+" ,style = MaterialTheme.typography.headlineSmall)
-                        }
-                        Row(modifier = Modifier.clickable{
-                            onEvent.invoke(SettingEvent.LetterSpace(-1.0))
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.space_bar_24px),
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.size(50.dp)
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Row(modifier = Modifier.clickable {
+                                    onEvent.invoke(SettingEvent.LetterSpace(1.0))
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.space_bar_24px),
+                                        contentDescription = null,
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                    Text(text = "+", style = MaterialTheme.typography.headlineSmall)
+                                }
+                                Row(modifier = Modifier.clickable {
+                                    onEvent.invoke(SettingEvent.LetterSpace(-1.0))
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.space_bar_24px),
+                                        contentDescription = null,
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                    Text(text = "-", style = MaterialTheme.typography.headlineSmall)
+                                }
+                            }
+
+
+
+                            Text(
+                                text = "LineHeight",
+                                style = MaterialTheme.typography.headlineMedium
                             )
-                            Text(text = "-", style = MaterialTheme.typography.headlineSmall)
-                        }
-                    }
 
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Row(modifier = Modifier.clickable {
+                                    onEvent.invoke(SettingEvent.LineHeight(2))
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.height_24px),
+                                        contentDescription = null,
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                    Text(text = "+", style = MaterialTheme.typography.headlineSmall)
+                                }
 
-
-                    Text(text = "LineHeight",style = MaterialTheme.typography.headlineMedium)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Row(modifier = Modifier.clickable{
-                            onEvent.invoke(SettingEvent.LineHeight(2))
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.height_24px),
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.size(50.dp)
-                            )
-                            Text(text = "+", style = MaterialTheme.typography.headlineSmall)
-                        }
-
-                        Row(modifier = Modifier.clickable{
-                            onEvent.invoke(SettingEvent.LineHeight(-2))
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.height_24px),
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.size(50.dp)
-                            )
-                            Text(text = "-", style = MaterialTheme.typography.headlineSmall)
+                                Row(modifier = Modifier.clickable {
+                                    onEvent.invoke(SettingEvent.LineHeight(-2))
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.height_24px),
+                                        contentDescription = null,
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                    Text(text = "-", style = MaterialTheme.typography.headlineSmall)
+                                }
+                            }
                         }
                     }
                 }
@@ -205,7 +228,6 @@ fun SettingScreen(
         }
     }
 }
-
 
 @Preview
 @Composable

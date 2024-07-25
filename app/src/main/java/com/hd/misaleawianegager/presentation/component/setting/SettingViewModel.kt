@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.domain.repository.SettingRepository
-import com.hd.misaleawianegager.presentation.theme.Font
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -42,12 +41,15 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 26 )
 
     val font = settingRepository.font
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), R.font.abyssinica_gentium )
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "default" )
 
     val letterType = settingRepository.letterType
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "01Ha.txt" )
 
-   private fun setFont(font: Int){
+   private fun setFont(font: String){
+       Log.i("SETTINGVIEWMODEL", "${font}")
+       Log.i("SETTINGVIEWMODEL" , "${this.font.value}")
+       Log.i("SETTINGVIEWMODEL" , "${R.font.andikaafr_r}")
        viewModelScope.launch {
            settingRepository.setFont(font)
        }

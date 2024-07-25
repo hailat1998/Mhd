@@ -12,6 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.hd.misaleawianegager.presentation.component.fav.FavScreen
 import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.home.HomeContent
@@ -63,10 +64,13 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
         }
         composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}"),
             arguments = listOf(navArgument("from") { type = NavType.StringType }, navArgument("arg2")
-            { type = NavType.StringType } ) ){ backStackEntry ->
-            val arg1 = backStackEntry.arguments?.getString("from")
+            { type = NavType.StringType } ),
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "misale://{from}/{arg2}" }
+            )){ backStackEntry ->
+            val arg1 = backStackEntry.arguments?.getString("from") ?:  "home"
             val arg2 = backStackEntry.arguments?.getString("arg2")
-           Selected(text = arg2!! , arg1!!) {
+           Selected(text = arg2!! , arg1) {
              navHostController.navigateSingleTopTo(arg1)
            }
         }
