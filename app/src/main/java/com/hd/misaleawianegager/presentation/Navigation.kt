@@ -46,9 +46,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
             }
         }
-
         composable(MisaleScreen.Fav.route){
-
             FavScreen(favList) { from, text ->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text"))
             }
@@ -60,7 +58,6 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
                 navHostController.navigateSingleTopTo(it)
             }
         }
-
         composable(MisaleScreen.Search.route){
             val viewModel = hiltViewModel<SearchViewModel>()
             SearchScreen(list = viewModel.searchResult, from = "home" , search = viewModel::search) {

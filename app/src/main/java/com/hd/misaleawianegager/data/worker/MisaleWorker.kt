@@ -21,8 +21,8 @@ import dagger.assisted.AssistedInject
 
 @HiltWorker
 class MisaleWorker @AssistedInject constructor(
-    @Assisted context: Context,
-    @Assisted workerParams: WorkerParameters,
+    @Assisted private val context: Context,
+    @Assisted private val workerParams: WorkerParameters,
     private val workerTextService: WorkerTextService
 ) : Worker(context, workerParams) {
 
