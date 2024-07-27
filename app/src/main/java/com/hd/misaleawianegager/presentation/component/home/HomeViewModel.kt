@@ -19,7 +19,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: TextRepository,
-                                        private val fileService: FileService,
                                         @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
                    @ApplicationContext private val context: Context) : ViewModel() {
 
@@ -54,7 +53,7 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
 
     private fun writeText(context: Context, type: Int, text: String){
         viewModelScope.launch(coroutineDispatcher) {
-            fileService.writeTexts(context, type, text)
+            repository.writeTextFile(context, type, text)
         }
     }
 }

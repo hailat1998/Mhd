@@ -48,7 +48,8 @@ fun SettingScreen(
     showModalBottomSheet: MutableState<Boolean>,
     onEvent: (SettingEvent) -> Unit,
     theme: State<String?>,
-    font: State<String?> ) {
+    font: State<String?> ,
+   ) {
     ModalBottomSheet(
         onDismissRequest = {
             showModalBottomSheet.value = !showModalBottomSheet.value

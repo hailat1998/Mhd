@@ -97,13 +97,13 @@ class MainActivity : ComponentActivity() {
                 if(showSplashScreen){
                     CircularProgressIndicator()
                 }else{
-                    val letterTypeLatest = letterType.value
+                    val letterTypeLatest = letterType.value!!
           MisaleApp(
               navHostController = navHostController,
               onEvent = viewModel::onEvent,
               theme = theme,
               font = font,
-              letterTypeLatest!!
+              letterTypeLatest
               )
                 }
             }
@@ -128,7 +128,7 @@ fun MisaleApp(
             SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,
                 theme = theme,
-                font = font
+                font = font,
                 )
         }
     }

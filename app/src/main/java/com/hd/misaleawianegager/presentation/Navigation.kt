@@ -3,6 +3,7 @@ package com.hd.misaleawianegager.presentation
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,6 +23,8 @@ import com.hd.misaleawianegager.presentation.component.recent.Recent
 import com.hd.misaleawianegager.presentation.component.recent.RecentViewModel
 import com.hd.misaleawianegager.presentation.component.search.SearchScreen
 import com.hd.misaleawianegager.presentation.component.search.SearchViewModel
+import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
+import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.favList
@@ -30,7 +33,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
-                      letterType: String, onEvent: (SettingEvent) -> Unit){
+                      letterType: String , onEvent: (SettingEvent) -> Unit){
     NavHost(navController = navHostController,
         startDestination = MisaleScreen.Home.route,
         modifier = modifier){
@@ -38,9 +41,9 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
              val viewModel: HomeViewModel = hiltViewModel()
             viewModel.onEvent(HomeEvent.LoadLetter(letterType))
             val list = viewModel.homeStateFlow.collectAsStateWithLifecycle()
-            HomeContent(homeData = list, loadLetter = viewModel::onEvent, onEvent,  ){ home , arg ->
+            HomeContent(homeData = list,  loadLetter = viewModel::onEvent, onEvent,  ){ home , arg, arg2 ->
                   viewModel.onEvent(HomeEvent.WriteText(arg))
-                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg"))
+                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
             }
         }
 
@@ -63,20 +66,30 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
             SearchScreen(list = viewModel.searchResult, from = "home" , search = viewModel::search) {
             }
         }
-        composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}"),
+        composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}/{arg3}"),
             arguments = listOf(navArgument("from") { type = NavType.StringType }, navArgument("arg2")
+            { type = NavType.StringType },  navArgument("arg3")
             { type = NavType.StringType } ),
             deepLinks = listOf(
-                navDeepLink { uriPattern = "misale://{from}/{arg2}" }
+                navDeepLink { uriPattern = "misale://{from}/{arg2}/{arg3}" }
             )){ backStackEntry ->
-            val arg1 = backStackEntry.arguments?.getString("from") ?:  "home"
+            val viewModel = hiltViewModel<DetailViewModel>()
+            val arg1 = backStackEntry.arguments?.getString("from")
             val arg2 = backStackEntry.arguments?.getString("arg2")
-           Selected(text = arg2!! , arg1) {
+            val arg3 = backStackEntry.arguments?.getString("arg3")
+            if(arg1 == "home"){
+                viewModel.onEvent(DetailEvent.LoadLetter(arg3!!))
+            }
+            if(arg1 == "fav"){
+                viewModel.onEvent(DetailEvent.LoadFav)
+                }
+            if(arg1 == "recent"){
+                viewModel.onEvent(DetailEvent.LoadRecent)
+            }
+            val list = viewModel.detailStateFlow.collectAsStateWithLifecycle()
+           Selected(list = list, text = arg2!! , arg1!!) {
              navHostController.navigateSingleTopTo(arg1)
            }
-        }
-        composable(MisaleScreen.Setting.route){
-
         }
     }
 }
