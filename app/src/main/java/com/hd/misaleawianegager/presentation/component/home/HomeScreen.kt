@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -83,8 +85,10 @@ fun HomeBootSheet(dismissReq : MutableState<Boolean>,
                  onEvent.invoke(SettingEvent.LetterType(DataProvider.letterMap[it]!!))
                  loadLetter.invoke(HomeEvent.LoadLetter(DataProvider.letterMap[it]!!))
                  dismissReq.value = !dismissReq.value },
-                 colors = ChipDefaults.chipColors(backgroundColor = Color.Black)){
-                 Text(text = it)
+                 colors = ChipDefaults.chipColors(backgroundColor =MaterialTheme.colorScheme.background),
+                 border = BorderStroke(2.dp, Color.DarkGray)
+             ){
+                 Text(text = it, style = MaterialTheme.typography.headlineSmall)
              }
          }
         }

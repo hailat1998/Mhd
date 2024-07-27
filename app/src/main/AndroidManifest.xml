@@ -27,7 +27,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="misale" android:host="selected" />
+                <data android:scheme="misale" android:host= "selected" />
             </intent-filter>
         </activity>
     </application>

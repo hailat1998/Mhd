@@ -43,6 +43,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg"))
             }
         }
+
         composable(MisaleScreen.Fav.route){
 
             FavScreen(favList) { from, text ->
