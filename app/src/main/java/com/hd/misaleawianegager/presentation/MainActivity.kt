@@ -38,8 +38,8 @@ import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.presentation.component.setting.SettingScreen
 import com.hd.misaleawianegager.presentation.component.setting.SettingViewModel
 import com.hd.misaleawianegager.presentation.theme.MisaleawiAnegagerTheme
-import com.hd.misaleawianegager.utils.LifeCycleObserver
-import com.hd.misaleawianegager.utils.favList
+import com.hd.misaleawianegager.utils.compose.LifeCycleObserver
+import com.hd.misaleawianegager.utils.compose.favList
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 

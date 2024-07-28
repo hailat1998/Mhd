@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.TopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,22 +17,34 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.hd.misaleawianegager.utils.compose.TextCard
 
 @Composable
-fun Recent(recentData: State<List<String>>, toDetail: (from: String) -> Unit){
-    Scaffold() { it ->
+fun Recent(recentData: State<List<String>>, toDetail: (from: String, text: String, first: String) -> Unit){
+    val lazyListState = rememberLazyListState()
+
+    Scaffold(topBar =  {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Details",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            },
+            backgroundColor = Color.DarkGray
+        )
+    }) { it ->
         Box(modifier = Modifier
             .fillMaxSize()
-            .padding(it),
-            contentAlignment = Alignment.Center) {
+            .padding(it)) {
             if (recentData.value.isEmpty()) {
                 CircularProgressIndicator()
             }else{
                 val list = recentData.value.distinct()
-                LazyColumn {
+                LazyColumn(state = lazyListState) {
                     items(list, {item -> item}){ it ->
-                        Text(text = it,
-                            modifier = Modifier.clickable{ toDetail.invoke( "selected")})
+                       TextCard(item = it, from = "recent", first = "  " , toDetail = toDetail)
                     }
                 }
             }

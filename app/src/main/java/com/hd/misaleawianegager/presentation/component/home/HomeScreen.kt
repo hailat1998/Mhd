@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
@@ -17,6 +18,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.presentation.DataProvider
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,43 +48,62 @@ fun HomeContent(homeData: State<List<String>>,
                 loadLetter: (HomeEvent) -> Unit,
                 onEvent: (SettingEvent) -> Unit,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
-                  ){
-val showBottomSheet = remember{ mutableStateOf( false ) }
+                  ) {
+    val showBottomSheet = remember { mutableStateOf(false) }
+    val lazyListState = rememberLazyListState()
 
 
+    var floatLetter by remember { mutableStateOf("") }
     Scaffold(
-        topBar = { TopAppBar(title = {Text(text = "Home" ,
-            style = MaterialTheme.typography.headlineMedium) },
-            backgroundColor = Color.DarkGray)},
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Home",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                },
+                backgroundColor = Color.DarkGray
+            )
+        }   ,
         floatingActionButton = {
-        FloatingActionButton(onClick = { showBottomSheet.value = true }) {
-            Icon(Icons.Default.Add, null)
-        }
-    }) { it ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(it),
-            contentAlignment = Alignment.Center) {
-            if (homeData.value.isEmpty()) {
-                CircularProgressIndicator()
-            }else{
-                LazyColumn {
-                  items(homeData.value, {item -> item}){ it ->
-                     Text(text = it,
-                         modifier = Modifier.clickable{ toDetail.invoke( "home" , it,
-                             if(homeData.value[0][0].toString() == "ኃ") "ኀ"
-                         else if(homeData.value[0][0].toString() == "ጳ") "ጰ"
-                         else homeData.value[0][0].toString())})
-                  }
-                }
+            FloatingActionButton(onClick = { showBottomSheet.value = true }) {
+
+                Text(floatLetter, style = MaterialTheme.typography.titleLarge)
+
             }
         }
-        if(showBottomSheet.value){
-            HomeBootSheet(dismissReq = showBottomSheet , loadLetter, onEvent)
+    ) { it ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            contentAlignment = Alignment.Center
+        ) {
+            if (homeData.value.isEmpty()) {
+                CircularProgressIndicator()
+            } else {
+                val arg3 = if (homeData.value[0][0].toString() == "ኃ") "ኀ"
+                else if (homeData.value[0][0].toString() == "ጳ") "ጰ"
+                else homeData.value[0][0].toString()
+
+                floatLetter = arg3
+
+                LazyColumn(state = lazyListState) {
+                    items(homeData.value, { item -> item }) { it ->
+                        TextCard(item = it, from = "home", first = arg3, toDetail = toDetail)
+                    }
+                }
+            }
+            if (showBottomSheet.value) {
+                LaunchedEffect(Unit) {
+                    lazyListState.scrollToItem(0)
+                }
+                HomeBootSheet(dismissReq = showBottomSheet, loadLetter, onEvent)
+            }
         }
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,

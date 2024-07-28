@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
-import com.hd.misaleawianegager.domain.local.FileService
 import com.hd.misaleawianegager.domain.repository.TextRepository
+import com.hd.misaleawianegager.presentation.DataProvider
+import com.hd.misaleawianegager.utils.compose.favList
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class DetailViewModel @Inject constructor(private val textRepository: TextRepository,
                                           @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
                                           @ApplicationContext private val context: Context
@@ -28,7 +31,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                 detailFeedQuery(context, e.q)
               }
             is DetailEvent.LoadFav ->{
-                detailFeedFav(context)
+                detailFeedFav()
               }
             is DetailEvent.LoadRecent ->{
                 detailFeedRecent(context)
@@ -41,7 +44,8 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
         viewModelScope.launch {
             viewModelScope.launch(coroutineDispatcher) {
                 val list = mutableListOf<String>()
-                textRepository.readTextAsset(context, query).collect{ it ->
+                val text = DataProvider.letterMap[query]
+                textRepository.readTextAsset(context, text!!).collect{ it ->
                      list.add(it.data!!)
                 }
                    _detailStateFlow.value = list
@@ -59,13 +63,8 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
         }
     }
 
-    private fun detailFeedFav(context: Context){
-        viewModelScope.launch(coroutineDispatcher) {
-            val list = mutableListOf<String>()
-            textRepository.readTextFile(context, 2).collect {
-                list.add(it.data!!)
-            }
-            _detailStateFlow.value = list
+    private fun detailFeedFav(){
+        _detailStateFlow.value = favList
         }
-    }
+
 }

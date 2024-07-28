@@ -1,11 +1,13 @@
 package com.hd.misaleawianegager.presentation.component.search
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -28,11 +30,15 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.hd.misaleawianegager.utils.compose.TextCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(list: List<String>,from : String ,
-                  search: (query: String) -> Unit, toDest: (from: String) -> Unit){
+                  search: (query: String) -> Unit,
+                 toDest: (from: String) -> Unit,
+                 toDetail: (from: String, text: String, first:String) -> Unit){
+    val lazyListState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
     var query by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
@@ -68,11 +74,12 @@ fun SearchScreen(list: List<String>,from : String ,
             },
         )
 
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
+        LazyColumn(modifier = Modifier.padding(16.dp),
+          state = lazyListState) {
             itemsIndexed(list, key = { _, item -> item }) { _, item ->
-               Text(text = item )
+               TextCard(item = item, from = "search", first = "  " , toDetail = toDetail)
+
             }
         }
     }
-
 }

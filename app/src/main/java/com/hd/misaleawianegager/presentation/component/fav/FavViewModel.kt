@@ -1,15 +1,11 @@
 package com.hd.misaleawianegager.presentation.component.fav
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.repository.TextRepository
-import com.hd.misaleawianegager.utils.favList
+import com.hd.misaleawianegager.utils.compose.favList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher

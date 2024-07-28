@@ -1,10 +1,6 @@
 package com.hd.misaleawianegager.presentation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.hd.misaleawianegager.presentation.component.fav.FavScreen
-import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.home.HomeContent
 import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.presentation.component.home.HomeViewModel
@@ -27,9 +22,7 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
-import com.hd.misaleawianegager.utils.favList
-import kotlinx.coroutines.Delay
-import kotlinx.coroutines.delay
+import com.hd.misaleawianegager.utils.compose.favList
 
 @Composable
 fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
@@ -46,23 +39,39 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
             }
         }
+
+
+
         composable(MisaleScreen.Fav.route){
-            FavScreen(favList) { from, text ->
-                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text"))
+            FavScreen(favList) { from, text, first->
+                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
             }
         }
+
+
+
         composable(MisaleScreen.Recent.route){
             val viewModel = hiltViewModel<RecentViewModel>()
             val list = viewModel.recentStateFlow.collectAsStateWithLifecycle()
-            Recent(recentData = list ) {
-                navHostController.navigateSingleTopTo(it)
+            Recent(recentData = list ) { from, text , first->
+                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
             }
         }
+
+
+
         composable(MisaleScreen.Search.route){
             val viewModel = hiltViewModel<SearchViewModel>()
-            SearchScreen(list = viewModel.searchResult, from = "home" , search = viewModel::search) {
-            }
+            SearchScreen(list = viewModel.searchResult, from = "home" , search = viewModel::search , toDest =  {
+                navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
+            }, toDetail = { from, text , first ->
+                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
+              }
+            )
         }
+
+
+
         composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}/{arg3}"),
             arguments = listOf(navArgument("from") { type = NavType.StringType }, navArgument("arg2")
             { type = NavType.StringType },  navArgument("arg3")
@@ -89,7 +98,9 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
            }
         }
     }
-}
+ }
+
+
 
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) { launchSingleTop = true }
