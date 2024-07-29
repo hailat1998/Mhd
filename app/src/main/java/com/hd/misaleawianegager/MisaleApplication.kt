@@ -8,17 +8,6 @@ import javax.inject.Inject
 
 
 @HiltAndroidApp
-class MisaleApplication: Application(), Configuration.Provider {
+class MisaleApplication: Application(){
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-
-    override val workManagerConfiguration: Configuration
-        get() =  Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
 }

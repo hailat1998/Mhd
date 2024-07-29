@@ -1,6 +1,8 @@
 package com.hd.misaleawianegager.presentation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,6 +24,7 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.compose.LifeCycleObserver
 import com.hd.misaleawianegager.utils.compose.favList
 
 @Composable
@@ -38,6 +41,13 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
                   viewModel.onEvent(HomeEvent.WriteText(arg))
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
             }
+           val worker = viewModel.working.collectAsState(initial = "RUNNING")
+            LifeCycleObserver(
+                onStart = { Log.i("HOMEVIEWMODEL", worker.value)},
+                onResume = { Log.i("HOMEVIEWMODEL", worker.value) },
+                onPause = { Log.i("HOMEVIEWMODEL", worker.value) },
+                onStop = { Log.i("HOMEVIEWMODEL", worker.value) }
+            )
         }
 
 

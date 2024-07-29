@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -21,13 +22,13 @@ import dagger.assisted.AssistedInject
 
 @HiltWorker
 class MisaleWorker @AssistedInject constructor(
-    @Assisted private val context: Context,
-    @Assisted private val workerParams: WorkerParameters,
+    @Assisted context: Context,
+    @Assisted workerParams: WorkerParameters,
     private val workerTextService: WorkerTextService
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val text = workerTextService.readSingleText(applicationContext)
+        val text = workerTextService.readSingleText(applicationContext).replace(' ', '_')
         Log.i("WORKER", "doing work")
         showNotification(applicationContext, text)
         return Result.success()
@@ -46,10 +47,9 @@ class MisaleWorker @AssistedInject constructor(
             }
             notificationManager.createNotificationChannel(channel)
         }
+                val deepLink = "misale://selected/search/$message/d".toUri()
 
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        val intent = Intent(Intent.ACTION_VIEW, deepLink)
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

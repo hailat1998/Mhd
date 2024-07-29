@@ -12,8 +12,11 @@ import com.hd.misaleawianegager.domain.repository.TextRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,10 +28,10 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
    private val _homeStateFlow = MutableStateFlow(emptyList<String>())
     val homeStateFlow get() = _homeStateFlow.asStateFlow()
 
+    var working: Flow<String> =
+        repository.enqueueWork().stateIn(viewModelScope , SharingStarted.WhileSubscribed(5000L), "RUNNING")
 
-    init {
-        repository.enqueueWork()
-    }
+
     fun onEvent(event: HomeEvent){
         when(event){
             is HomeEvent.LoadLetter -> {
@@ -56,4 +59,5 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
             repository.writeTextFile(context, type, text)
         }
     }
+
 }

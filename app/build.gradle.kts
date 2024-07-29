@@ -69,6 +69,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.appcompat)
+    implementation("androidx.startup:startup-runtime:1.1.1")
 
     /* *****************************************************
      **** Lifecycle

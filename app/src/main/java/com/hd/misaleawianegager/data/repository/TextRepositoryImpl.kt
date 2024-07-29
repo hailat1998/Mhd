@@ -29,9 +29,7 @@ private const val WORK_NAME = "DailyQuoteMisale"
 @Singleton
 class TextRepositoryImpl @Inject constructor(private val assetsTextService: AssetsTextService ,
                                             private val fileService: FileService ,
-                                            private val workManager: WorkManager,
-                                             private val workerTextService: WorkerTextService,
-                                             @ApplicationContext private val context: Context):
+                                            private val workManager: WorkManager ):
     TextRepository {
 
 
@@ -70,9 +68,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
     override fun enqueueWork(): Flow<String> {
 
-        val k = workerTextService.readSingleText(context)
-
-        Log.i("FROM REPO workservice " , k)
 
 //        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(20 , TimeUnit.MINUTES)
 //            .build()
@@ -83,7 +78,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 //            periodicWorkRequest
 //        )
 
-             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().build()
+             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().setInitialDelay(30, TimeUnit.SECONDS).build()
 
 
               workManager.enqueueUniqueWork(WORK_NAME ,ExistingWorkPolicy.REPLACE , oneTimeWorkRequest)
