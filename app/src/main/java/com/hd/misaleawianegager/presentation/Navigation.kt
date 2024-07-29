@@ -73,11 +73,11 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
 
 
         composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}/{arg3}"),
-            arguments = listOf(navArgument("from") { type = NavType.StringType }, navArgument("arg2")
-            { type = NavType.StringType },  navArgument("arg3")
-            { type = NavType.StringType } ),
+            arguments = listOf(navArgument("from") { type = NavType.StringType },
+                               navArgument("arg2") { type = NavType.StringType },
+                               navArgument("arg3") { type = NavType.StringType } ),
             deepLinks = listOf(
-                navDeepLink { uriPattern = "misale://{from}/{arg2}/{arg3}" }
+                navDeepLink { uriPattern = "misale://selected/{from}/{arg2}/{arg3}" }
             )){ backStackEntry ->
             val viewModel = hiltViewModel<DetailViewModel>()
             val arg1 = backStackEntry.arguments?.getString("from")

@@ -18,6 +18,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import com.hd.misaleawianegager.utils.compose.TextCard
 
 @Composable
@@ -28,8 +29,8 @@ fun Recent(recentData: State<List<String>>, toDetail: (from: String, text: Strin
         TopAppBar(
             title = {
                 Text(
-                    text = "Details",
-                    style = MaterialTheme.typography.headlineMedium
+                    text = "Recent",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             },
             backgroundColor = Color.DarkGray
@@ -44,7 +45,7 @@ fun Recent(recentData: State<List<String>>, toDetail: (from: String, text: Strin
                 val list = recentData.value.distinct()
                 LazyColumn(state = lazyListState) {
                     items(list, {item -> item}){ it ->
-                       TextCard(item = it, from = "recent", first = "  " , toDetail = toDetail)
+                       TextCard(item = it, from = "recent", first = "" , toDetail = toDetail)
                     }
                 }
             }

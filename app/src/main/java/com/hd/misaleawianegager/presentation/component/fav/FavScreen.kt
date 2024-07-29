@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import com.hd.misaleawianegager.utils.compose.TextCard
 
 @Composable
@@ -23,8 +24,8 @@ fun FavScreen(favList: List<String> , toDetail:(from: String, s: String, first: 
         TopAppBar(
             title = {
                 Text(
-                    text = "Details",
-                    style = MaterialTheme.typography.headlineMedium
+                    text = "Favourite",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             },
             backgroundColor = Color.DarkGray

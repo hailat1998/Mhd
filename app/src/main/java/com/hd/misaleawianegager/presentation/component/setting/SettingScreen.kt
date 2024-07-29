@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.R
@@ -57,13 +58,13 @@ fun SettingScreen(
         dragHandle = {
             Row {
                 Text(
-                    text = "Setting", style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(10.dp)
+                    text = "Setting", style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
                 )
                 Spacer(modifier = Modifier.weight(0.8f))
                 Icon(Icons.Default.Close, null, modifier = Modifier
                     .clickable { showModalBottomSheet.value = false }
-                    .padding(10.dp))
+                    .padding(top = 20.dp, end = 20.dp))
             }
         },
     ) {
