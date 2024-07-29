@@ -86,8 +86,7 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
                     }
                 }
                 else -> {
-                      val textModified = text.replace('_', ' ')
-                    ItemText(item = textModified, toDest = toDest, from = from)
+                    ItemText(item = text, toDest = toDest, from = from)
                 }
             }
         }

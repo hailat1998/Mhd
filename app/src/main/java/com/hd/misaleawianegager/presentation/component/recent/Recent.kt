@@ -45,7 +45,7 @@ fun Recent(recentData: State<List<String>>, toDetail: (from: String, text: Strin
                 val list = recentData.value.distinct()
                 LazyColumn(state = lazyListState) {
                     items(list, {item -> item}){ it ->
-                       TextCard(item = it, from = "recent", first = "" , toDetail = toDetail)
+                       TextCard(item = it, from = "recent", first = " " , toDetail = toDetail)
                     }
                 }
             }

@@ -78,7 +78,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 //            periodicWorkRequest
 //        )
 
-             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().setInitialDelay(30, TimeUnit.SECONDS).build()
+             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().build()
 
 
               workManager.enqueueUniqueWork(WORK_NAME ,ExistingWorkPolicy.REPLACE , oneTimeWorkRequest)

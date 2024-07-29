@@ -91,7 +91,8 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
             )){ backStackEntry ->
             val viewModel = hiltViewModel<DetailViewModel>()
             val arg1 = backStackEntry.arguments?.getString("from")
-            val arg2 = backStackEntry.arguments?.getString("arg2")
+            val arg2 = if(arg1 == "search")backStackEntry.arguments?.getString("arg2")!!.replace('_', ' ')
+                               else backStackEntry.arguments?.getString("arg2")
             val arg3 = backStackEntry.arguments?.getString("arg3")
             if(arg1 == "home"){
                 viewModel.onEvent(DetailEvent.LoadLetter(arg3!!))
@@ -102,6 +103,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
             if(arg1 == "recent"){
                 viewModel.onEvent(DetailEvent.LoadRecent)
             }
+
             val list = viewModel.detailStateFlow.collectAsStateWithLifecycle()
            Selected(list = list, text = arg2!! , arg1!!) {
              navHostController.navigateSingleTopTo(arg1)

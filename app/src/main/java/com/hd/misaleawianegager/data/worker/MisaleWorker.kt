@@ -28,7 +28,7 @@ class MisaleWorker @AssistedInject constructor(
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val text = workerTextService.readSingleText(applicationContext).replace(' ', '_')
+        val text = workerTextService.readSingleText(applicationContext)
         Log.i("WORKER", "doing work")
         showNotification(applicationContext, text)
         return Result.success()
@@ -47,7 +47,7 @@ class MisaleWorker @AssistedInject constructor(
             }
             notificationManager.createNotificationChannel(channel)
         }
-                val deepLink = "misale://selected/search/$message/d".toUri()
+                val deepLink = "misale://selected/search/${message.replace(' ', '_')}/d".toUri()
 
         val intent = Intent(Intent.ACTION_VIEW, deepLink)
 
