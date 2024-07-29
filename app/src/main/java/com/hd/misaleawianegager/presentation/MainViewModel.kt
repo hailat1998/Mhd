@@ -25,6 +25,9 @@ class MainViewModel @Inject constructor(private val textRepository: TextReposito
 
         }
     }
+    init {
+        textRepository.enqueueWork()
+    }
 
   fun readFavList(favList: MutableList<String>){
         viewModelScope.launch(coroutineDispatcher) {

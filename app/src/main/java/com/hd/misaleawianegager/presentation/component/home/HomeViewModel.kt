@@ -28,10 +28,6 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
    private val _homeStateFlow = MutableStateFlow(emptyList<String>())
     val homeStateFlow get() = _homeStateFlow.asStateFlow()
 
-    var working: Flow<String> =
-        repository.enqueueWork().stateIn(viewModelScope , SharingStarted.WhileSubscribed(5000L), "RUNNING")
-
-
     fun onEvent(event: HomeEvent){
         when(event){
             is HomeEvent.LoadLetter -> {
