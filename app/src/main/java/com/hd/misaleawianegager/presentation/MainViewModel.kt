@@ -8,6 +8,8 @@ import com.hd.misaleawianegager.domain.repository.TextRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,6 +20,9 @@ class MainViewModel @Inject constructor(private val textRepository: TextReposito
                                @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher
 ): ViewModel() {
 
+
+    val working = textRepository.enqueueWork().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "RUNNING")
+
      fun writeFavList(favList: MutableList<String>){
         viewModelScope.launch(coroutineDispatcher) {
            val text = favList.joinToString("\n")
@@ -25,9 +30,7 @@ class MainViewModel @Inject constructor(private val textRepository: TextReposito
 
         }
     }
-    init {
-        textRepository.enqueueWork()
-    }
+
 
   fun readFavList(favList: MutableList<String>){
         viewModelScope.launch(coroutineDispatcher) {

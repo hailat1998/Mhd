@@ -44,7 +44,7 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
         viewModelScope.launch(coroutineDispatcher) {
             val list = mutableListOf<String>()
             repository.readTextAsset(context, query).collect{it ->
-               list.add(it.data!!)
+               list.add(it.data!!.trim())
             }
             _homeStateFlow.value = list
         }

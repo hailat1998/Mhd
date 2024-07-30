@@ -8,15 +8,15 @@ import androidx.work.DelegatingWorkerFactory
 import androidx.work.WorkManager
 import com.hd.misaleawianegager.data.worker.MyWorkerFactory
 import com.hd.misaleawianegager.di.InitializerEntryPoint
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 class WorkManagerInitializer : Initializer<WorkManager>, Configuration.Provider {
 
-//    @Inject
-//    lateinit var workerFactory: HiltWorkerFactory
-//
-//    @Inject
-//    private lateinit var workerTextService: WorkerTextService
+    val fixedThreadPool: ExecutorService = Executors.newFixedThreadPool(4)
+
+
 
     @Inject
     lateinit var myWorkerFactory: MyWorkerFactory
@@ -40,6 +40,8 @@ class WorkManagerInitializer : Initializer<WorkManager>, Configuration.Provider 
             workerFactory.addFactory(myWorkerFactory)
             return Configuration.Builder()
                 .setWorkerFactory(workerFactory)
+                .setExecutor(Executors.newFixedThreadPool(8))
+                .setMinimumLoggingLevel(Log.INFO)
                 .build()
         }
 }

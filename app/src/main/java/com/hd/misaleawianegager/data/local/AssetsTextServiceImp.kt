@@ -7,6 +7,7 @@ import com.hd.misaleawianegager.utils.Resources
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
@@ -30,7 +31,7 @@ class AssetsTextServiceImp @Inject constructor() : AssetsTextService {
             } finally {
                 reader.close()
             }
-        }
+        }.distinctUntilChanged()
     }
 
     override fun search(context: Context, query: String): Flow<String> {
@@ -50,7 +51,7 @@ class AssetsTextServiceImp @Inject constructor() : AssetsTextService {
                     reader.close() // Close the reader to free up resources
                 }
             }
-        }
+        }.distinctUntilChanged()
     }
 
     override fun readRandomTexts(context: Context): Flow<String> {

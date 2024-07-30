@@ -32,7 +32,7 @@ init {
         viewModelScope.launch(coroutineDispatcher) {
             val list = mutableListOf<String>()
             textRepository.readTextFile(context, 1).collect{
-                list.add(it.data!!)
+                list.add(it.data!!.trim())
             }
             _recentStateFlow.value = list
         }

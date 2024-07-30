@@ -6,6 +6,7 @@ import com.hd.misaleawianegager.domain.local.FileService
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.IOException
@@ -43,13 +44,13 @@ class FileServiceImp @Inject constructor(@ApplicationContext context: Context) :
                     emit(line)
                 }
             }
-        }
+        }.distinctUntilChanged()
     }
 
     override fun writeTexts(context: Context , type: Int  , text : String): Boolean {
        val writeType = if(type == 1) RECENT else FAV
         Log.i("FILESERVICE" , "writing text")
-
+      val list  = mutableListOf<String>()
         try {
             context.openFileOutput(writeType,  if(type == 1 )Context.MODE_APPEND else Context.MODE_PRIVATE).use {
                 it.write(text.plus("\n").toByteArray())

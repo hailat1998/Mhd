@@ -12,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface InitializerEntryPoint {
     fun inject(workManagerInitializer: WorkManagerInitializer)
-    fun getWorkerTextService(): WorkerTextService
+
 
     companion object {
         fun resolve(context: Context): InitializerEntryPoint {
@@ -23,5 +23,4 @@ interface InitializerEntryPoint {
             )
         }
     }
-
 }

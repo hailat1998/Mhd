@@ -69,19 +69,17 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     override fun enqueueWork(): Flow<String> {
 
 
-//        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(20 , TimeUnit.MINUTES)
-//            .build()
-//        Log.i("FROM REPO" , "working on work")
-//        workManager.enqueueUniquePeriodicWork(
-//            WORK_NAME,
-//            ExistingPeriodicWorkPolicy.UPDATE,
-//            periodicWorkRequest
-//        )
-
-             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().build()
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(20 , TimeUnit.MINUTES)
+            .build()
+        Log.i("FROM REPO" , "working on work")
+        workManager.enqueueUniquePeriodicWork(
+            WORK_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            periodicWorkRequest
+        )
 
 
-              workManager.enqueueUniqueWork(WORK_NAME ,ExistingWorkPolicy.REPLACE , oneTimeWorkRequest)
+
 
            return workManager.getWorkInfosForUniqueWorkLiveData(WORK_NAME).asFlow().map { workInfos ->
             if (workInfos.isNotEmpty()) {

@@ -7,16 +7,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -24,9 +28,11 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -36,7 +42,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,10 +59,14 @@ fun SettingScreen(
     theme: State<String?>,
     font: State<String?> ,
    ) {
+    val sheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
+        sheetState = sheetState ,
         onDismissRequest = {
             showModalBottomSheet.value = !showModalBottomSheet.value
         },
+        shape = RectangleShape,
+
         dragHandle = {
             Row {
                 Text(
@@ -72,64 +84,72 @@ fun SettingScreen(
             Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f)),
-            contentAlignment = Alignment.TopCenter
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f))
+                .heightIn(max = 350.dp),
+            contentAlignment = Alignment.Center
 
         ) {
-            Box(modifier = Modifier.heightIn(max = 350.dp)) {
+
             LazyColumn(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
             ) {
-                item {
-
-                            ThemeContent(theme = theme, onEvent)
-
-                            FontContent(font = font, onEvent)
-
-                            FontSizeContent(onEvent)
-
-                            LetterSpaceContent(onEvent)
-
-                            LineHeightContent(onEvent)
-
-                        }
+                item { ThemeContent(theme = theme, onEvent) }
+                item{ Divider()}
+                item{ FontContent(font = font, onEvent) }
+                item{ Divider()}
+                item{ FontSizeContent(onEvent) }
+                item{ Divider()}
+                item{ LetterSpaceContent(onEvent) }
                   }
             }
         }
     }
-}
+
+
+
+
 
 
 
 @Composable
-fun ThemeContent(  theme: State<String?> ,onEvent: (SettingEvent) -> Unit){
-    Text(text = "Theme", style = MaterialTheme.typography.headlineMedium)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
-    ) {
-        RadioButton(
-            selected = theme.value == "system",
-            onClick = { onEvent.invoke(SettingEvent.Theme("system")) })
-        Text(text = "System", style = MaterialTheme.typography.titleMedium)
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        RadioButton(
-            selected = theme.value == "dark",
-            onClick = { onEvent.invoke(SettingEvent.Theme("dark")) })
-        Text(text = "Dark", style = MaterialTheme.typography.titleMedium)
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        RadioButton(
-            selected = theme.value == "light",
-            onClick = { onEvent.invoke(SettingEvent.Theme("light")) })
-        Text(text = "Light", style = MaterialTheme.typography.titleMedium)
+fun ThemeContent(  theme: State<String?> ,onEvent: (SettingEvent) -> Unit) {
+    Box(Modifier.padding(start = 20.dp)) {
+
+        Column {
+            Text(text = "Theme", style = MaterialTheme.typography.headlineMedium)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
+            ) {
+                RadioButton(
+                    selected = theme.value == "system",
+                    onClick = { onEvent.invoke(SettingEvent.Theme("system")) },
+                )
+                Text(text = "System", style = MaterialTheme.typography.titleMedium,)
+
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                RadioButton(
+                    selected = theme.value == "dark",
+                    onClick = { onEvent.invoke(SettingEvent.Theme("dark")) },
+                )
+                Text(text = "Dark", style = MaterialTheme.typography.titleMedium,)
+
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                RadioButton(
+                    selected = theme.value == "light",
+                    onClick = { onEvent.invoke(SettingEvent.Theme("light")) },
+                )
+                Text(text = "Light", style = MaterialTheme.typography.titleMedium,)
+            }
+        }
     }
 }
 
@@ -142,13 +162,16 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
         "jiret", "nyala", "washrasb", "wookianos", "yebse", "serif", "Default"
     )
 
-    Box {
+    Box(Modifier.padding(20.dp)) {
         var expanded by remember { mutableStateOf(false) }
         Column {
             Text(text = "FontFamily", style = MaterialTheme.typography.headlineMedium)
             ExposedDropdownMenuBox(
                 expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier
+                    .height(60.dp)
+                    .shadow(0.dp, RoundedCornerShape(10.dp))
             ) {
                 TextField(
                     value = font.value!!,
@@ -184,7 +207,8 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
-    Box {
+
+    Box(Modifier.padding(20.dp)) {
         Column {
             Text(text = "FontSize", style = MaterialTheme.typography.headlineMedium)
             Row(
@@ -213,7 +237,7 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
-    Box {
+    Box(Modifier.padding(20.dp)) {
         Column {
             Text(
                 text = "LetterSpace",

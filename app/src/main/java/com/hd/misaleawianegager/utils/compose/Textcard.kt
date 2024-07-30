@@ -18,6 +18,6 @@ fun TextCard(item: String, from: String , first: String, toDetail: ( from: Strin
         .shadow(shape = RoundedCornerShape(2.dp), elevation = 0.dp)
         .clickable { toDetail.invoke(from, item, first) }.
     padding(top = 0.dp, bottom = 10.dp, end = 5.dp, start = 5.dp)){
-          Text(text = item, textAlign = TextAlign.Center)
+          Text(text = item, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 10.dp))
     }
 }

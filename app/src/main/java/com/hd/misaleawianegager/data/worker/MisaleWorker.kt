@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.hilt.work.HiltWorker
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.hd.misaleawianegager.R
@@ -18,6 +19,8 @@ import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.presentation.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 @HiltWorker
@@ -25,13 +28,15 @@ class MisaleWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val workerTextService: WorkerTextService
-) : Worker(context, workerParams) {
+) : CoroutineWorker(context, workerParams) {
 
-    override fun doWork(): Result {
+
+
+    override suspend fun doWork(): Result {
         val text = workerTextService.readSingleText(applicationContext)
         Log.i("WORKER", "doing work")
         showNotification(applicationContext, text)
-        return Result.success()
+        return Result.retry()
     }
 
     private fun showNotification(context: Context, message: String) {
@@ -56,9 +61,9 @@ class MisaleWorker @AssistedInject constructor(
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("ሚሳለያዊ አነጋገር")
+            .setContentTitle("ምሳሌያዊ አነጋገር")
             .setContentText(message)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)

@@ -41,13 +41,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
                   viewModel.onEvent(HomeEvent.WriteText(arg))
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
             }
-           val worker = viewModel.working.collectAsState(initial = "RUNNING")
-            LifeCycleObserver(
-                onStart = { Log.i("HOMEVIEWMODEL", worker.value)},
-                onResume = { Log.i("HOMEVIEWMODEL", worker.value) },
-                onPause = { Log.i("HOMEVIEWMODEL", worker.value) },
-                onStop = { Log.i("HOMEVIEWMODEL", worker.value) }
-            )
+
         }
 
 
@@ -73,7 +67,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
         composable(MisaleScreen.Search.route){
             val viewModel = hiltViewModel<SearchViewModel>()
             SearchScreen(list = viewModel.searchResult, from = "home" , search = viewModel::search , toDest =  {
-                navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
+                navHostController.popBackStack()
             }, toDetail = { from, text , first ->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
               }
@@ -106,7 +100,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
 
             val list = viewModel.detailStateFlow.collectAsStateWithLifecycle()
            Selected(list = list, text = arg2!! , arg1!!) {
-             navHostController.navigateSingleTopTo(arg1)
+             navHostController.popBackStack()
            }
         }
     }

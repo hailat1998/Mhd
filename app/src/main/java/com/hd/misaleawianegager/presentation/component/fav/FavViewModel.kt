@@ -50,7 +50,7 @@ init {
            viewModelScope.launch(coroutineDispatcher) {
                val list2 = mutableListOf<String>()
                textRepository.readTextFile(context , 2).collect{
-                   list2.add(it.data!!)
+                   list2.add(it.data!!.trim())
                }
                favList.addAll(list2)
                _favStateFlow.value = favList
