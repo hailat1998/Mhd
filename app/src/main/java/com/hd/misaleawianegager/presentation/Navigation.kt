@@ -66,7 +66,8 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
 
         composable(MisaleScreen.Search.route){
             val viewModel = hiltViewModel<SearchViewModel>()
-            SearchScreen(list = viewModel.searchResult, from = "home" , search = viewModel::search , toDest =  {
+            val list = viewModel.searchResult.collectAsStateWithLifecycle()
+            SearchScreen(list = list, from = "home" , search = viewModel::search , toDest =  {
                 navHostController.popBackStack()
             }, toDetail = { from, text , first ->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
@@ -109,4 +110,8 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
 
 
 fun NavHostController.navigateSingleTopTo(route: String) =
-    this.navigate(route) { launchSingleTop = true }
+    this.navigate(route) {
+        popUpTo(this@navigateSingleTopTo.graph.startDestinationId)
+        launchSingleTop = true
+   restoreState = true
+    }

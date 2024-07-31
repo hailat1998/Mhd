@@ -17,7 +17,7 @@ fun selectedTypography(
         fontFamily = selectedFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = fontSize.sp,
-        lineHeight = letterHeight.sp,
+        lineHeight = 35.sp,
         letterSpacing = letterSpace.sp
     ),
     titleLarge = TextStyle(

@@ -113,7 +113,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                                 listContains = false
                                 favList.remove(item)
                             }
-                            .padding(20.dp)
+                            .padding(20.dp),  tint = Color.Black
                     )
                 } else {
                     Icon(Icons.Sharp.FavoriteBorder, null,
@@ -122,7 +122,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                                 listContains = true
                                 favList.add(item)
                             }
-                            .padding(20.dp)
+                            .padding(20.dp),  tint = Color.Black
                     )
                 }
                 Icon(Icons.Default.Share , null, modifier = Modifier
@@ -134,7 +134,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                         val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
                         context.startActivity(chooserIntent)
                     }
-                    .padding(20.dp))
+                    .padding(20.dp), tint = Color.Black )
                 Icon(painterResource(id = R.drawable.baseline_content_copy_24) , null, modifier = Modifier
                     .clickable {
                         val annotatedString = buildAnnotatedString {
@@ -144,7 +144,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                         }
                         clipboardManager.setText(annotatedString)
                     }
-                    .padding(20.dp)
+                    .padding(20.dp),  tint = Color.Black
                 )
             }
             Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),

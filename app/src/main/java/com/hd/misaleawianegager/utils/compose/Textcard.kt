@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -19,5 +20,16 @@ fun TextCard(item: String, from: String , first: String, toDetail: ( from: Strin
         .clickable { toDetail.invoke(from, item, first) }.
     padding(top = 0.dp, bottom = 10.dp, end = 5.dp, start = 5.dp)){
           Text(text = item, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 10.dp))
+    }
+}
+
+
+@Composable
+fun TextCardAnnotated(item: AnnotatedString, from: String , first: String, toDetail: ( from: String, text: String, first: String) -> Unit){
+    Card(modifier = Modifier.fillMaxWidth()
+        .shadow(shape = RoundedCornerShape(2.dp), elevation = 0.dp)
+        .clickable { toDetail.invoke(from, item.text, first) }.
+        padding(top = 0.dp, bottom = 10.dp, end = 5.dp, start = 5.dp)){
+        Text(text = item, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 10.dp))
     }
 }

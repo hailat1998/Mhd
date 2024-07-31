@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation.component.setting
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomSheetDefaults
@@ -121,33 +123,47 @@ fun ThemeContent(  theme: State<String?> ,onEvent: (SettingEvent) -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                    .clickable { onEvent.invoke(SettingEvent.Theme("system")) },
             ) {
                 RadioButton(
                     selected = theme.value == "system",
                     onClick = { onEvent.invoke(SettingEvent.Theme("system")) },
+
                 )
-                Text(text = "System", style = MaterialTheme.typography.titleMedium,)
+                Text(text = "System", style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 14.dp))
 
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                    .clickable { onEvent.invoke(SettingEvent.Theme("dark")) },
             ) {
                 RadioButton(
                     selected = theme.value == "dark",
                     onClick = { onEvent.invoke(SettingEvent.Theme("dark")) },
+
                 )
-                Text(text = "Dark", style = MaterialTheme.typography.titleMedium,)
+                Text(text = "Dark", style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 14.dp) )
 
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                    .clickable { onEvent.invoke(SettingEvent.Theme("light")) },
+
             ) {
                 RadioButton(
                     selected = theme.value == "light",
                     onClick = { onEvent.invoke(SettingEvent.Theme("light")) },
+
                 )
-                Text(text = "Light", style = MaterialTheme.typography.titleMedium,)
+                Text(text = "Light", style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 14.dp))
             }
         }
     }
@@ -181,7 +197,8 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                     },
                     modifier = Modifier.menuAnchor(),
-                    textStyle = MaterialTheme.typography.titleMedium
+                    textStyle = MaterialTheme.typography.titleMedium,
+                    shape = RoundedCornerShape(20.dp),
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
