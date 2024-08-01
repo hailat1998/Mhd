@@ -1,6 +1,5 @@
 package com.hd.misaleawianegager.presentation.component.search
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,10 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.hd.misaleawianegager.utils.compose.TextCard
 import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +48,7 @@ fun SearchScreen(list: State<List<String>>, from : String,
     var query by remember { mutableStateOf("") }
     var k = 0
     var j = 0
+    var qu = 0
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -70,7 +67,7 @@ fun SearchScreen(list: State<List<String>>, from : String,
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                   keyboardActions = KeyboardActions(onSearch = {if(query.isNotEmpty()){
-
+                      qu = query.length
                       search.invoke(query)
                      }
                    }
@@ -93,7 +90,7 @@ fun SearchScreen(list: State<List<String>>, from : String,
             itemsIndexed(list.value, key = { _, item -> item }) { _, item ->
 
                 j = item.indexOf(query)
-                k =  j + query.length
+                k =  j + qu
 
                 val annotatedString = buildAnnotatedString {
                     append(item)

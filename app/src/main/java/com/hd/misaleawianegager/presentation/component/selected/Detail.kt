@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -25,7 +26,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +54,8 @@ import com.hd.misaleawianegager.R
 @Composable
 fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: String,
              from: String, toDest: (s : String) -> Unit) {
+    val listNotFav = mutableListOf<Int>()
+
     Scaffold(topBar =  {
         TopAppBar(
             title = {
@@ -61,8 +66,10 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
             },
             backgroundColor = Color.DarkGray
         )
-    } ) { it ->
-        Box(modifier = Modifier.padding(it)
+    }
+    ) { it ->
+        Box(modifier = Modifier
+            .padding(it)
             .fillMaxSize()) {
             when (from) {
                 "fav", "home", "recent" -> {
@@ -81,13 +88,22 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
                             state = pagerState,
                             modifier = Modifier.fillMaxWidth()
                         ) { page ->
-                            ItemText(item = list.value[page], toDest = toDest, from = from)
+                            ItemText(item = list.value[page], toDest = toDest, from = from, listNotFav)
                         }
                     }
                 }
                 else -> {
-                    ItemText(item = text, toDest = toDest, from = from)
+                    ItemText(item = text, toDest = toDest, from = from, listNotFav)
                 }
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            Log.i("FROM DETAIL FAV", "GOT IT")
+            listNotFav.forEach {
+                favList.removeAt(it)
             }
         }
     }
@@ -95,37 +111,40 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
 
 
 @Composable
-fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
+fun ItemText(item: String, toDest: (s : String) -> Unit, from: String, list: MutableList<Int>){
     var listContains by remember { mutableStateOf(favList.contains(item)) }
+    var fvListContains by remember { mutableStateOf(!list.contains(favList.indexOf(item))) }
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
     Box(contentAlignment = Alignment.Center, modifier = Modifier
         .fillMaxSize()
         .clickable { toDest.invoke(from) }) {
-
         Column {
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-                if (listContains) {
+            if (from == "fav") {
+                Row {
+                if (fvListContains) {
                     Icon(Icons.Sharp.Favorite, null,
                         modifier = Modifier
                             .clickable {
-                                listContains = false
-                                favList.remove(item)
+                                Log.i("ITEM", "WE ARE HERE.")
+                                fvListContains = false
+                                list.remove(favList.indexOf(item))
+                                Log.i("ITEM","REMOVED")
                             }
-                            .padding(20.dp),  tint = Color.Black
+                            .padding(20.dp), tint = Color.Black
                     )
                 } else {
                     Icon(Icons.Sharp.FavoriteBorder, null,
                         modifier = Modifier
                             .clickable {
-                                listContains = true
-                                favList.add(item)
+                                fvListContains = true
+                                list.add(favList.indexOf(item))
                             }
-                            .padding(20.dp),  tint = Color.Black
+                            .padding(20.dp), tint = Color.Black
                     )
                 }
-                Icon(Icons.Default.Share , null, modifier = Modifier
+
+                Icon(Icons.Default.Share, null, modifier = Modifier
                     .clickable {
                         val shareText = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
@@ -134,19 +153,70 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                         val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
                         context.startActivity(chooserIntent)
                     }
-                    .padding(20.dp), tint = Color.Black )
-                Icon(painterResource(id = R.drawable.baseline_content_copy_24) , null, modifier = Modifier
-                    .clickable {
-                        val annotatedString = buildAnnotatedString {
-                            withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
-                                append(item)
+                    .padding(20.dp), tint = Color.Black)
+                Icon(painterResource(id = R.drawable.baseline_content_copy_24),
+                    null,
+                    modifier = Modifier
+                        .clickable {
+                            val annotatedString = buildAnnotatedString {
+                                withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
+                                    append(item)
+                                }
                             }
+                            clipboardManager.setText(annotatedString)
                         }
-                        clipboardManager.setText(annotatedString)
+                        .padding(20.dp),
+                    tint = Color.Black
+                )
+                }
+            } else {
+                Row {
+                Spacer(modifier = Modifier.weight(1f))
+                if (listContains) {
+                    Icon(Icons.Sharp.Favorite, null,
+                        modifier = Modifier
+                            .clickable {
+                                listContains = false
+                                favList.remove(item)
+                            }
+                            .padding(20.dp), tint = Color.Black
+                    )
+                } else {
+                    Icon(Icons.Sharp.FavoriteBorder, null,
+                        modifier = Modifier
+                            .clickable {
+                                listContains = true
+                                favList.add(item)
+                            }
+                            .padding(20.dp), tint = Color.Black
+                        )
+                }
+                Icon(Icons.Default.Share, null, modifier = Modifier
+                    .clickable {
+                        val shareText = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, item)
+                        }
+                        val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
+                        context.startActivity(chooserIntent)
                     }
-                    .padding(20.dp),  tint = Color.Black
+                    .padding(20.dp), tint = Color.Black)
+                Icon(painterResource(id = R.drawable.baseline_content_copy_24),
+                    null,
+                    modifier = Modifier
+                        .clickable {
+                            val annotatedString = buildAnnotatedString {
+                                withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
+                                    append(item)
+                                }
+                            }
+                            clipboardManager.setText(annotatedString)
+                        }
+                        .padding(20.dp),
+                    tint = Color.Black
                 )
             }
+        }
             Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                 modifier = Modifier.fillMaxWidth()) {
 
