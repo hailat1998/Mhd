@@ -30,10 +30,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,9 +55,30 @@ fun HomeContent(homeData: State<List<String>>,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
                   ) {
 
+    val intSaver = Saver<Int, Int>(
+        save = { it }, // Save the integer value as is
+        restore = { it } // Restore the integer value as is
+    )
+
     val showBottomSheet = remember { mutableStateOf(false) }
+
+    var firstVisibleItemIndex = rememberSaveable(saver = intSaver) { 0 }
+
     val lazyListState = rememberLazyListState()
 
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.firstVisibleItemIndex }
+            .collect { index ->
+                Log.i("FROMHOME", "$index")
+                firstVisibleItemIndex = index
+            }
+       }
+
+
+    LaunchedEffect(Unit) {
+        Log.i("FROMHOME", "$firstVisibleItemIndex")
+        lazyListState.scrollToItem(firstVisibleItemIndex)
+    }
 
     var floatLetter by remember { mutableStateOf("") }
     Scaffold(

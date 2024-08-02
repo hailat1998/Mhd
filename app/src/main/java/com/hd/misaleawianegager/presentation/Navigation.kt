@@ -111,7 +111,6 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
 
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) {
-        popUpTo(this@navigateSingleTopTo.graph.startDestinationId)
         launchSingleTop = true
    restoreState = true
     }
