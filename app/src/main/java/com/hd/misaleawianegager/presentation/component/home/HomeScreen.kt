@@ -50,6 +50,7 @@ fun HomeContent(homeData: State<List<String>>,
                 onEvent: (SettingEvent) -> Unit,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
                   ) {
+
     val showBottomSheet = remember { mutableStateOf(false) }
     val lazyListState = rememberLazyListState()
 
@@ -89,9 +90,9 @@ fun HomeContent(homeData: State<List<String>>,
                 else homeData.value[0][0].toString()
 
                 floatLetter = arg3
-
+               val list = homeData.value.distinct()
                 LazyColumn(state = lazyListState) {
-                    items(homeData.value, { item -> item }) { it ->
+                    items(list, { item -> item }) { it ->
                         TextCard(item = it, from = "home", first = arg3, toDetail = toDetail)
                     }
                 }

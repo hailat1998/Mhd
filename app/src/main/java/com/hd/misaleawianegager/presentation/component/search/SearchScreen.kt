@@ -84,10 +84,10 @@ fun SearchScreen(list: State<List<String>>, from : String,
                 }
             },
         )
-
+               val list2 = list.value.distinct()
         LazyColumn(modifier = Modifier.padding(16.dp),
           state = lazyListState) {
-            itemsIndexed(list.value, key = { _, item -> item }) { _, item ->
+            itemsIndexed(list2, key = { _, item -> item }) { _, item ->
 
                 j = item.indexOf(query)
                 k =  j + qu
