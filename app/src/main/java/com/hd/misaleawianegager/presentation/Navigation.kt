@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.hd.misaleawianegager.presentation.component.fav.FavScreen
+import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.home.HomeContent
 import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.presentation.component.home.HomeViewModel
@@ -29,40 +30,50 @@ import com.hd.misaleawianegager.utils.compose.favList
 
 @Composable
 fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
-                      letterType: String , onEvent: (SettingEvent) -> Unit){
+                      letterType: String , onSettingEvent: (SettingEvent) -> Unit){
+
+    val viewModelHome: HomeViewModel = hiltViewModel()
+
+    val viewModelRecent = hiltViewModel<RecentViewModel>()
+
+    val viewModelFav: FavViewModel = hiltViewModel()
+
     NavHost(navController = navHostController,
         startDestination = MisaleScreen.Home.route,
         modifier = modifier){
-        composable(MisaleScreen.Home.route){
-             val viewModel: HomeViewModel = hiltViewModel()
-            viewModel.onEvent(HomeEvent.LoadLetter(letterType))
-            val list = viewModel.homeStateFlow.collectAsStateWithLifecycle()
-            HomeContent(homeData = list,  loadLetter = viewModel::onEvent, onEvent,  ){ home , arg, arg2 ->
-                  viewModel.onEvent(HomeEvent.WriteText(arg))
-                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
-            }
 
+        composable(MisaleScreen.Home.route){
+
+            viewModelHome.onEvent(HomeEvent.LoadLetter(letterType))
+            val list = viewModelHome.homeStateFlow.collectAsStateWithLifecycle()
+            val scrollPos = viewModelHome.scrollValue.collectAsStateWithLifecycle()
+            Log.i("NAV", "${scrollPos.value}")
+            HomeContent(homeData = list,  onHomeEvent = viewModelHome::onEvent,  onSettingEvent, toDetail =   { home , arg, arg2 ->
+                  viewModelHome.onEvent(HomeEvent.WriteText(arg))
+                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
+            }, scrollIndex = scrollPos)
         }
 
 
 
         composable(MisaleScreen.Fav.route){
-            FavScreen(favList) { from, text, first->
+
+            val list = viewModelFav.favStateFlow.collectAsStateWithLifecycle()
+            val scrollIndex = viewModelFav.scrollValue.collectAsStateWithLifecycle()
+            FavScreen(list , toDetail =  { from, text, first->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-            }
+            }, setScroll = viewModelFav::setScroll, scrollIndex = scrollIndex)
         }
-
-
 
         composable(MisaleScreen.Recent.route){
-            val viewModel = hiltViewModel<RecentViewModel>()
-            val list = viewModel.recentStateFlow.collectAsStateWithLifecycle()
-            Recent(recentData = list ) { from, text , first->
+
+            val list = viewModelRecent.recentStateFlow.collectAsStateWithLifecycle()
+            val scrollIndex = viewModelRecent.scrollValue.collectAsStateWithLifecycle()
+            Recent(recentData = list , toDetail =  { from, text , first->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-            }
+            }, setScroll = viewModelRecent::setScroll, scrollIndex = scrollIndex)
+
         }
-
-
 
         composable(MisaleScreen.Search.route){
             val viewModel = hiltViewModel<SearchViewModel>()

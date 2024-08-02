@@ -2,7 +2,6 @@ package com.hd.misaleawianegager.presentation.component.home
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -15,13 +14,9 @@ import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.TopAppBar
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -30,12 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -50,34 +42,25 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun HomeContent(homeData: State<List<String>>,
-                loadLetter: (HomeEvent) -> Unit,
-                onEvent: (SettingEvent) -> Unit,
+                onHomeEvent: (HomeEvent) -> Unit,
+                onSettingEvent: (SettingEvent) -> Unit,
+                scrollIndex: State<Int>,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
                   ) {
 
-    val intSaver = Saver<Int, Int>(
-        save = { it }, // Save the integer value as is
-        restore = { it } // Restore the integer value as is
-    )
-
     val showBottomSheet = remember { mutableStateOf(false) }
 
-    var firstVisibleItemIndex = rememberSaveable(saver = intSaver) { 0 }
-
-    val lazyListState = rememberLazyListState()
+    val lazyListState =rememberLazyListState(initialFirstVisibleItemIndex = scrollIndex.value)
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }
             .collect { index ->
-                Log.i("FROMHOME", "$index")
-                firstVisibleItemIndex = index
+               onHomeEvent.invoke(HomeEvent.ScrollPos(index))
             }
-       }
-
-
-    LaunchedEffect(Unit) {
-        Log.i("FROMHOME", "$firstVisibleItemIndex")
-        lazyListState.scrollToItem(firstVisibleItemIndex)
+    }
+    LaunchedEffect(true) {
+        delay(200L)
+        Log.i("HOME", "${scrollIndex.value}")
     }
 
     var floatLetter by remember { mutableStateOf("") }
@@ -126,7 +109,7 @@ fun HomeContent(homeData: State<List<String>>,
                 LaunchedEffect(Unit) {
                     lazyListState.scrollToItem(0)
                 }
-                HomeBootSheet(dismissReq = showBottomSheet, loadLetter, onEvent)
+                HomeBottomSheet(dismissReq = showBottomSheet, onHomeEvent, onSettingEvent)
             }
         }
     }
@@ -137,16 +120,16 @@ fun HomeContent(homeData: State<List<String>>,
     ExperimentalMaterialApi::class
 )
 @Composable
-fun HomeBootSheet(dismissReq : MutableState<Boolean>,
+fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
                   loadLetter: (HomeEvent) -> Unit,
-                  onEvent: (SettingEvent) -> Unit) {
+                  onSettingEvent: (SettingEvent) -> Unit) {
     ModalBottomSheet(onDismissRequest = {
         dismissReq.value = !dismissReq.value
     }) {
         FlowRow(modifier = Modifier.padding(8.dp)) {
          DataProvider.letterMap.keys.forEach { it ->
              Chip(onClick = {
-                 onEvent.invoke(SettingEvent.LetterType(DataProvider.letterMap[it]!!))
+                 onSettingEvent.invoke(SettingEvent.LetterType(DataProvider.letterMap[it]!!))
                  loadLetter.invoke(HomeEvent.LoadLetter(DataProvider.letterMap[it]!!))
                  dismissReq.value = !dismissReq.value },
                  colors = ChipDefaults.chipColors(backgroundColor =MaterialTheme.colorScheme.background),
@@ -158,3 +141,6 @@ fun HomeBootSheet(dismissReq : MutableState<Boolean>,
         }
     }
 }
+
+
+

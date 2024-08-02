@@ -2,28 +2,40 @@ package com.hd.misaleawianegager.presentation.component.home
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
-import com.hd.misaleawianegager.domain.local.FileService
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: TextRepository,
                                         @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
-                   @ApplicationContext private val context: Context) : ViewModel() {
+                   @ApplicationContext private val context: Context,
+                                       private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    companion object {
+        private const val SCROLLINDEX = "scrollIndex"
+    }
+
+    val scrollValue = MutableStateFlow(savedStateHandle.get<Int>(SCROLLINDEX) ?:0)
+
+    private fun setScroll(value: Int){
+
+        Log.i("HOMEVIEWMODEL", "$value")
+
+        scrollValue.value = value
+        savedStateHandle[SCROLLINDEX] = value
+    }
 
    private val _homeStateFlow = MutableStateFlow(emptyList<String>())
     val homeStateFlow get() = _homeStateFlow.asStateFlow()
@@ -35,6 +47,9 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
             }
             is HomeEvent.WriteText -> {
                 writeText(context, 1 , event.text)
+            }
+            is HomeEvent.ScrollPos -> {
+                setScroll(event.value)
             }
         }
     }
