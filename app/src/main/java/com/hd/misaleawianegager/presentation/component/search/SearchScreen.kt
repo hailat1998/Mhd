@@ -48,7 +48,6 @@ fun SearchScreen(list: State<List<String>>, from : String,
     var query by remember { mutableStateOf("") }
     var k = 0
     var j = 0
-    var qu = 0
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -67,7 +66,6 @@ fun SearchScreen(list: State<List<String>>, from : String,
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                   keyboardActions = KeyboardActions(onSearch = {if(query.isNotEmpty()){
-                      qu = query.length
                       search.invoke(query)
                      }
                    }
@@ -90,7 +88,7 @@ fun SearchScreen(list: State<List<String>>, from : String,
             itemsIndexed(list2, key = { _, item -> item }) { _, item ->
 
                 j = item.indexOf(query)
-                k =  j + qu
+                k =  j + query.length
 
                 val annotatedString = buildAnnotatedString {
                     append(item)

@@ -64,7 +64,10 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
     }
 
     private fun detailFeedFav(){
-        _detailStateFlow.value = favList
+        val list = mutableListOf<String>()
+        list.addAll(favList)
+        _detailStateFlow.value = list
+
         }
 
 }

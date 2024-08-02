@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -55,7 +56,13 @@ import com.hd.misaleawianegager.utils.compose.favList
 @Composable
 fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: String,
              from: String, toDest: (s : String) -> Unit) {
-    val listNotFav = mutableListOf<Int>()
+
+    val listFav = mutableListOf<String>()
+    LaunchedEffect(Unit) {
+        if(list.value.isNotEmpty()){
+            listFav.addAll(list.value)
+        }
+    }
 
     Scaffold(topBar =  {
         TopAppBar(
@@ -73,28 +80,7 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
             .padding(it)
             .fillMaxSize()) {
             when (from) {
-                "fav" -> {
-
-                    if (list.value.isEmpty()) {
-                        CircularProgressIndicator()
-                    } else {
-                        val pagerState = rememberPagerState(
-                            initialPage = 0,
-                            0f
-                        ) { list.value.size }
-                        val index = remember { list.value.indexOf(text) }
-                        LaunchedEffect(Unit) {
-                            pagerState.scrollToPage(index)
-                        }
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxWidth()
-                        ) { page ->
-                            ItemTextFav(item = list.value[page], toDest = toDest, from = from , listNotFav)
-                        }
-                    }
-                }
-               "home", "recent" -> {
+             "fav" , "home", "recent" -> {
                     if (list.value.isEmpty()) {
                         CircularProgressIndicator()
                     } else {
@@ -120,16 +106,6 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
             }
         }
     }
-     if(from == "fav") {
-         LifeCycleObserver(onStop = {
-             Log.i("FROM DETAIL FAV", "GOT IT")
-             listNotFav.forEach {
-                 favList.removeAt(it)
-             }
-            }
-
-         )
-     }
 }
 
 
@@ -152,7 +128,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                                 favList.remove(item)
                             }
                             .padding(20.dp), tint = Color.Black
-                    )
+                     )
                 } else {
                     Icon(Icons.Sharp.FavoriteBorder, null,
                         modifier = Modifier
@@ -161,7 +137,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                                 favList.add(item)
                             }
                             .padding(20.dp), tint = Color.Black
-                    )
+                     )
                 }
                 Icon(Icons.Default.Share, null, modifier = Modifier
                     .clickable {
@@ -212,91 +188,4 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
 
 
 
-@Composable
-fun ItemTextFav(item: String, toDest: (s : String) -> Unit, from: String, list: MutableList<Int>){
 
-    val fvListContains by remember { derivedStateOf { !list.contains(favList.indexOf(item)) } }
-    val clipboardManager = LocalClipboardManager.current
-    val context = LocalContext.current
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable { toDest(from) }
-    ) {
-        Column {
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-                if (fvListContains) {
-                    Icon(
-                        Icons.Sharp.Favorite, null,
-                        modifier = Modifier
-                            .clickable {
-                                Log.i("ITEM", "WE ARE HERE.")
-                                list.remove(favList.indexOf(item))
-                                Log.i("ITEM", "REMOVED")
-                            }
-                            .padding(20.dp),
-                        tint = Color.Black
-                    )
-                } else {
-                    Icon(
-                        Icons.Sharp.FavoriteBorder, null,
-                        modifier = Modifier
-                            .clickable {
-                                list.add(favList.indexOf(item))
-                            }
-                            .padding(20.dp),
-                        tint = Color.Black
-                    )
-                }
-
-                Icon(
-                    Icons.Default.Share, null,
-                    modifier = Modifier
-                        .clickable {
-                            val shareText = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, item)
-                            }
-                            val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
-                            context.startActivity(chooserIntent)
-                        }
-                        .padding(20.dp),
-                    tint = Color.Black
-                )
-
-                Icon(
-                    painterResource(id = R.drawable.baseline_content_copy_24),
-                    null,
-                    modifier = Modifier
-                        .clickable {
-                            val annotatedString = AnnotatedString(item)
-                            clipboardManager.setText(annotatedString)
-                        }
-                        .padding(20.dp),
-                    tint = Color.Black
-                )
-            }
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = item,
-                    modifier = Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp, bottom = 10.dp),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.displayMedium
-                )
-            }
-        }
-    }
-}
-
-@Composable
-@Preview
-fun SD(){
-   // Selected(value = "THIS IS MY STORY OF LEAVING GOOD LIFE HERE IN ETHIOPIA")
-}
