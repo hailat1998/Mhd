@@ -42,7 +42,7 @@ fun Recent(recentData: State<List<String>>,
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             },
-            backgroundColor = Color.DarkGray
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
         )
     }) { it ->
         Box(modifier = Modifier

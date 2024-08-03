@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -40,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -172,9 +175,16 @@ fun MisaleBottomAppBar(navController: NavController,
     val route = currentBackStackEntry?.destination?.route
     BottomAppBar(
         modifier = Modifier.height(56.dp)
+            .shadow(shape = RoundedCornerShape(topStart = 14.dp, topEnd = 15.dp), elevation = 0.dp)
+            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
+        containerColor = MaterialTheme.colorScheme.surface,
+
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .shadow(shape = RoundedCornerShape(topStart = 14.dp, topEnd = 15.dp), elevation = 0.dp)
+                .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                ),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             DataProvider.icons.keys.forEach { key ->
@@ -248,7 +258,7 @@ fun SplashScreen(){
         Spacer(modifier = Modifier.height(200.dp))
             CircularProgressIndicator()
     }
-}
+  }
 }
 
 @Preview

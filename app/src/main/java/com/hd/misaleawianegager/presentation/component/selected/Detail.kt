@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation.component.selected
 
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,7 +67,7 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
                     style = MaterialTheme.typography.headlineMedium
                 )
             },
-            backgroundColor = Color.DarkGray
+           backgroundColor = MaterialTheme.colorScheme.primaryContainer,
         )
     }
     ) { it ->
@@ -110,7 +111,8 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
     val context = LocalContext.current
     Box(contentAlignment = Alignment.Center, modifier = Modifier
         .fillMaxSize()
-        .clickable { toDest.invoke(from) }) {
+        .clickable { toDest.invoke(from) }
+        .background(MaterialTheme.colorScheme.surfaceContainerHigh)) {
         Column {
             Row {
                 Spacer(modifier = Modifier.weight(1f))
@@ -160,7 +162,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
             }
 
             Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                 modifier = Modifier.fillMaxWidth()
             ) {
 

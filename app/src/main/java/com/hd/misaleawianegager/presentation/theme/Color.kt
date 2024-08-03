@@ -2,13 +2,29 @@ package com.hd.misaleawianegager.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val LightPrimary = Color(0xFF6200EE)
+val LightPrimaryVariant = Color(0xFFA0815F)
+val LightSecondary = Color(0xFF03DAC6)
+val LightPrimaryContainer = Color(0xFFC59867)
+val LightPrimaryVariantBackground = Color(0xFF000000)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val DarkPrimary = Color(0xFFBB86FC)
+val DarkPrimaryVariant = Color(0xFF473622)
+val DarkSecondary = Color(0xFF03DAC6)
+val DarkPrimaryContainer = Color(0xFF854D0A)
+val DarkPrimaryVariantBackground = Color(0xFFFFFFFF)
 
-val brown400 = Color(0xFF4B3C2F)
-val brown700 =Color(0xFF615745)
+
+val LightBackground = Color(0xFFFFFFFF)
+val LightSurface = Color(0xFFFFFFFF)
+val LightOnPrimary = Color(0xFFFFFFFF)
+val LightOnSecondary = Color(0xFF000000)
+val LightOnBackground = Color(0xFF000000)
+val LightOnSurface = Color(0xFF000000)
+
+val DarkBackground = Color(0xFF121212)
+val DarkSurface = Color(0xFF121212)
+val DarkOnPrimary = Color(0xFF000000)
+val DarkOnSecondary = Color(0xFF000000)
+val DarkOnBackground = Color(0xFFFFFFFF)
+val DarkOnSurface = Color(0xFFFFFFFF)

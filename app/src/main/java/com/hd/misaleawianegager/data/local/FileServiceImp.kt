@@ -50,6 +50,7 @@ class FileServiceImp @Inject constructor(@ApplicationContext context: Context) :
     override fun writeTexts(context: Context , type: Int  , text : String): Boolean {
        val writeType = if(type == 1) RECENT else FAV
         Log.i("FILESERVICE" , "writing text")
+
       val list  = mutableListOf<String>()
         try {
             context.openFileOutput(writeType,  if(type == 1 )Context.MODE_APPEND else Context.MODE_PRIVATE).use {

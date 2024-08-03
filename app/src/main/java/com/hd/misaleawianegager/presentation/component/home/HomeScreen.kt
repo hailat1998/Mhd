@@ -2,21 +2,31 @@ package com.hd.misaleawianegager.presentation.component.home
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -48,6 +58,8 @@ fun HomeContent(homeData: State<List<String>>,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
                   ) {
 
+    val openDialog = remember { mutableStateOf(false)    }
+
     val showBottomSheet = remember { mutableStateOf(false) }
 
     val lazyListState =rememberLazyListState(initialFirstVisibleItemIndex = scrollIndex.value)
@@ -73,9 +85,14 @@ fun HomeContent(homeData: State<List<String>>,
                         style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 },
-                backgroundColor = Color.DarkGray
-            )
-        }   ,
+                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                actions = { Icon(Icons.Default.Info , null,  modifier = Modifier.clickable {
+                    openDialog.value = true
+                     }.padding(end= 20.dp)
+                  )
+                }
+             )
+        }  ,
         floatingActionButton = {
             FloatingActionButton(onClick = { showBottomSheet.value = true }) {
 
@@ -111,6 +128,9 @@ fun HomeContent(homeData: State<List<String>>,
                 }
                 HomeBottomSheet(dismissReq = showBottomSheet, onHomeEvent, onSettingEvent)
             }
+            if(openDialog.value){
+                AppInfoDialog(openDialog = openDialog)
+            }
         }
     }
 }
@@ -133,7 +153,7 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
                  loadLetter.invoke(HomeEvent.LoadLetter(DataProvider.letterMap[it]!!))
                  dismissReq.value = !dismissReq.value },
                  colors = ChipDefaults.chipColors(backgroundColor =MaterialTheme.colorScheme.background),
-                 border = BorderStroke(2.dp, Color.DarkGray)
+                 border = BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceContainer)
              ){
                  Text(text = it, style = MaterialTheme.typography.headlineSmall)
              }
@@ -141,6 +161,42 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
         }
     }
 }
+
+@Composable
+fun AppInfoDialog(openDialog: MutableState<Boolean>) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+            AlertDialog(
+                onDismissRequest = { openDialog.value = false },
+                title = {
+                    Text(text = "App Information")
+                },
+                text = {
+                    SelectionContainer {
+                    Column {
+                            Text(text = "Version: 1.0.0")
+                            Text(text = "Developer: Haile Temesgen")
+                            Text(text = "Email: htemesgen400@gmail.com")
+                            Text(text = "Telegram: @varargs1")
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { openDialog.value = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+    }
+
 
 
 

@@ -93,11 +93,11 @@ fun SettingScreen(
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
             ) {
                 item { ThemeContent(theme = theme, onEvent) }
-                item{ Divider()}
+                item{ Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer))}
                 item{ FontContent(font = font, onEvent) }
-                item{ Divider()}
+                item{ Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer))}
                 item{ FontSizeContent(onEvent) }
-                item{ Divider()}
+                item{ Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer))}
                 item{ LetterSpaceContent(onEvent) }
                   }
             }
@@ -229,15 +229,17 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
             ) {
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.FontSize(2)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.background),
-                    shape =  MaterialTheme.shapes. small. copy(CornerSize(percent = 20))
+                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
+                    shape =  MaterialTheme.shapes. small. copy(CornerSize(percent = 20)),
+                    modifier = Modifier.padding(end = 20.dp)
                 ) {
                     Text(text = "A+", style = MaterialTheme.typography.titleLarge)
                 }
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.FontSize(-2)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.background),
-                    shape =  MaterialTheme.shapes. small. copy(CornerSize(percent = 20))
+                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
+                    shape =  MaterialTheme.shapes. small. copy(CornerSize(percent = 20),),
+                    modifier = Modifier.padding(start = 20.dp)
                 ) {
                     Text(text = "A-", style = MaterialTheme.typography.titleLarge)
                 }
@@ -261,29 +263,31 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.background)) {
+                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.padding(end = 20.dp)) {
                     Row {
                         Icon(
                             painter = painterResource(id = R.drawable.space_bar_24px),
                             contentDescription = null,
-                            tint = Color.Black,
+                            tint = MaterialTheme.colorScheme.surfaceContainerLow,
                             modifier = Modifier.size(50.dp)
                         )
-                        Text(text = "+", style = MaterialTheme.typography.headlineSmall)
+                        Text(text = "+", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =13.dp ))
                     }
                 }
                 Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.background)) {
+                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.padding(start = 20.dp)) {
                     Row(modifier = Modifier.clickable {
                         onEvent.invoke(SettingEvent.LetterSpace(-1.0))
                     }) {
                         Icon(
                             painter = painterResource(id = R.drawable.space_bar_24px),
                             contentDescription = null,
-                            tint = Color.Black,
+                            tint = MaterialTheme.colorScheme.surfaceContainerLow,
                             modifier = Modifier.size(50.dp)
                         )
-                        Text(text = "-", style = MaterialTheme.typography.headlineSmall)
+                        Text(text = "-", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =13.dp ))
                     }
                 }
             }
