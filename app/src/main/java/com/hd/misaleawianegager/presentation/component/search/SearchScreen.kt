@@ -67,9 +67,9 @@ fun SearchScreen(list: State<List<String>>, from : String,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                   keyboardActions = KeyboardActions(onSearch = {if(query.isNotEmpty()){
                       search.invoke(query)
-                     }
-                   }
-                  ),
+                        }
+                      }
+                   ),
 
                     shape = RoundedCornerShape(20.dp),
 
@@ -93,7 +93,7 @@ fun SearchScreen(list: State<List<String>>, from : String,
                 val annotatedString = buildAnnotatedString {
                     append(item)
 
-                    // Apply bold style to the word "Hello"
+
                     addStyle(
                         style = SpanStyle(
                             background = Color.Green

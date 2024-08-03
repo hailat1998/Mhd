@@ -72,22 +72,8 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                REQUEST_CODE_POST_NOTIFICATIONS
-            )
-        }
         setContent {
             val viewModel = hiltViewModel<SettingViewModel>()
-
-
             val fontSize = viewModel.fontSize.collectAsStateWithLifecycle()
             val letterSpace = viewModel.letterSpace.collectAsStateWithLifecycle()
             val lineHeight = viewModel.letterHeight.collectAsStateWithLifecycle()

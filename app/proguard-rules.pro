@@ -1,21 +1,49 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Keep all public classes, methods, and fields
+-keep public class * {
+    public *;
+}
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep classes with specific annotations
+-keep @interface com.example.yourannotation.Keep
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep all classes and methods used by reflection
+-keep class * {
+    @com.example.yourannotation.Keep *;
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep all Activity subclasses
+-keep class * extends android.app.Activity {
+    <init>(...);
+}
+
+# Keep all Service subclasses
+-keep class * extends android.app.Service {
+    <init>(...);
+}
+
+# Keep all BroadcastReceiver subclasses
+-keep class * extends android.content.BroadcastReceiver {
+    <init>(...);
+}
+
+# Keep all ContentProvider subclasses
+-keep class * extends android.content.ContentProvider {
+    <init>(...);
+}
+
+# Keep all Fragment subclasses
+-keep class * extends android.app.Fragment {
+    <init>(...);
+}
+
+# Keep all custom views
+-keep class * extends android.view.View {
+    <init>(...);
+}
+
+# Retrofit and Gson rules
+-keep class com.example.yourpackage.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class com.google.gson.** { *; }
+-keep class retrofit2.** { *; }
+-keep class okhttp3.** { *; }
