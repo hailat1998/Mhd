@@ -321,7 +321,7 @@ fun LineHeightContent(onEvent: (SettingEvent) -> Unit) {
                             tint = Color.Black,
                             modifier = Modifier.size(50.dp)
                         )
-                        Text(text = "+", style = MaterialTheme.typography.headlineSmall)
+                        Text(text = "+", style = MaterialTheme.typography.headlineMedium)
                     }
                 }
 
@@ -337,7 +337,7 @@ fun LineHeightContent(onEvent: (SettingEvent) -> Unit) {
                             tint = Color.Black,
                             modifier = Modifier.size(50.dp)
                         )
-                        Text(text = "-", style = MaterialTheme.typography.headlineSmall)
+                        Text(text = "-", style = MaterialTheme.typography.headlineMedium)
                     }
                 }
             }

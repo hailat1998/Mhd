@@ -1,49 +1,103 @@
-# Keep all public classes, methods, and fields
--keep public class * {
-    public *;
+# Hilt (Dagger)
+-keepclassmembers,allowobfuscation class * {
+    @dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories$HiltWrapper_* *;
 }
+-keep class dagger.hilt.** { *; }
+-keep interface dagger.hilt.** { *; }
+-keep @dagger.hilt.InstallIn class * { *; }
+-keep @dagger.hilt.components.SingletonComponent class * { *; }
 
-# Keep classes with specific annotations
--keep @interface com.example.yourannotation.Keep
+# Jetpack Compose
+-keep class androidx.compose.** { *; }
+-keep class kotlin.** { *; }
+-keep class androidx.activity.ComponentActivity { *; }
+-keep class androidx.lifecycle.LifecycleOwner { *; }
 
-# Keep all classes and methods used by reflection
--keep class * {
-    @com.example.yourannotation.Keep *;
+# ViewModel
+-keep class androidx.lifecycle.ViewModel { *; }
+-keepclassmembers class androidx.lifecycle.ViewModel {
+    <init>(...);
 }
-
-# Keep all Activity subclasses
--keep class * extends android.app.Activity {
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
     <init>(...);
 }
 
-# Keep all Service subclasses
--keep class * extends android.app.Service {
-    <init>(...);
+# DataStore
+-keep class androidx.datastore.** { *; }
+-keep class com.google.protobuf.** { *; }
+
+
+# WorkManager
+-keep class androidx.work.** { *; }
+-dontwarn androidx.work.**
+
+# General AndroidX libraries
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
+
+# Retrofit (if used)
+#-keep class retrofit2.** { *; }
+#-keep interface retrofit2.** { *; }
+#-dontwarn retrofit2.**
+
+## Gson (if used)
+#-keep class com.google.gson.* { *; }
+#-dontwarn com.google.gson.**
+#
+## OkHttp (if used)
+#-keep class okhttp3.** { *; }
+#-dontwarn okhttp3.**
+
+# For reflection in general (use with caution)
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @androidx.annotation.Keep *;
 }
 
-# Keep all BroadcastReceiver subclasses
--keep class * extends android.content.BroadcastReceiver {
-    <init>(...);
+# Retain specific methods and fields (example)
+-keepclassmembers class ** {
+    public <methods>;
+    public <fields>;
 }
 
-# Keep all ContentProvider subclasses
--keep class * extends android.content.ContentProvider {
-    <init>(...);
+# Custom classes (example)
+-keep class com.hd.** { *; }
+
+
+# Prevents obfuscation of Parcelable classes (example)
+-keepclassmembers class * implements android.os.Parcelable {
+  static ** CREATOR;
 }
 
-# Keep all Fragment subclasses
--keep class * extends android.app.Fragment {
-    <init>(...);
+# Asset handling (example)
+-keep class ** {
+    public void loadAsset(...);
+    public void loadAssets(...);
+    public void getAssets(...);
 }
 
-# Keep all custom views
--keep class * extends android.view.View {
-    <init>(...);
+# Internal file access
+-keep class ** {
+    public void openFileInput(...);
+    public void openFileOutput(...);
+    public void getFilesDir(...);
+    public void getCacheDir(...);
+    public void getDir(...);
 }
 
-# Retrofit and Gson rules
--keep class com.example.yourpackage.** { *; }
--keep class * implements com.google.gson.TypeAdapterFactory
--keep class com.google.gson.** { *; }
--keep class retrofit2.** { *; }
--keep class okhttp3.** { *; }
+
+
+# Additional rules for other libraries or use cases can be added here
+
+# Keep everything in release builds
+#-dontobfuscate
+
+# Optimize the code
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+# Ignore warnings (adjust as needed)
+-dontwarn javax.annotation.**
+-dontwarn org.joda.time.**
+-dontwarn javax.inject.**
+-dontwarn dagger.**

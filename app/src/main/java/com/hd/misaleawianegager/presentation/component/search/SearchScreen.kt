@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -81,6 +82,7 @@ fun SearchScreen(list: State<List<String>>, from : String,
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
+          colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
         )
                val list2 = list.value.distinct()
         LazyColumn(modifier = Modifier.padding(16.dp),

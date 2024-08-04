@@ -72,7 +72,7 @@ fun selectedTypography(
         letterSpacing = 0.sp
 ),
  headlineSmall = TextStyle(
-     fontFamily = FontFamily.Default,
+     fontFamily = selectedFontFamily,
      fontSize = 24.sp,
      fontWeight = FontWeight.Normal,
      letterSpacing = 0.sp

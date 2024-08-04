@@ -23,7 +23,8 @@ fun TextCard(item: String, from: String , first: String, toDetail: ( from: Strin
         .clickable { toDetail.invoke(from, item, first) }
         .padding(top = 0.dp, bottom = 10.dp, end = 5.dp, start = 5.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)){
-          Text(text = item, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 10.dp))
+          Text(text = item, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 10.dp),
+              color = MaterialTheme.colorScheme.onPrimary)
     }
 }
 
@@ -36,6 +37,6 @@ fun TextCardAnnotated(item: AnnotatedString, from: String , first: String, toDet
         .clickable { toDetail.invoke(from, item.text, first) }
         .padding(top = 0.dp, bottom = 10.dp, end = 5.dp, start = 5.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)){
-        Text(text = item, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 10.dp))
+        Text(text = item, textAlign = TextAlign.Center, modifier = Modifier.padding(start = 10.dp), color = MaterialTheme.colorScheme.onPrimary)
     }
 }

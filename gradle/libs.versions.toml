@@ -98,6 +98,7 @@ shimmer = "0.5.0"
 jsoup = "1.15.4"
 
 #Download File
+startupRuntime = "1.1.1"
 work-runtime-ktx = "2.9.0"
 
 #KSP
@@ -107,6 +108,7 @@ ksp = "1.9.20-1.0.14"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -54,7 +54,6 @@ android {
     lint {
         baseline = file("lint-baseline.xml")
     }
-
 }
 
 dependencies {
@@ -75,7 +74,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.appcompat)
-    implementation("androidx.startup:startup-runtime:1.1.1")
+    implementation(libs.androidx.startup.runtime)
 
     /* *****************************************************
      **** Lifecycle
@@ -127,14 +126,6 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.work)
 
-    /* *****************************************************
-      **** Retrofit2
-      ****************************************************** */
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
-    implementation(libs.converter.moshi)
 
     /* *****************************************************
      **** Material

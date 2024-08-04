@@ -196,9 +196,11 @@ fun MisaleBottomAppBar(navController: NavController,
                             ) {
                                 Icon(
                                     imageVector = DataProvider.icons[key]!!,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimary
                                 )
-                                Text(text = key.uppercase(), style = MaterialTheme.typography.bodySmall)
+                                Text(text = key.uppercase(), style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimary)
                             }
                         }
                     }

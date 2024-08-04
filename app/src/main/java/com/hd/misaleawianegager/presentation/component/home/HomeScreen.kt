@@ -155,7 +155,7 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
                  colors = ChipDefaults.chipColors(backgroundColor =MaterialTheme.colorScheme.background),
                  border = BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceContainer)
              ){
-                 Text(text = it, style = MaterialTheme.typography.headlineSmall)
+                 Text(text = it, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onPrimary)
              }
            }
         }
