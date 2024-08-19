@@ -2,6 +2,8 @@ package com.hd.misaleawianegager.presentation.component.home
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,12 +46,15 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.presentation.DataProvider
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
+import com.hd.misaleawianegager.R
 
 @Composable
 fun HomeContent(homeData: State<List<String>>,
@@ -86,9 +92,11 @@ fun HomeContent(homeData: State<List<String>>,
                     )
                 },
                 backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                actions = { Icon(Icons.Default.Info , null,  modifier = Modifier.clickable {
-                    openDialog.value = true
-                     }.padding(end= 20.dp)
+                actions = { Icon(Icons.Default.Info , null,  modifier = Modifier
+                    .clickable {
+                        openDialog.value = true
+                    }
+                    .padding(end = 20.dp)
                   )
                 }
              )
@@ -146,7 +154,11 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
     ModalBottomSheet(onDismissRequest = {
         dismissReq.value = !dismissReq.value
     }) {
-        FlowRow(modifier = Modifier.padding(8.dp)) {
+        Box(modifier = Modifier.heightIn( max= 250.dp)){
+        Image(painterResource(id = R.drawable.drawing_dun), null,
+        contentScale = ContentScale.FillBounds)
+        FlowRow(modifier = Modifier.padding(8.dp)
+            .background(Color.Transparent)) {
          DataProvider.letterMap.keys.forEach { it ->
              Chip(onClick = {
                  onSettingEvent.invoke(SettingEvent.LetterType(DataProvider.letterMap[it]!!))
@@ -160,8 +172,8 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
            }
         }
     }
+ }
 }
-
 @Composable
 fun AppInfoDialog(openDialog: MutableState<Boolean>) {
 
@@ -190,7 +202,7 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>) {
                 },
                 confirmButton = {
                     Button(onClick = { openDialog.value = false }) {
-                        Text("OK")
+                        Text("OK", color = Color.Black)
                     }
                 }
             )

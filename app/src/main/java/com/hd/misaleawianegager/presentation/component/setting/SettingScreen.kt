@@ -255,7 +255,7 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
     Box(Modifier.padding(20.dp)) {
         Column {
             Text(
-                text = "LetterSpace",
+                text = "Word Space",
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -272,22 +272,20 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
                             tint = MaterialTheme.colorScheme.surfaceContainerLow,
                             modifier = Modifier.size(50.dp)
                         )
-                        Text(text = "+", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =13.dp ))
+                        Text(text = "+", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =11.dp ))
                     }
                 }
                 Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
                     colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
                     modifier = Modifier.padding(start = 20.dp)) {
-                    Row(modifier = Modifier.clickable {
-                        onEvent.invoke(SettingEvent.LetterSpace(-1.0))
-                    }) {
+                    Row {
                         Icon(
                             painter = painterResource(id = R.drawable.space_bar_24px),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.surfaceContainerLow,
                             modifier = Modifier.size(50.dp)
                         )
-                        Text(text = "-", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =13.dp ))
+                        Text(text = "-", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =10.dp ))
                     }
                 }
             }

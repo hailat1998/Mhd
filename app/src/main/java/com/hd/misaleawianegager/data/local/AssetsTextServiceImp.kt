@@ -1,18 +1,11 @@
 package com.hd.misaleawianegager.data.local
 
 import android.content.Context
-import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.local.AssetsTextService
-import com.hd.misaleawianegager.utils.Resources
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import java.io.BufferedReader
-import java.io.FileReader
 import java.io.InputStreamReader
 import javax.inject.Inject
 
@@ -37,7 +30,7 @@ class AssetsTextServiceImp @Inject constructor() : AssetsTextService {
     override fun search(context: Context, query: String): Flow<String> {
         return flow {
             val assets = context.assets
-            val textList = assets.list("text")
+            val textList = assets.list("drawable/text")
 
             textList?.let { list ->
                 for (fileName in list) {
@@ -48,7 +41,7 @@ class AssetsTextServiceImp @Inject constructor() : AssetsTextService {
                             emit(line!!)
                         }
                     }
-                    reader.close() // Close the reader to free up resources
+                    reader.close()
                 }
             }
         }.distinctUntilChanged()

@@ -78,11 +78,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             periodicWorkRequest
         )
 
-            val oneTimeWorkRequest = OneTimeWorkRequestBuilder<MisaleWorker>().build()
-
-            workManager.enqueueUniqueWork("testing_workManager", ExistingWorkPolicy.KEEP, oneTimeWorkRequest)
-
-
 
         return workManager.getWorkInfosForUniqueWorkLiveData(WORK_NAME).asFlow().map { workInfos ->
             if (workInfos.isNotEmpty()) {

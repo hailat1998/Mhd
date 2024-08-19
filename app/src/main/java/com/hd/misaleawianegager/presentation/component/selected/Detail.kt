@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.sharp.Favorite
 import androidx.compose.material.icons.sharp.FavoriteBorder
@@ -45,20 +47,27 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.R
+import com.hd.misaleawianegager.utils.compose.ZoomOutImageBackground
 import com.hd.misaleawianegager.utils.compose.favList
+import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: String,
              from: String, toDest: (s : String) -> Unit) {
 
-    val listFav = mutableListOf<String>()
-    LaunchedEffect(Unit) {
-        if(list.value.isNotEmpty()){
-            listFav.addAll(list.value)
-        }
-    }
 
+    val context = LocalContext.current
+
+val res = when(Random.nextInt(from = 1, until = 8)){
+    1 -> Pair(R.drawable.harar, " https://en.wikipedia.org/wiki/Harar")
+    2 -> Pair(R.drawable.axum, "https://en.wikipedia.org/wiki/Obelisk_of_Axum")
+    3 -> Pair(R.drawable.tiya, "https://en.wikipedia.org/wiki/Tiya_(archaeological_site)")
+    4 -> Pair(R.drawable.gondar, "https://en.wikipedia.org/wiki/Fasil_Ghebbi")
+    5 -> Pair(R.drawable.konso , "https://en.wikipedia.org/wiki/Konso_people")
+    6 -> Pair(R.drawable.sofumer, "https://en.wikipedia.org/wiki/Sof_Omar_Caves")
+    else -> Pair(R.drawable.lalibela, "https://en.wikipedia.org/wiki/Lalibela")
+}
     Scaffold(topBar =  {
         TopAppBar(
             title = {
@@ -74,6 +83,9 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
         Box(modifier = Modifier
             .padding(it)
             .fillMaxSize()) {
+
+            ZoomOutImageBackground(painter = painterResource(id = res.first))
+
             when (from) {
              "fav" , "home", "recent" -> {
                     if (list.value.isEmpty()) {
@@ -89,14 +101,14 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
                         }
                         HorizontalPager(
                             state = pagerState,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().background(color = Color.Transparent)
                         ) { page ->
-                            ItemText(item = list.value[page], toDest = toDest, from = from)
+                            ItemText(item = list.value[page], res.second )
                         }
                     }
                 }
                 else -> {
-                    ItemText(item = text, toDest = toDest, from = from)
+                    ItemText(item = text, res.second)
                 }
             }
         }
@@ -105,17 +117,26 @@ fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: Str
 
 
 @Composable
-fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
+fun ItemText(item: String, info: String,){
     var listContains by remember { mutableStateOf(favList.contains(item)) }
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
     Box(contentAlignment = Alignment.Center, modifier = Modifier
         .fillMaxSize()
-        .clickable { toDest.invoke(from) }
-        .background(MaterialTheme.colorScheme.surfaceContainerHigh)) {
+        .background(Color.Transparent)) {
+
         Column {
             Row {
+
                 Spacer(modifier = Modifier.weight(1f))
+                Icon(Icons.Default.Info, null, modifier = Modifier.clickable {
+                    val view = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(info)
+                    }
+                    context.startActivity(view)
+                }.padding(20.dp),
+                    tint = Color.Black
+                )
                 if (listContains) {
                     Icon(Icons.Sharp.Favorite, null,
                         modifier = Modifier
@@ -138,7 +159,7 @@ fun ItemText(item: String, toDest: (s : String) -> Unit, from: String){
                 Icon(Icons.Default.Share, null, modifier = Modifier
                     .clickable {
                         val shareText = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
+                            type = "drawable/text/plain"
                             putExtra(Intent.EXTRA_TEXT, item)
                         }
                         val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")

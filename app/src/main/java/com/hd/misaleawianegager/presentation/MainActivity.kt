@@ -1,11 +1,9 @@
 package com.hd.misaleawianegager.presentation
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import com.hd.misaleawianegager.R
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -47,15 +45,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.splashscreen.SplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.presentation.component.setting.SettingScreen
 import com.hd.misaleawianegager.presentation.component.setting.SettingViewModel
@@ -157,9 +154,8 @@ fun MisaleApp(
     LifeCycleObserver(
         onStart = {viewModel.readFavList(favList)
                   Log.i("HOMEVIEWMODEL", "${favList.size}")},
-        onPause = { viewModel.writeFavList(favList) },
-        onStop = { viewModel.writeFavList(favList)
-                 },
+        onPause = { viewModel.writeFavList(favList)
+                  Log.i("FAVLIST", "OnP")},
     )
 
 
@@ -171,8 +167,6 @@ fun MisaleApp(
         onPause = { Log.i("HOMEVIEWMODEL", worker.value) },
         onStop = { Log.i("HOMEVIEWMODEL", worker.value) }
     )
-
-
 }
 
 

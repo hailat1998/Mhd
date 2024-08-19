@@ -2,10 +2,7 @@ package com.hd.misaleawianegager.data.local
 
 import android.content.Context
 import com.hd.misaleawianegager.domain.local.WorkerTextService
-import com.hd.misaleawianegager.utils.Resources
-import java.io.BufferedInputStream
 import java.io.BufferedReader
-import java.io.FileReader
 import java.io.InputStreamReader
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +14,7 @@ class WorkerTextServiceImp @Inject constructor() : WorkerTextService {
 
     override fun readSingleText(context: Context): String {
         val assets = context.assets
-        val listAssets = assets.list("text/") ?: return ""
+        val listAssets = assets.list("/text/") ?: return ""
         if (listAssets.isEmpty()) return ""
 
         val randomIndex = Random.nextInt(listAssets.size)

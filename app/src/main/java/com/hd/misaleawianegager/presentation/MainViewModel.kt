@@ -25,9 +25,9 @@ class MainViewModel @Inject constructor(private val textRepository: TextReposito
 
      fun writeFavList(favList: MutableList<String>){
         viewModelScope.launch(coroutineDispatcher) {
-           val text = favList.joinToString("\n")
+            val j = favList.toHashSet()
+           val text = j.joinToString("\n")
                 textRepository.writeTextFile(context , 2, text)
-
         }
     }
 
@@ -39,7 +39,6 @@ class MainViewModel @Inject constructor(private val textRepository: TextReposito
                 list2.add(it.data!!)
             }
             favList.addAll(list2)
-
         }
     }
 }
