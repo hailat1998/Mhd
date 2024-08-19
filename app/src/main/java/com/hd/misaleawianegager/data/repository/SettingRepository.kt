@@ -39,4 +39,5 @@ class SettingRepositoryImpl @Inject constructor(private val dataStoreManager: Da
   override suspend fun setFontSize(fontSize: Int){
       dataStoreManager.setFontSize(fontSize)
   }
+
 }

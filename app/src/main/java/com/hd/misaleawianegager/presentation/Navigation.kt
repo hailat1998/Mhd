@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -57,7 +58,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
 
 
         composable(MisaleScreen.Fav.route){
-
+               viewModelFav.readFavList()
             val list = viewModelFav.favStateFlow.collectAsStateWithLifecycle()
             val scrollIndex = viewModelFav.scrollValue.collectAsStateWithLifecycle()
             FavScreen(list , toDetail =  { from, text, first->
@@ -66,7 +67,8 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
         }
 
         composable(MisaleScreen.Recent.route){
-
+            val context = LocalContext.current
+             viewModelRecent.readText(context)
             val list = viewModelRecent.recentStateFlow.collectAsStateWithLifecycle()
             val scrollIndex = viewModelRecent.scrollValue.collectAsStateWithLifecycle()
             Recent(recentData = list , toDetail =  { from, text , first->
@@ -123,5 +125,4 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) {
         launchSingleTop = true
-   restoreState = true
     }

@@ -30,9 +30,6 @@ class FavViewModel @Inject constructor(private val textRepository: TextRepositor
 
 
 
-          init{
-              readFavList()
-          }
 
     companion object {
         private const val SCROLLINDEX = "scrollIndex"
@@ -50,7 +47,7 @@ class FavViewModel @Inject constructor(private val textRepository: TextRepositor
 
 
 
-           private  fun readFavList(){
+             fun readFavList(){
                _favStateFlow.value = favList
               }
            }

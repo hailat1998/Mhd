@@ -28,7 +28,16 @@
 
 
 # WorkManager
+
 -keep class androidx.work.** { *; }
+-keep class androidx.work.impl.** { *; }
+-keep class androidx.work.impl.background.systemalarm.** { *; }
+-keep class androidx.work.impl.background.systemjob.** { *; }
+-keep class androidx.work.impl.background.gcm.** { *; }
+-keep class androidx.work.impl.background.firebase.** { *; }
+-keep class androidx.work.impl.utils.** { *; }
+-keep class androidx.work.impl.constraints.** { *; }
+
 -dontwarn androidx.work.**
 
 # General AndroidX libraries
@@ -64,6 +73,16 @@
 # Custom classes (example)
 -keep class com.hd.** { *; }
 
+
+-keepclassmembers class com.hd.misaleawianegager.utils.compose.**
+
+-keepclassmembers class android.content.Context {
+    public java.io.FileOutputStream openFileOutput(java.lang.String, int);
+}
+
+-keepclassmembers class android.content.Context {
+    public java.io.FileInputStream openFileInput(java.lang.String);
+}
 
 # Prevents obfuscation of Parcelable classes (example)
 -keepclassmembers class * implements android.os.Parcelable {
@@ -101,3 +120,11 @@
 -dontwarn org.joda.time.**
 -dontwarn javax.inject.**
 -dontwarn dagger.**
+
+# Uncomment this to preserve the line number information for
+# debugging stack traces.
+-keepattributes SourceFile,LineNumberTable
+
+# If you keep the line number information, uncomment this to
+# hide the original source file name.
+-renamesourcefileattribute SourceFile

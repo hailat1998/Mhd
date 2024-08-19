@@ -9,6 +9,7 @@ import com.hd.misaleawianegager.R
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,12 +68,25 @@ import kotlinx.coroutines.delay
 
 private const val REQUEST_CODE_POST_NOTIFICATIONS = 1
 
-
+  const val  PERMISSION_REQUEST_CODE = 1
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {}
+
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS)
+        }
+
         setContent {
             val viewModel = hiltViewModel<SettingViewModel>()
             val fontSize = viewModel.fontSize.collectAsStateWithLifecycle()
@@ -140,17 +155,24 @@ fun MisaleApp(
     }
 
     LifeCycleObserver(
-        onStart = {viewModel.readFavList(favList)},
+        onStart = {viewModel.readFavList(favList)
+                  Log.i("HOMEVIEWMODEL", "${favList.size}")},
         onPause = { viewModel.writeFavList(favList) },
-        onStop = { viewModel.writeFavList(favList) },
+        onStop = { viewModel.writeFavList(favList)
+                 },
     )
+
+
     val worker = viewModel.working.collectAsState(initial = "RUNNING")
+
     LifeCycleObserver(
         onStart = { Log.i("HOMEVIEWMODEL", worker.value)},
         onResume = { Log.i("HOMEVIEWMODEL", worker.value) },
         onPause = { Log.i("HOMEVIEWMODEL", worker.value) },
         onStop = { Log.i("HOMEVIEWMODEL", worker.value) }
     )
+
+
 }
 
 
@@ -161,11 +183,9 @@ fun MisaleBottomAppBar(navController: NavController,
     val route = currentBackStackEntry?.destination?.route
     BottomAppBar(
         modifier = Modifier.height(56.dp)
-            .shadow(shape = RoundedCornerShape(topStart = 14.dp, topEnd = 15.dp), elevation = 0.dp)
+            .shadow(shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp), elevation = 0.dp)
             .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
-        containerColor = MaterialTheme.colorScheme.surface,
-
-    ) {
+           ) {
         Row(
             modifier = Modifier.fillMaxWidth()
                 .shadow(shape = RoundedCornerShape(topStart = 14.dp, topEnd = 15.dp), elevation = 0.dp)

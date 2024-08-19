@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -47,11 +48,13 @@ fun Recent(recentData: State<List<String>>,
     }) { it ->
         Box(modifier = Modifier
             .fillMaxSize()
-            .padding(it)) {
+            .padding(it),
+            contentAlignment = Alignment.Center
+        ) {
             if (recentData.value.isEmpty()) {
                 CircularProgressIndicator()
             }else{
-                val list = recentData.value.distinct()
+                val list = recentData.value.distinct().reversed()
                 LazyColumn(state = lazyListState) {
                     items(list, {item -> item}){ it ->
                        TextCard(item = it, from = "recent", first = " " , toDetail = toDetail)
