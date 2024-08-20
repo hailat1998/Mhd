@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -73,7 +74,7 @@ val res = when(Random.nextInt(from = 1, until = 8)){
             title = {
                 Text(
                     text = "Details",
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             },
            backgroundColor = MaterialTheme.colorScheme.primaryContainer,

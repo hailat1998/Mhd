@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.Divider
@@ -47,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hd.misaleawianegager.R
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -57,54 +59,49 @@ fun SettingScreen(
     theme: State<String?>,
     font: State<String?> ,
    ) {
-    val sheetState = rememberModalBottomSheetState()
-    ModalBottomSheet(
-        sheetState = sheetState ,
-        onDismissRequest = {
-            showModalBottomSheet.value = !showModalBottomSheet.value
-        },
-        shape = RectangleShape,
 
-        dragHandle = {
-            Row {
-                Text(
-                    text = "Setting", style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)
-                )
-                Spacer(modifier = Modifier.weight(0.8f))
-                Icon(Icons.Default.Close, null, modifier = Modifier
-                    .clickable { showModalBottomSheet.value = false }
-                    .padding(top = 20.dp, end = 20.dp))
-            }
-        },
+    ModalBottomSheet(
+        onDismissRequest = { showModalBottomSheet.value = false },
+        containerColor = MaterialTheme.colorScheme.background,
+        dragHandle = null,
+        shape = RectangleShape
     ) {
         Box(
             Modifier
                 .fillMaxWidth()
                 .padding(10.dp)
                 .background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f))
-                .heightIn(max = 350.dp),
+                .heightIn(max = 500.dp),
             contentAlignment = Alignment.Center
-
         ) {
-
-            LazyColumn(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-            ) {
-                item { ThemeContent(theme = theme, onEvent) }
-                item{ Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer))}
-                item{ FontContent(font = font, onEvent) }
-                item{ Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer))}
-                item{ FontSizeContent(onEvent) }
-                item{ Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer))}
-                item{ LetterSpaceContent(onEvent) }
-                  }
+            Column {
+                Row {
+                    Text(
+                        text = "Setting",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                    Spacer(modifier = Modifier.weight(0.8f))
+                    Icon(Icons.Default.Close, null, modifier = Modifier
+                        .clickable { showModalBottomSheet.value = false }
+                        .padding(10.dp))
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                ) {
+                    item { ThemeContent(theme = theme, onEvent) }
+                    item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                    item { FontContent(font = font, onEvent) }
+                    item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                    item { FontSizeContent(onEvent) }
+                    item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                    item { LetterSpaceContent(onEvent) }
+                }
             }
         }
     }
-
-
+}
 
 
 
@@ -112,59 +109,62 @@ fun SettingScreen(
 
 @Composable
 fun ThemeContent(  theme: State<String?> ,onEvent: (SettingEvent) -> Unit) {
-    Box(Modifier.padding(start = 20.dp)) {
-
+    Box(Modifier.padding(start = 8.dp)) {
         Column {
-            Text(text = "Theme", style = MaterialTheme.typography.headlineMedium)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                    .clickable { onEvent.invoke(SettingEvent.Theme("system")) },
-            ) {
-                RadioButton(
-                    selected = theme.value == "system",
-                    onClick = { onEvent.invoke(SettingEvent.Theme("system")) },
+            Text(text = "Theme", style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold))
+            Row {
+                Row(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                        .clickable { onEvent.invoke(SettingEvent.Theme("system")) },
+                ) {
+                    RadioButton(
+                        selected = theme.value == "system",
+                        onClick = { onEvent.invoke(SettingEvent.Theme("system")) },
 
-                )
-                Text(text = "System", style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 14.dp))
+                        )
+                    Text(
+                        text = "System", style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 14.dp)
+                    )
 
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                    .clickable { onEvent.invoke(SettingEvent.Theme("dark")) },
-            ) {
-                RadioButton(
-                    selected = theme.value == "dark",
-                    onClick = { onEvent.invoke(SettingEvent.Theme("dark")) },
+                }
+                Row(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                        .clickable { onEvent.invoke(SettingEvent.Theme("dark")) },
+                ) {
+                    RadioButton(
+                        selected = theme.value == "dark",
+                        onClick = { onEvent.invoke(SettingEvent.Theme("dark")) },
 
-                )
-                Text(text = "Dark", style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 14.dp) )
+                        )
+                    Text(
+                        text = "Dark", style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 14.dp)
+                    )
 
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                    .clickable { onEvent.invoke(SettingEvent.Theme("light")) },
+                }
+                Row(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                        .clickable { onEvent.invoke(SettingEvent.Theme("light")) },
 
-            ) {
-                RadioButton(
-                    selected = theme.value == "light",
-                    onClick = { onEvent.invoke(SettingEvent.Theme("light")) },
+                    ) {
+                    RadioButton(
+                        selected = theme.value == "light",
+                        onClick = { onEvent.invoke(SettingEvent.Theme("light")) },
 
-                )
-                Text(text = "Light", style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 14.dp))
+                        )
+                    Text(
+                        text = "Light", style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 14.dp)
+                    )
+                }
             }
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,10 +174,10 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
         "jiret", "nyala", "washrasb", "wookianos", "yebse", "serif", "Default"
     )
 
-    Box(Modifier.padding(20.dp)) {
+    Box(Modifier.padding(8.dp)) {
         var expanded by remember { mutableStateOf(false) }
         Column {
-            Text(text = "FontFamily", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "FontFamily", style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold))
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded },
@@ -192,9 +192,9 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                     },
-                    modifier = Modifier.menuAnchor(),
+                    modifier = Modifier.menuAnchor().height(50.dp),
                     textStyle = MaterialTheme.typography.titleMedium,
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(10.dp),
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -220,10 +220,9 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
-
-    Box(Modifier.padding(20.dp)) {
+    Box(Modifier.padding(8.dp)) {
         Column {
-            Text(text = "FontSize", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "FontSize", style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold))
             Row(
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -252,15 +251,14 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
-    Box(Modifier.padding(20.dp)) {
+    Box(Modifier.padding(8.dp)) {
         Column {
             Text(
                 text = "Word Space",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)
             )
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 25.dp),
             ) {
                 Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
                     colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
@@ -275,7 +273,7 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
                         Text(text = "+", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =11.dp ))
                     }
                 }
-                Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
+                Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(-1.0)) },
                     colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
                     modifier = Modifier.padding(start = 20.dp)) {
                     Row {
@@ -342,6 +340,7 @@ fun LineHeightContent(onEvent: (SettingEvent) -> Unit) {
         }
     }
 }
+
 
 @Preview
 @Composable

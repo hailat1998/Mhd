@@ -57,7 +57,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
 
 
     private fun setLetterSpace(space: Double) {
-        if (letterSpace.value + space in 0.1 .. 5.0) {
+        if (letterSpace.value + space in 0.1 .. 7.0) {
      Log.i("SETTINGVIEWMODEL" , "$space")
             viewModelScope.launch {
                 settingRepository.setLetterSpace(letterSpace.value + space)
@@ -74,7 +74,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
 
     private fun setFontSize(size: Int) {
         Log.i("SETTINGVIEWMODEL" , "$size")
-        if (fontSize.value + size in 5..49) {
+        if (fontSize.value + size in 5..70) {
             viewModelScope.launch {
                 settingRepository.setFontSize(fontSize.value + size)
             }

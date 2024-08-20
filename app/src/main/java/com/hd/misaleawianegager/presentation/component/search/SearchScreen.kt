@@ -3,6 +3,7 @@ package com.hd.misaleawianegager.presentation.component.search
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,9 +17,12 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,24 +62,38 @@ fun SearchScreen(list: State<List<String>>, from : String,
             title = {
                 TextField(
                     value = query,
-                    onValueChange = {
-                        query = it
-                                    },
-                    placeholder = { Text("Search...", style= MaterialTheme.typography.labelSmall) },
+                    onValueChange = { query = it },
+                    placeholder = {
+                        Text(
+                            "Search...",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .focusRequester(focusRequester),
+                        .focusRequester(focusRequester)
+                        .padding(vertical = 8.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                  keyboardActions = KeyboardActions(onSearch = {if(query.isNotEmpty()){
-                      search.invoke(query)
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            if(query.isNotEmpty()) {
+                                search.invoke(query)
+                            }
                         }
-                      }
-                   ),
-
+                    ),
+                    textStyle = MaterialTheme.typography.bodyLarge,
                     shape = RoundedCornerShape(20.dp),
-
-                    leadingIcon = { Icon(Icons.Default.Search, null) }
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search Icon"
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(blue = 0.7f,red = 0.7f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(blue = 0.7f,red = 0.7f)
+                    )
                 )
             },
             navigationIcon = {

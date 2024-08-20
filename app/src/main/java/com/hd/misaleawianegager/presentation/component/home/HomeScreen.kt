@@ -153,7 +153,8 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
                   onSettingEvent: (SettingEvent) -> Unit) {
     ModalBottomSheet(onDismissRequest = {
         dismissReq.value = !dismissReq.value
-    }) {
+    },
+        dragHandle = null) {
         Box(modifier = Modifier.heightIn( max= 250.dp)){
         Image(painterResource(id = R.drawable.drawing_dun), null,
         contentScale = ContentScale.FillBounds)

@@ -59,7 +59,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
             textRepository.readTextFile(context, 1).collect {
                 list.add(it.data!!)
             }
-            _detailStateFlow.value = list
+            _detailStateFlow.value = list.reversed()
         }
     }
 
@@ -67,7 +67,6 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
         val list = mutableListOf<String>()
         list.addAll(favList)
         _detailStateFlow.value = list
-
-        }
+    }
 
 }

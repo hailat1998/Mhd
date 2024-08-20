@@ -10,6 +10,8 @@ import java.io.InputStreamReader
 import javax.inject.Inject
 
 class AssetsTextServiceImp @Inject constructor() : AssetsTextService {
+
+
     override fun readTexts(context: Context, type : String): Flow<String?> {
 
         return flow {
@@ -30,7 +32,7 @@ class AssetsTextServiceImp @Inject constructor() : AssetsTextService {
     override fun search(context: Context, query: String): Flow<String> {
         return flow {
             val assets = context.assets
-            val textList = assets.list("drawable/text")
+            val textList = assets.list("text/")
 
             textList?.let { list ->
                 for (fileName in list) {

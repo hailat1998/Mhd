@@ -14,7 +14,7 @@ class WorkerTextServiceImp @Inject constructor() : WorkerTextService {
 
     override fun readSingleText(context: Context): String {
         val assets = context.assets
-        val listAssets = assets.list("/text/") ?: return ""
+        val listAssets = assets.list("text/") ?: return ""
         if (listAssets.isEmpty()) return ""
 
         val randomIndex = Random.nextInt(listAssets.size)
