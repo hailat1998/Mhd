@@ -1,7 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +8,6 @@ import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,8 +28,6 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
     val scrollValue = MutableStateFlow(savedStateHandle.get<Int>(SCROLLINDEX) ?:0)
 
     private fun setScroll(value: Int){
-
-        Log.i("HOMEVIEWMODEL", "$value")
 
         scrollValue.value = value
         savedStateHandle[SCROLLINDEX] = value

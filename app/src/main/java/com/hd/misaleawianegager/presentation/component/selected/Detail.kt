@@ -197,7 +197,8 @@ fun ItemText(item: String, info: String,){
                         bottom = 10.dp
                     ),
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.displayMedium
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

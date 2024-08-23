@@ -48,7 +48,6 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
             viewModelHome.onEvent(HomeEvent.LoadLetter(letterType))
             val list = viewModelHome.homeStateFlow.collectAsStateWithLifecycle()
             val scrollPos = viewModelHome.scrollValue.collectAsStateWithLifecycle()
-            Log.i("NAV", "${scrollPos.value}")
             HomeContent(homeData = list,  onHomeEvent = viewModelHome::onEvent,  onSettingEvent, toDetail =   { home , arg, arg2 ->
                   viewModelHome.onEvent(HomeEvent.WriteText(arg))
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))

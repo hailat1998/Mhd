@@ -45,7 +45,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
             viewModelScope.launch(coroutineDispatcher) {
                 val list = mutableListOf<String>()
                 val text = DataProvider.letterMap[query]
-                textRepository.readTextAsset(context, text!!).collect{ it ->
+                textRepository.readTextAsset(context, text!!).collect{
                      list.add(it.data!!.trim())
                 }
                    _detailStateFlow.value = list

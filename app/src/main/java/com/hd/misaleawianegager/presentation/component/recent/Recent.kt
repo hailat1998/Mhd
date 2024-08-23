@@ -14,12 +14,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import com.hd.misaleawianegager.utils.compose.TextCard
+import kotlinx.coroutines.delay
 
 @Composable
 fun Recent(recentData: State<List<String>>,
@@ -29,11 +33,18 @@ fun Recent(recentData: State<List<String>>,
 
     val lazyListState =rememberLazyListState(initialFirstVisibleItemIndex = scrollIndex.value)
 
+    var loading by remember { mutableStateOf(true) }
+
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }
             .collect { index ->
                 setScroll.invoke(index)
             }
+    }
+
+    LaunchedEffect(Unit) {
+        delay(1000L)
+        loading = false
     }
     Scaffold(topBar =  {
         TopAppBar(
@@ -51,12 +62,12 @@ fun Recent(recentData: State<List<String>>,
             .padding(it),
             contentAlignment = Alignment.Center
         ) {
-            if (recentData.value.isEmpty()) {
+            if (loading && recentData.value.isEmpty()) {
                 CircularProgressIndicator()
             }else{
                 val list = recentData.value.distinct().reversed()
                 LazyColumn(state = lazyListState) {
-                    items(list, {item -> item}){ it ->
+                    items(list, {item -> item}){
                        TextCard(item = it, from = "recent", first = " " , toDetail = toDetail)
                     }
                 }

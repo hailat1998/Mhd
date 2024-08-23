@@ -34,7 +34,6 @@ class MisaleWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val text = workerTextService.readSingleText(applicationContext)
-        Log.i("WORKER", "doing work")
         showNotification(applicationContext, text)
         return Result.retry()
     }

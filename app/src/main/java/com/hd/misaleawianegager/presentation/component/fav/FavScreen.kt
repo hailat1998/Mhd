@@ -14,11 +14,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.hd.misaleawianegager.utils.compose.TextCard
+import kotlinx.coroutines.delay
 
 @Composable
 fun FavScreen(favList: State<List<String>> ,
@@ -28,12 +33,21 @@ fun FavScreen(favList: State<List<String>> ,
 
     val lazyListState =rememberLazyListState(initialFirstVisibleItemIndex = scrollIndex.value)
 
+    var loading by remember { mutableStateOf(true) }
+
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }
             .collect { index ->
            setScroll.invoke(index)
             }
          }
+
+    LaunchedEffect(Unit) {
+        delay(1000L)
+        loading = false
+    }
+
+
     Scaffold(topBar =  {
         TopAppBar(
             title = {
@@ -50,7 +64,7 @@ fun FavScreen(favList: State<List<String>> ,
             .padding(it)
             .fillMaxSize(),
             contentAlignment = Alignment.Center) {
-            if (favList.value.isEmpty()) {
+            if (loading && favList.value.isEmpty()) {
                 CircularProgressIndicator()
             } else {
                 val list = favList.value.distinct()

@@ -8,7 +8,7 @@ val LightSecondary = Color(0xFF03DAC6)
 val LightPrimaryContainer = Color(0xFFC59867)
 val LightPrimaryVariantBackground = Color(0xFF000000)
 
-val DarkPrimary = Color(0xFFC59867)
+val DarkPrimary = Color(0xFF854D0A)
 val DarkPrimaryVariant = Color(0xFF473622)
 val DarkSecondary = Color(0xFF03DAC6)
 val DarkPrimaryContainer = Color(0xFF854D0A)

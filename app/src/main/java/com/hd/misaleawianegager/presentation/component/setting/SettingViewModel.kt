@@ -3,7 +3,6 @@ package com.hd.misaleawianegager.presentation.component.setting
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.domain.repository.SettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,9 +46,6 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "01Ha.txt" )
 
    private fun setFont(font: String){
-       Log.i("SETTINGVIEWMODEL", "${font}")
-       Log.i("SETTINGVIEWMODEL" , "${this.font.value}")
-       Log.i("SETTINGVIEWMODEL" , "${R.font.andikaafr_r}")
        viewModelScope.launch {
            settingRepository.setFont(font)
        }
@@ -58,7 +54,6 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
 
     private fun setLetterSpace(space: Double) {
         if (letterSpace.value + space in 0.1 .. 7.0) {
-     Log.i("SETTINGVIEWMODEL" , "$space")
             viewModelScope.launch {
                 settingRepository.setLetterSpace(letterSpace.value + space)
             }

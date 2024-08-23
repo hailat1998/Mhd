@@ -34,7 +34,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
 
     override fun readTextAsset(context: Context, type: String): Flow<Resources<String>> {
-        Log.i("FROM REPO", "reading")
         return flow{
        assetsTextService.readTexts(context , type).collect{data ->
            if(data == null){
@@ -69,9 +68,8 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     override fun enqueueWork(): Flow<String> {
 
 
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(20 , TimeUnit.MINUTES)
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(6 , TimeUnit.HOURS)
             .build()
-        Log.i("FROM REPO" , "working on work")
         workManager.enqueueUniquePeriodicWork(
             WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,

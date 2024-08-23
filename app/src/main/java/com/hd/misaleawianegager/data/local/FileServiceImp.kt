@@ -22,20 +22,13 @@ class FileServiceImp @Inject constructor(@ApplicationContext context: Context) :
     init{
         val file1 = File(context.filesDir, FAV)
         val file2 = File(context.filesDir, RECENT)
-        if(file1.createNewFile()){
-            Log.i("FILESERVICE" , "file created: Fav")
-        }
+       file1.createNewFile()
 
-        if(file2.createNewFile()){
-            Log.i("FILESERVICE" , "file created: Recent")
-        }
+       file2.createNewFile()
     }
     override fun readTexts(context: Context, type: Int): Flow<String>{
 
             val readType = if (type == 1) RECENT else FAV
-
-            Log.i("FILESERVICE" , "reading text")
-            println(type)
 
         return flow {
             context.openFileInput(readType).bufferedReader().useLines { lines ->
@@ -49,7 +42,6 @@ class FileServiceImp @Inject constructor(@ApplicationContext context: Context) :
 
     override fun writeTexts(context: Context , type: Int  , text : String): Boolean {
        val writeType = if(type == 1) RECENT else FAV
-        Log.i("FILESERVICE" , "writing text" )
         try {
             context.openFileOutput(writeType,  if(type == 1 )Context.MODE_APPEND else Context.MODE_PRIVATE).use {
                 it.write(text.plus("\n").toByteArray())

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.Divider
@@ -31,7 +30,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -173,7 +171,6 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
         "abyssinica_gentium", "andikaafr_r", "charterbr_roman", "desta_gentium", "gfzemen_regular",
         "jiret", "nyala", "washrasb", "wookianos", "yebse", "serif", "Default"
     )
-
     Box(Modifier.padding(8.dp)) {
         var expanded by remember { mutableStateOf(false) }
         Column {
@@ -258,7 +255,7 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
                 style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)
             )
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 25.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 70.dp),
             ) {
                 Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
                     colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),

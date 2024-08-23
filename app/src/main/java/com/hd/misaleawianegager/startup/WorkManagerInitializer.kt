@@ -14,25 +14,8 @@ import javax.inject.Inject
 
 class WorkManagerInitializer : Initializer<WorkManager>, Configuration.Provider {
 
-    val fixedThreadPool: ExecutorService = Executors.newFixedThreadPool(4)
-
-
-
     @Inject
     lateinit var myWorkerFactory: MyWorkerFactory
-
-    override fun create(context: Context): WorkManager {
-        Log.d("WorkManagerInitializer", "Initializing WorkManager")
-          val entryPoint= InitializerEntryPoint.resolve(context)
-           entryPoint.inject(this)
-//       workerTextService = entryPoint.getWorkerTextService()
-        WorkManager.initialize(context, workManagerConfiguration)
-        return WorkManager.getInstance(context)
-    }
-
-    override fun dependencies(): List<Class<out Initializer<*>>> {
-        return listOf(DependencyGraphInitializer::class.java)
-    }
 
     override val workManagerConfiguration: Configuration
         get() {
@@ -40,8 +23,19 @@ class WorkManagerInitializer : Initializer<WorkManager>, Configuration.Provider 
             workerFactory.addFactory(myWorkerFactory)
             return Configuration.Builder()
                 .setWorkerFactory(workerFactory)
-                .setExecutor(Executors.newFixedThreadPool(8))
+                .setExecutor(Executors.newFixedThreadPool(5))
                 .setMinimumLoggingLevel(Log.INFO)
                 .build()
         }
+
+    override fun create(context: Context): WorkManager {
+        val entryPoint= InitializerEntryPoint.resolve(context)
+           entryPoint.inject(this)
+        WorkManager.initialize(context, workManagerConfiguration)
+        return WorkManager.getInstance(context)
+    }
+
+    override fun dependencies(): List<Class<out Initializer<*>>> {
+        return listOf(DependencyGraphInitializer::class.java)
+    }
 }

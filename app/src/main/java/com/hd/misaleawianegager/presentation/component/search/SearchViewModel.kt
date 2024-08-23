@@ -26,7 +26,6 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
     val searchResult get() = _searchResult.asStateFlow()
 
     fun search(query: String){
-        Log.i("SEARCHVIEWMODEL", "searching")
         viewModelScope.launch(coroutineDispatcher) {
             val list = mutableListOf<String>()
            textRepository.search( context, query).collect{

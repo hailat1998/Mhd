@@ -152,10 +152,8 @@ fun MisaleApp(
     }
 
     LifeCycleObserver(
-        onStart = {viewModel.readFavList(favList)
-                  Log.i("HOMEVIEWMODEL", "${favList.size}")},
-        onPause = { viewModel.writeFavList(favList)
-                  Log.i("FAVLIST", "OnP")},
+        onStart = {viewModel.readFavList(favList) },
+        onPause = { viewModel.writeFavList(favList) },
     )
 
 
