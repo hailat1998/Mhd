@@ -57,9 +57,6 @@ import kotlin.random.Random
 fun Selected(list : State<List<String>> = mutableStateOf(emptyList()), text: String,
              from: String, toDest: (s : String) -> Unit) {
 
-
-    val context = LocalContext.current
-
 val res = when(Random.nextInt(from = 1, until = 8)){
     1 -> Pair(R.drawable.harar, " https://en.wikipedia.org/wiki/Harar")
     2 -> Pair(R.drawable.axum, "https://en.wikipedia.org/wiki/Obelisk_of_Axum")

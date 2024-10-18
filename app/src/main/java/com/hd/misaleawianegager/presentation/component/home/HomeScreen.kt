@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -39,6 +40,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -54,6 +56,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.R
@@ -204,13 +208,17 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
 @Composable
 fun AppInfoDialog(openDialog: MutableState<Boolean>) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    val localFont = FontFamily.Default
+    val textStyle = TextStyle(fontFamily = localFont)
+
+    CompositionLocalProvider(LocalTextStyle provides textStyle) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
             AlertDialog(
                 onDismissRequest = { openDialog.value = false },
@@ -219,7 +227,7 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>) {
                 },
                 text = {
                     SelectionContainer {
-                    Column {
+                        Column {
                             Text(text = "Version: 1.0.0")
                             Text(text = "Developer: Haile Temesgen")
                             Text(text = "Email: htemesgen400@gmail.com")
@@ -236,6 +244,6 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>) {
         }
     }
 
-
+}
 
 

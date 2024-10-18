@@ -37,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,7 +94,7 @@ class MainActivity : ComponentActivity() {
             val font = viewModel.font.collectAsStateWithLifecycle()
             val letterType = viewModel.letterType.collectAsStateWithLifecycle()
 
-            var showSplashScreen by remember { mutableStateOf(true) }
+            var showSplashScreen by rememberSaveable  { mutableStateOf(true) }
 
             LaunchedEffect(Unit) {
 
@@ -148,8 +149,8 @@ fun MisaleApp(
                 theme = theme,
                 font = font,
                 )
-        }
-    }
+             }
+           }
 
     LifeCycleObserver(
         onStart = {viewModel.readFavList(favList) },
@@ -165,6 +166,7 @@ fun MisaleApp(
         onPause = { Log.i("HOMEVIEWMODEL", worker.value) },
         onStop = { Log.i("HOMEVIEWMODEL", worker.value) }
     )
+
 }
 
 

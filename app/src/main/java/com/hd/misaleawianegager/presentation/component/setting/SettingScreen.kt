@@ -18,6 +18,7 @@ import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DropdownMenuItem
@@ -31,6 +32,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -43,6 +45,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,112 +61,119 @@ fun SettingScreen(
     theme: State<String?>,
     font: State<String?> ,
    ) {
+    val localFont = FontFamily.Default
+    val textStyle = TextStyle(fontFamily = localFont)
 
-    ModalBottomSheet(
-        onDismissRequest = { showModalBottomSheet.value = false },
-        containerColor = MaterialTheme.colorScheme.background,
-        dragHandle = null,
-        shape = RectangleShape
-    ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f))
-                .heightIn(max = 500.dp),
-            contentAlignment = Alignment.Center
+    CompositionLocalProvider(LocalTextStyle provides textStyle) {
+        ModalBottomSheet(
+            onDismissRequest = { showModalBottomSheet.value = false },
+            containerColor = MaterialTheme.colorScheme.background,
+            dragHandle = null,
+            shape = RectangleShape
         ) {
-            Column {
-                Row {
-                    Text(
-                        text = "Setting",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(10.dp)
-                    )
-                    Spacer(modifier = Modifier.weight(0.8f))
-                    Icon(Icons.Default.Close, null, modifier = Modifier
-                        .clickable { showModalBottomSheet.value = false }
-                        .padding(10.dp))
-                }
-                LazyColumn(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                ) {
-                    item { ThemeContent(theme = theme, onEvent) }
-                    item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                    item { FontContent(font = font, onEvent) }
-                    item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                    item { FontSizeContent(onEvent) }
-                    item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                    item { LetterSpaceContent(onEvent) }
-                }
-            }
-        }
-    }
-}
-
-
-
-
-
-@Composable
-fun ThemeContent(  theme: State<String?> ,onEvent: (SettingEvent) -> Unit) {
-    Box(Modifier.padding(start = 8.dp)) {
-        Column {
-            Text(text = "Theme", style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold))
-            Row {
-                Row(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                        .clickable { onEvent.invoke(SettingEvent.Theme("system")) },
-                ) {
-                    RadioButton(
-                        selected = theme.value == "system",
-                        onClick = { onEvent.invoke(SettingEvent.Theme("system")) },
-
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f))
+                    .heightIn(max = 500.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column {
+                    Row {
+                        Text(
+                            text = "Setting",
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.padding(10.dp)
                         )
-                    Text(
-                        text = "System", style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 14.dp)
-                    )
-
-                }
-                Row(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                        .clickable { onEvent.invoke(SettingEvent.Theme("dark")) },
-                ) {
-                    RadioButton(
-                        selected = theme.value == "dark",
-                        onClick = { onEvent.invoke(SettingEvent.Theme("dark")) },
-
-                        )
-                    Text(
-                        text = "Dark", style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 14.dp)
-                    )
-
-                }
-                Row(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                        .clickable { onEvent.invoke(SettingEvent.Theme("light")) },
-
+                        Spacer(modifier = Modifier.weight(0.8f))
+                        Icon(Icons.Default.Close, null, modifier = Modifier
+                            .clickable { showModalBottomSheet.value = false }
+                            .padding(10.dp))
+                    }
+                    LazyColumn(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                     ) {
-                    RadioButton(
-                        selected = theme.value == "light",
-                        onClick = { onEvent.invoke(SettingEvent.Theme("light")) },
-
-                        )
-                    Text(
-                        text = "Light", style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 14.dp)
-                    )
+                        item { ThemeContent(theme = theme, onEvent) }
+                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                        item { FontContent(font = font, onEvent) }
+                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                        item { FontSizeContent(onEvent) }
+                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                        item { LetterSpaceContent(onEvent) }
+                    }
                 }
             }
         }
     }
 }
+
+
+    @Composable
+    fun ThemeContent(theme: State<String?>, onEvent: (SettingEvent) -> Unit) {
+        Box(Modifier.padding(start = 8.dp)) {
+            Column {
+                Text(
+                    text = "Theme",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Row {
+                    Row(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                            .clickable { onEvent.invoke(SettingEvent.Theme("system")) },
+                    ) {
+                        RadioButton(
+                            selected = theme.value == "system",
+                            onClick = { onEvent.invoke(SettingEvent.Theme("system")) },
+
+                            )
+                        Text(
+                            text = "System", style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 14.dp)
+                        )
+
+                    }
+                    Row(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                            .clickable { onEvent.invoke(SettingEvent.Theme("dark")) },
+                    ) {
+                        RadioButton(
+                            selected = theme.value == "dark",
+                            onClick = { onEvent.invoke(SettingEvent.Theme("dark")) },
+
+                            )
+                        Text(
+                            text = "Dark", style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 14.dp)
+                        )
+
+                    }
+                    Row(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                            .clickable { onEvent.invoke(SettingEvent.Theme("light")) },
+
+                        ) {
+                        RadioButton(
+                            selected = theme.value == "light",
+                            onClick = { onEvent.invoke(SettingEvent.Theme("light")) },
+
+                            )
+                        Text(
+                            text = "Light", style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 14.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

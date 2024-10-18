@@ -41,7 +41,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
            }else{
                emit(Resources.Success(data))
            }
-       }
+          }
         }
     }
 
@@ -58,7 +58,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
         fileService.readTexts(context, type ).collect{ it ->
             emit(Resources.Success(it))
         }
-    }
+     }
     }
 
     override fun writeTextFile(context: Context, type: Int, text: String): Boolean {
