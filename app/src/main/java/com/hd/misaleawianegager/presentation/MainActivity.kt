@@ -142,7 +142,7 @@ fun MisaleApp(
     val viewModel = hiltViewModel<MainViewModel>()
    val showModalBottomSheet = remember{ mutableStateOf(false) }
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent)
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, showModalBottomSheet)
         if(showModalBottomSheet.value){
             SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,
@@ -191,7 +191,7 @@ fun MisaleBottomAppBar(navController: NavController,
                 if(route == key){
                     IconButton(
                         onClick = {
-                            if (key == "setting") {
+                            if (key == "ማስቴካክያ") {
                                 showModalBottomSheet.value = !showModalBottomSheet.value
                             } else {
                                 navController.navigate(key)
@@ -221,7 +221,7 @@ fun MisaleBottomAppBar(navController: NavController,
                 }else{
                     IconButton(
                         onClick = {
-                            if (key == "setting") {
+                            if (key == "ማስቴካክያ") {
                                 showModalBottomSheet.value = !showModalBottomSheet.value
                             } else {
                                 navController.navigate(key)

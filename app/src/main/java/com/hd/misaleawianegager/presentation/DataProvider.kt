@@ -9,11 +9,11 @@ import androidx.compose.material.icons.rounded.Settings
 
 object DataProvider {
     val icons = mapOf(
-        "recent" to Icons.Rounded.Refresh,
-        "fav" to Icons.Rounded.Favorite,
-        "home" to Icons.Rounded.Home,
-        "search" to Icons.Rounded.Search,
-        "setting" to Icons.Rounded.Settings,
+        "የቅርብ" to Icons.Rounded.Refresh,
+        "ምርጥ" to Icons.Rounded.Favorite,
+        "ዋና" to Icons.Rounded.Home,
+        "ፈልግ" to Icons.Rounded.Search,
+        "ማስቴካክያ" to Icons.Rounded.Settings,
     )
 
     val letterMap = mapOf(

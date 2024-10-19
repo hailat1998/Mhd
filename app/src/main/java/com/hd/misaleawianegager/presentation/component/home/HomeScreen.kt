@@ -109,7 +109,7 @@ fun HomeContent(homeData: State<List<String>>,
             TopAppBar(
                 title = {
                     Text(
-                        text = "Home",
+                        text = "ዋና",
                         style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 },
@@ -154,7 +154,7 @@ fun HomeContent(homeData: State<List<String>>,
 
                 LazyColumn(state = lazyListState) {
                     items(list, { item -> item }) { it ->
-                        TextCard(item = it, from = "home", first = arg3, toDetail = toDetail)
+                        TextCard(item = it, from = "ዋና", first = arg3, toDetail = toDetail)
                     }
                 }
                 
@@ -203,7 +203,7 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
            }
         }
     }
- }
+  }
 }
 @Composable
 fun AppInfoDialog(openDialog: MutableState<Boolean>) {
@@ -223,7 +223,7 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>) {
             AlertDialog(
                 onDismissRequest = { openDialog.value = false },
                 title = {
-                    Text(text = "App Information")
+                    Text(text = "App Information", style = MaterialTheme.typography.headlineMedium.copy(fontFamily = FontFamily.Default))
                 },
                 text = {
                     SelectionContainer {
@@ -231,7 +231,6 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>) {
                             Text(text = "Version: 1.0.0")
                             Text(text = "Developer: Haile Temesgen")
                             Text(text = "Email: htemesgen400@gmail.com")
-                            Text(text = "Telegram: @varargs1")
                         }
                     }
                 },
@@ -243,7 +242,6 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>) {
             )
         }
     }
-
 }
 
 

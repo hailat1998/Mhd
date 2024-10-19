@@ -69,9 +69,10 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
 
     private fun setFontSize(size: Int) {
         Log.i("SETTINGVIEWMODEL" , "$size")
-        if (fontSize.value + size in 5..70) {
+        if (fontSize.value + size in 5..50) {
             viewModelScope.launch {
                 settingRepository.setFontSize(fontSize.value + size)
+                settingRepository.setLineHeight(letterHeight.value + 3)
             }
         }
     }

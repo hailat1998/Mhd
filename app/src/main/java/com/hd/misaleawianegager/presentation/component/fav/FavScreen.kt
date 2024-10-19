@@ -52,11 +52,11 @@ fun FavScreen(favList: State<List<String>> ,
         TopAppBar(
             title = {
                 Text(
-                    text = "Favourite",
+                    text = "ምርጥ",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             },
-           backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
         )
     }
     ) {
@@ -71,7 +71,7 @@ fun FavScreen(favList: State<List<String>> ,
                 LazyColumn(state = lazyListState) {
                     items(list, { item -> item }) { text ->
                         if(text.isNotEmpty()){
-                            TextCard(item = text, from = "fav", first = " ", toDetail = toDetail)
+                            TextCard(item = text, from = "ምርጥ", first = " ", toDetail = toDetail)
                         }
                     }
                 }

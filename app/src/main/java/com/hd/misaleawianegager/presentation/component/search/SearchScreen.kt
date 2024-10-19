@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
@@ -23,6 +24,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -34,7 +36,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
@@ -47,13 +51,20 @@ fun SearchScreen(list: State<List<String>>, from : String,
                  toDetail: (from: String, text: String, first:String) -> Unit){
     val lazyListState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
+
+    val localFont = FontFamily.Default
+    val textStyle = TextStyle(fontFamily = localFont)
+
     var query by remember { mutableStateOf("") }
     var k: Int
     var j: Int
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+
     Column(modifier = Modifier.fillMaxSize()) {
+        CompositionLocalProvider(LocalTextStyle provides textStyle) {
+
         TopAppBar(
             title = {
                 TextField(
@@ -73,12 +84,12 @@ fun SearchScreen(list: State<List<String>>, from : String,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            if(query.isNotEmpty()) {
+                            if (query.isNotEmpty()) {
                                 search.invoke(query)
                             }
                         }
                     ),
-                    textStyle = MaterialTheme.typography.bodyLarge,
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(fontFamily = FontFamily.Default),
                     shape = RoundedCornerShape(20.dp),
                     leadingIcon = {
                         Icon(
@@ -87,8 +98,18 @@ fun SearchScreen(list: State<List<String>>, from : String,
                         )
                     },
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f, red = 0.9f, green = 0.8f , blue = 0.9f ),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f, red = 0.9f, green = 0.8f , blue = 0.9f )
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                            alpha = 0.5f,
+                            red = 0.9f,
+                            green = 0.8f,
+                            blue = 0.9f
+                        ),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                            alpha = 0.5f,
+                            red = 0.9f,
+                            green = 0.8f,
+                            blue = 0.9f
+                        )
                     )
                 )
             },
@@ -96,9 +117,10 @@ fun SearchScreen(list: State<List<String>>, from : String,
                 IconButton(onClick = { toDest.invoke(from) }) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
-              },
-          colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                 )
+            },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        )
+    }
                val list2 = list.value.distinct()
         LazyColumn(modifier = Modifier.padding(16.dp),
           state = lazyListState) {

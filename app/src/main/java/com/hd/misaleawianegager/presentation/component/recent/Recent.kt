@@ -50,7 +50,7 @@ fun Recent(recentData: State<List<String>>,
         TopAppBar(
             title = {
                 Text(
-                    text = "Recent",
+                    text = "የቅርብ",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                 )
             },
@@ -68,7 +68,7 @@ fun Recent(recentData: State<List<String>>,
                 val list = recentData.value.distinct().reversed()
                 LazyColumn(state = lazyListState) {
                     items(list, {item -> item}){
-                       TextCard(item = it, from = "recent", first = " " , toDetail = toDetail)
+                       TextCard(item = it, from = "የቅርብ", first = " " , toDetail = toDetail)
                     }
                 }
             }

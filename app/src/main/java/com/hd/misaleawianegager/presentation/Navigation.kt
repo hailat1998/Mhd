@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,8 +31,11 @@ import com.hd.misaleawianegager.utils.compose.LifeCycleObserver
 import com.hd.misaleawianegager.utils.compose.favList
 
 @Composable
-fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
-                      letterType: String , onSettingEvent: (SettingEvent) -> Unit){
+fun MisaleBodyContent(navHostController: NavHostController,
+                      modifier: Modifier,
+                      letterType: String ,
+                      onSettingEvent: (SettingEvent) -> Unit,
+                      showModalBottomSheet: MutableState<Boolean>){
 
     val viewModelHome: HomeViewModel = hiltViewModel()
 
@@ -79,7 +83,7 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
         composable(MisaleScreen.Search.route){
             val viewModel = hiltViewModel<SearchViewModel>()
             val list = viewModel.searchResult.collectAsStateWithLifecycle()
-            SearchScreen(list = list, from = "home" , search = viewModel::search , toDest =  {
+            SearchScreen(list = list, from = "ዋና" , search = viewModel::search , toDest =  {
                 navHostController.popBackStack()
             }, toDetail = { from, text , first ->
                 navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
@@ -101,20 +105,20 @@ fun MisaleBodyContent(navHostController: NavHostController, modifier: Modifier,
             val arg2 = if(arg1 == "search")backStackEntry.arguments?.getString("arg2")!!.replace('_', ' ')
                                else backStackEntry.arguments?.getString("arg2")
             val arg3 = backStackEntry.arguments?.getString("arg3")
-            if(arg1 == "home"){
+            if(arg1 == "ዋና"){
                 viewModel.onEvent(DetailEvent.LoadLetter(arg3!!))
             }
-            if(arg1 == "fav"){
+            if(arg1 == "ምርጥ"){
                 viewModel.onEvent(DetailEvent.LoadFav)
                 }
-            if(arg1 == "recent"){
+            if(arg1 == "የቅርብ"){
                 viewModel.onEvent(DetailEvent.LoadRecent)
             }
 
             val list = viewModel.detailStateFlow.collectAsStateWithLifecycle()
-           Selected(list = list, text = arg2!! , arg1!!) {
+           Selected(list = list, text = arg2!! , arg1!!, showModalBottomSheet = showModalBottomSheet, toDest =  {
              navHostController.popBackStack()
-           }
+           })
         }
     }
  }

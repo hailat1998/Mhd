@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.Font
@@ -63,12 +64,13 @@ fun MisaleawiAnegagerTheme(
         "dark" -> DarkColorPalette
         else -> if(isSystemInDarkTheme()) DarkColorPalette else LightColorPalette
     }
+    val darkTheme = isSystemInDarkTheme()
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primaryContainer.copy(alpha = 0.8f, red = 0.9f, green = 0.9f, blue = 0.9f).toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = theme == "dark"
+            window.statusBarColor = if (theme == "dark" || darkTheme) Color.White.toArgb() else Color.Black.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = theme == "dark" || darkTheme
         }
     }
 
@@ -86,9 +88,6 @@ fun MisaleawiAnegagerTheme(
         "serif" -> FontFamily.Serif
         else -> FontFamily.Default
     }
-
-
-
 
     MaterialTheme(
         colorScheme = colorScheme,

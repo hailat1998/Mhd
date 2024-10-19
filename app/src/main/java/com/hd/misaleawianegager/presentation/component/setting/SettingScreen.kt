@@ -266,11 +266,11 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
                 style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)
             )
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 70.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 45.dp),
             ) {
                 Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
                     colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
-                    modifier = Modifier.padding(end = 20.dp)) {
+                    modifier = Modifier.padding(end = 20.dp, top = 15.dp)) {
                     Row {
                         Icon(
                             painter = painterResource(id = R.drawable.space_bar_24px),
@@ -283,7 +283,7 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
                 }
                 Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(-1.0)) },
                     colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
-                    modifier = Modifier.padding(start = 20.dp)) {
+                    modifier = Modifier.padding(start = 20.dp, top = 15.dp)) {
                     Row {
                         Icon(
                             painter = painterResource(id = R.drawable.space_bar_24px),
