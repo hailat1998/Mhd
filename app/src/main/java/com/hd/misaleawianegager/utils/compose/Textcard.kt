@@ -1,5 +1,9 @@
 package com.hd.misaleawianegager.utils.compose
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,12 +22,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun TextCard(
+fun SharedTransitionScope.TextCard(
     item: String,
     from: String,
     first: String,
-    toDetail: (from: String, text: String, first: String) -> Unit
+    toDetail: (from: String, text: String, first: String) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     Card(
         modifier = Modifier
@@ -49,17 +55,26 @@ fun TextCard(
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.sharedElement(
+                    state = rememberSharedContentState("text"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 500)
+                    }
+                )
             )
         }
     }
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun TextCardAnnotated(   item: AnnotatedString,
+fun SharedTransitionScope.TextCardAnnotated(   item: AnnotatedString,
                          from: String,
                          first: String,
-                         toDetail: (from: String, text: String, first: String) -> Unit
+                         toDetail: (from: String, text: String, first: String) -> Unit,
+                                               animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     Card(
         modifier = Modifier
@@ -85,6 +100,13 @@ fun TextCardAnnotated(   item: AnnotatedString,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.sharedElement(
+                    state = rememberSharedContentState("text"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 500)
+                    }
+                )
             )
         }
     }
@@ -94,10 +116,6 @@ fun TextCardAnnotated(   item: AnnotatedString,
 @Composable
 fun HD() {
     MaterialTheme {
-        TextCard(
-            item = "ሀብታም ለሀብታም ይጠቃቀሱ ድሀ ለድሃ ይለቃቀሱ, ሀብታም ለሀብታም ይጠቃቀሱ ድሀ ለድሃ ይለቃቀሱ, ሀብታም ለሀብታም ይጠቃቀሱ ድሀ ለድሃ ይለቃቀሱ ድሀ ለድሃ ይለቃቀሱ",
-            from = "",
-            first = "",
-            toDetail = { from, text, first -> })
+
     }
 }

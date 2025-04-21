@@ -140,8 +140,9 @@ dependencies {
     implementation(libs.datastore.preferences)
 
     /* *****************************************************
-    **** ScrollBar
+    **** Shared Element Transition
     ****************************************************** */
 
-    implementation(libs.composescrollbars)
+    implementation(libs.ui)
+
 }

@@ -1,9 +1,9 @@
 package com.hd.misaleawianegager.presentation
 
-import android.util.Log
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,15 +27,14 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
-import com.hd.misaleawianegager.utils.compose.LifeCycleObserver
-import com.hd.misaleawianegager.utils.compose.favList
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MisaleBodyContent(navHostController: NavHostController,
                       modifier: Modifier,
                       letterType: String ,
                       onSettingEvent: (SettingEvent) -> Unit,
-                      showModalBottomSheet: MutableState<Boolean>){
+                      showModalBottomSheet: MutableState<Boolean>) {
 
     val viewModelHome: HomeViewModel = hiltViewModel()
 
@@ -43,87 +42,107 @@ fun MisaleBodyContent(navHostController: NavHostController,
 
     val viewModelFav: FavViewModel = hiltViewModel()
 
-    NavHost(navController = navHostController,
-        startDestination = MisaleScreen.Home.route,
-        modifier = modifier){
+    SharedTransitionLayout {
 
-        composable(MisaleScreen.Home.route){
+        NavHost(
+            navController = navHostController,
+            startDestination = MisaleScreen.Home.route,
+            modifier = modifier
+        ) {
 
-            viewModelHome.onEvent(HomeEvent.LoadLetter(letterType))
-            val list = viewModelHome.homeStateFlow.collectAsStateWithLifecycle()
-            val scrollPos = viewModelHome.scrollValue.collectAsStateWithLifecycle()
-            HomeContent(homeData = list,  onHomeEvent = viewModelHome::onEvent,  onSettingEvent, toDetail =   { home , arg, arg2 ->
-                  viewModelHome.onEvent(HomeEvent.WriteText(arg))
-                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
-            }, scrollIndex = scrollPos)
-        }
+            composable(MisaleScreen.Home.route) {
 
-
-
-        composable(MisaleScreen.Fav.route){
-               viewModelFav.readFavList()
-            val list = viewModelFav.favStateFlow.collectAsStateWithLifecycle()
-            val scrollIndex = viewModelFav.scrollValue.collectAsStateWithLifecycle()
-            FavScreen(list , toDetail =  { from, text, first->
-                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-            }, setScroll = viewModelFav::setScroll, scrollIndex = scrollIndex)
-        }
-
-        composable(MisaleScreen.Recent.route){
-            val context = LocalContext.current
-             viewModelRecent.readText(context)
-            val list = viewModelRecent.recentStateFlow.collectAsStateWithLifecycle()
-            val scrollIndex = viewModelRecent.scrollValue.collectAsStateWithLifecycle()
-            Recent(recentData = list , toDetail =  { from, text , first->
-                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-            }, setScroll = viewModelRecent::setScroll, scrollIndex = scrollIndex)
-
-        }
-
-        composable(MisaleScreen.Search.route){
-            val viewModel = hiltViewModel<SearchViewModel>()
-            val list = viewModel.searchResult.collectAsStateWithLifecycle()
-            SearchScreen(list = list, from = "ዋና" , search = viewModel::search , toDest =  {
-                navHostController.popBackStack()
-            }, toDetail = { from, text , first ->
-                navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-              }
-            )
-        }
-
-
-
-        composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}/{arg3}"),
-            arguments = listOf(navArgument("from") { type = NavType.StringType },
-                               navArgument("arg2") { type = NavType.StringType },
-                               navArgument("arg3") { type = NavType.StringType } ),
-            deepLinks = listOf(
-                navDeepLink { uriPattern = "misale://selected/{from}/{arg2}/{arg3}" }
-            )){ backStackEntry ->
-            val viewModel = hiltViewModel<DetailViewModel>()
-            val arg1 = backStackEntry.arguments?.getString("from")
-            val arg2 = if(arg1 == "search")backStackEntry.arguments?.getString("arg2")!!.replace('_', ' ')
-                               else backStackEntry.arguments?.getString("arg2")
-            val arg3 = backStackEntry.arguments?.getString("arg3")
-            if(arg1 == "ዋና"){
-                viewModel.onEvent(DetailEvent.LoadLetter(arg3!!))
+                viewModelHome.onEvent(HomeEvent.LoadLetter(letterType))
+                val list = viewModelHome.homeStateFlow.collectAsStateWithLifecycle()
+                val scrollPos = viewModelHome.scrollValue.collectAsStateWithLifecycle()
+                HomeContent(
+                    homeData = list,
+                    onHomeEvent = viewModelHome::onEvent,
+                    onSettingEvent,
+                    toDetail = { home, arg, arg2 ->
+                        viewModelHome.onEvent(HomeEvent.WriteText(arg))
+                        navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
+                    },
+                    scrollIndex = scrollPos,
+                    animatedVisibilityScope = this
+                )
             }
-            if(arg1 == "ምርጥ"){
-                viewModel.onEvent(DetailEvent.LoadFav)
+
+
+
+            composable(MisaleScreen.Fav.route) {
+                viewModelFav.readFavList()
+                val list = viewModelFav.favStateFlow.collectAsStateWithLifecycle()
+                val scrollIndex = viewModelFav.scrollValue.collectAsStateWithLifecycle()
+                FavScreen(list, toDetail = { from, text, first ->
+                    navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
+                }, setScroll = viewModelFav::setScroll, scrollIndex = scrollIndex,
+                    animatedVisibilityScope = this)
+            }
+
+            composable(MisaleScreen.Recent.route) {
+                val context = LocalContext.current
+                viewModelRecent.readText(context)
+                val list = viewModelRecent.recentStateFlow.collectAsStateWithLifecycle()
+                val scrollIndex = viewModelRecent.scrollValue.collectAsStateWithLifecycle()
+                Recent(recentData = list, toDetail = { from, text, first ->
+                    navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
+                }, setScroll = viewModelRecent::setScroll, scrollIndex = scrollIndex,
+                    animatedVisibilityScope = this)
+
+            }
+
+            composable(MisaleScreen.Search.route) {
+                val viewModel = hiltViewModel<SearchViewModel>()
+                val list = viewModel.searchResult.collectAsStateWithLifecycle()
+                SearchScreen(list = list, from = "ዋና", search = viewModel::search, toDest = {
+                    navHostController.popBackStack()
+                }, toDetail = { from, text, first ->
+                    navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
                 }
-            if(arg1 == "የቅርብ"){
-                viewModel.onEvent(DetailEvent.LoadRecent)
+                )
             }
 
-            val list = viewModel.detailStateFlow.collectAsStateWithLifecycle()
-           Selected(list = list, text = arg2!! , arg1!!, showModalBottomSheet = showModalBottomSheet, toDest =  {
-             navHostController.popBackStack()
-           })
+
+
+            composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}/{arg3}"),
+                arguments = listOf(navArgument("from") { type = NavType.StringType },
+                    navArgument("arg2") { type = NavType.StringType },
+                    navArgument("arg3") { type = NavType.StringType }),
+                deepLinks = listOf(
+                    navDeepLink { uriPattern = "misale://selected/{from}/{arg2}/{arg3}" }
+                )) { backStackEntry ->
+                val viewModel = hiltViewModel<DetailViewModel>()
+                val arg1 = backStackEntry.arguments?.getString("from")
+                val arg2 = if (arg1 == "search") backStackEntry.arguments?.getString("arg2")!!
+                    .replace('_', ' ')
+                else backStackEntry.arguments?.getString("arg2")
+                val arg3 = backStackEntry.arguments?.getString("arg3")
+                if (arg1 == "ዋና") {
+                    viewModel.onEvent(DetailEvent.LoadLetter(arg3!!))
+                }
+                if (arg1 == "ምርጥ") {
+                    viewModel.onEvent(DetailEvent.LoadFav)
+                }
+                if (arg1 == "የቅርብ") {
+                    viewModel.onEvent(DetailEvent.LoadRecent)
+                }
+
+                val list = viewModel.detailStateFlow.collectAsStateWithLifecycle()
+                Selected(
+                    list = list,
+                    text = arg2!!,
+                    arg1!!,
+                    showModalBottomSheet = showModalBottomSheet,
+                    toDest = {
+                        navHostController.popBackStack()
+                    },
+                    animatedVisibilityScope = this
+                )
+            }
         }
     }
- }
-
-
+}
 
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) {

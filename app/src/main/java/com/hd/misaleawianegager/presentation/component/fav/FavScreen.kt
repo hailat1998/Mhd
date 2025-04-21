@@ -1,5 +1,8 @@
 package com.hd.misaleawianegager.presentation.component.fav
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,11 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun FavScreen(favList: State<List<String>> ,
+fun SharedTransitionScope.FavScreen(favList: State<List<String>> ,
               toDetail:(from: String, s: String, first: String, ) -> Unit,
               scrollIndex: State<Int>,
-              setScroll: (Int) -> Unit){
+              setScroll: (Int) -> Unit,
+                                    animatedVisibilityScope: AnimatedVisibilityScope){
 
     val lazyListState =rememberLazyListState(initialFirstVisibleItemIndex = scrollIndex.value)
 
@@ -71,7 +76,7 @@ fun FavScreen(favList: State<List<String>> ,
                 LazyColumn(state = lazyListState) {
                     items(list, { item -> item }) { text ->
                         if(text.isNotEmpty()){
-                            TextCard(item = text, from = "ምርጥ", first = " ", toDetail = toDetail)
+                            TextCard(item = text, from = "ምርጥ", first = " ", toDetail = toDetail, animatedVisibilityScope)
                         }
                     }
                 }

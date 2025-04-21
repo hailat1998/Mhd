@@ -3,7 +3,11 @@ package com.hd.misaleawianegager.presentation.component.selected
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,13 +61,14 @@ import com.hd.misaleawianegager.utils.compose.ZoomOutImageBackground
 import com.hd.misaleawianegager.utils.compose.favList
 import kotlin.random.Random
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Selected(list : State<List<String>> = mutableStateOf(emptyList()),
+fun SharedTransitionScope.Selected(list : State<List<String>> = mutableStateOf(emptyList()),
              text: String,
              from: String,
              toDest: (s : String) -> Unit,
-             showModalBottomSheet: MutableState<Boolean>) {
+             showModalBottomSheet: MutableState<Boolean>,
+                                   animatedVisibilityScope: AnimatedVisibilityScope) {
 
     var offsetX by remember { mutableFloatStateOf(-250f) }
     val animatedOffsetX by animateFloatAsState(targetValue = offsetX)
@@ -106,14 +111,18 @@ val res = when(Random.nextInt(from = 1, until = 8)){
                         ) { page ->
                             ItemText(item = list.value[page],
                                 res.second ,
-                                modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f })
-                            Log.i("Detail", "$index ${pagerState.pageCount}")
+                                modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f },
+                                animatedVisibilityScope
+                            )
+
                         }
                     }
                 }
                 else -> {
-                    ItemText(item = text, res.second, modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f })
-                    Log.i("Detail", "Setting")
+                    ItemText(item = text, res.second, modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f },
+                        animatedVisibilityScope
+                    )
+
                 }
             }
         }
@@ -121,8 +130,12 @@ val res = when(Random.nextInt(from = 1, until = 8)){
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun ItemText(item: String, info: String,modifier: Modifier){
+fun SharedTransitionScope.ItemText(item: String,
+             info: String,
+             modifier: Modifier,
+             animatedVisibilityScope: AnimatedVisibilityScope){
     var listContains by remember { mutableStateOf(favList.contains(item)) }
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
@@ -198,7 +211,14 @@ fun ItemText(item: String, info: String,modifier: Modifier){
                         start = 10.dp,
                         end = 10.dp,
                         bottom = 10.dp
-                    ),
+                    )
+                        .sharedElement(
+                            state = rememberSharedContentState("text"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 500)
+                            }
+                        ),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.onPrimary

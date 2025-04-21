@@ -1,6 +1,9 @@
 package com.hd.misaleawianegager.presentation.component.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
@@ -66,11 +69,13 @@ import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun HomeContent(homeData: State<List<String>>,
+fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
                 onHomeEvent: (HomeEvent) -> Unit,
                 onSettingEvent: (SettingEvent) -> Unit,
                 scrollIndex: State<Int>,
+                animatedVisibilityScope: AnimatedVisibilityScope,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
                   ) {
 
@@ -154,7 +159,7 @@ fun HomeContent(homeData: State<List<String>>,
 
                 LazyColumn(state = lazyListState) {
                     items(list, { item -> item }) { it ->
-                        TextCard(item = it, from = "ዋና", first = arg3, toDetail = toDetail)
+                        TextCard(item = it, from = "ዋና", first = arg3, toDetail = toDetail, animatedVisibilityScope)
                     }
                 }
                 

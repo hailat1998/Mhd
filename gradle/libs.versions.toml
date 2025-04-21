@@ -100,6 +100,7 @@ jsoup = "1.15.4"
 
 #Download File
 startupRuntime = "1.1.1"
+ui = "1.7.8"
 work-runtime-ktx = "2.9.0"
 
 #KSP
@@ -135,6 +136,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 multidex = { group = "androidx.multidex", name = "multidex" }
+ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 
 #Accompanist

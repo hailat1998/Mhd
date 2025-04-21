@@ -1,5 +1,8 @@
 package com.hd.misaleawianegager.presentation.component.recent
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,11 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Recent(recentData: State<List<String>>,
+fun SharedTransitionScope.Recent(recentData: State<List<String>>,
            toDetail: (from: String, text: String, first: String) -> Unit,
            scrollIndex: State<Int>,
-           setScroll: (Int) -> Unit){
+           setScroll: (Int) -> Unit,
+                                 animatedVisibilityScope: AnimatedVisibilityScope){
 
     val lazyListState =rememberLazyListState(initialFirstVisibleItemIndex = scrollIndex.value)
 
@@ -68,7 +73,7 @@ fun Recent(recentData: State<List<String>>,
                 val list = recentData.value.distinct().reversed()
                 LazyColumn(state = lazyListState) {
                     items(list, {item -> item}){
-                       TextCard(item = it, from = "የቅርብ", first = " " , toDetail = toDetail)
+                       TextCard(item = it, from = "የቅርብ", first = " " , toDetail = toDetail, animatedVisibilityScope)
                     }
                 }
             }
