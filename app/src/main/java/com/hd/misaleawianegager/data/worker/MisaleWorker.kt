@@ -4,23 +4,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.domain.local.WorkerTextService
-import com.hd.misaleawianegager.presentation.MainActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 
 @HiltWorker

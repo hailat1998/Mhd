@@ -3,14 +3,14 @@ package com.hd.misaleawianegager.di
 import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerFactory
-import com.hd.misaleawianegager.data.datastore.DataStoreManager
+import com.hd.misaleawianegager.data.datastore.DataStoreManagerImpl
 import com.hd.misaleawianegager.data.local.AssetsTextServiceImp
 import com.hd.misaleawianegager.data.local.FileServiceImp
 import com.hd.misaleawianegager.data.local.WorkerTextServiceImp
 import com.hd.misaleawianegager.data.repository.SettingRepositoryImpl
 import com.hd.misaleawianegager.data.repository.TextRepositoryImpl
+import com.hd.misaleawianegager.domain.datastoremanager.DataStoreManager
 import com.hd.misaleawianegager.domain.local.AssetsTextService
 import com.hd.misaleawianegager.domain.local.FileService
 import com.hd.misaleawianegager.domain.local.WorkerTextService
@@ -113,5 +113,17 @@ abstract class WorkerServiceModule{
     abstract fun bindWorkerService(
         impl : WorkerTextServiceImp
     ) : WorkerTextService
+
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataStoreManagerModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindDataStoreManager(
+        impl: DataStoreManagerImpl
+    ): DataStoreManager
 
 }

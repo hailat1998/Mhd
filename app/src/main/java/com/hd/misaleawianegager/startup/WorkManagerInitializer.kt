@@ -18,8 +18,11 @@ class WorkManagerInitializer : Initializer<WorkManager>, Configuration.Provider 
 
     override val workManagerConfiguration: Configuration
         get() {
+
             val workerFactory = DelegatingWorkerFactory()
+
             workerFactory.addFactory(myWorkerFactory)
+
             return Configuration.Builder()
                 .setWorkerFactory(workerFactory)
                 .setExecutor(Executors.newFixedThreadPool(5))
@@ -28,9 +31,13 @@ class WorkManagerInitializer : Initializer<WorkManager>, Configuration.Provider 
         }
 
     override fun create(context: Context): WorkManager {
+
         val entryPoint= InitializerEntryPoint.resolve(context)
-           entryPoint.inject(this)
+
+        entryPoint.inject(this)
+
         WorkManager.initialize(context, workManagerConfiguration)
+
         return WorkManager.getInstance(context)
     }
 

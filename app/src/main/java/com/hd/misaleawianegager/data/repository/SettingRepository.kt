@@ -1,11 +1,10 @@
 package com.hd.misaleawianegager.data.repository
 
-import com.hd.misaleawianegager.data.datastore.DataStoreManager
+import com.hd.misaleawianegager.domain.datastoremanager.DataStoreManager
 import com.hd.misaleawianegager.domain.repository.SettingRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 @Singleton
 class SettingRepositoryImpl @Inject constructor(private val dataStoreManager: DataStoreManager) : SettingRepository{

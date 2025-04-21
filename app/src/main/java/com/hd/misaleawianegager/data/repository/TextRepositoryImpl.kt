@@ -1,21 +1,16 @@
 package com.hd.misaleawianegager.data.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.asFlow
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.hd.misaleawianegager.data.worker.MisaleWorker
 import com.hd.misaleawianegager.domain.local.AssetsTextService
 import com.hd.misaleawianegager.domain.local.FileService
-import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.utils.Resources
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -31,7 +26,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
                                             private val fileService: FileService ,
                                             private val workManager: WorkManager ):
     TextRepository {
-
 
     override fun readTextAsset(context: Context, type: String): Flow<Resources<String>> {
         return flow{
@@ -66,7 +60,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
     }
 
     override fun enqueueWork(): Flow<String> {
-
 
         val periodicWorkRequest = PeriodicWorkRequestBuilder<MisaleWorker>(6 , TimeUnit.HOURS)
             .build()

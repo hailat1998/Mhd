@@ -1,15 +1,11 @@
 package com.hd.misaleawianegager.presentation.theme
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color
@@ -69,8 +65,9 @@ fun MisaleawiAnegagerTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = if (theme == "dark" || darkTheme) Color.White.toArgb() else Color.Black.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = theme == "dark" || darkTheme
+            val isDark = theme == "dark" || darkTheme
+            window.statusBarColor = if (isDark) Color.Black.toArgb() else Color.White.toArgb()
+            WindowCompat.getInsetsController(window, view)?.isAppearanceLightStatusBars = !isDark
         }
     }
 

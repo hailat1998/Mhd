@@ -47,9 +47,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -63,22 +65,19 @@ import com.hd.misaleawianegager.utils.compose.favList
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 
-
-private const val REQUEST_CODE_POST_NOTIFICATIONS = 1
-
-  const val  PERMISSION_REQUEST_CODE = 1
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
 
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) {}
 
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            installSplashScreen()
+        }
         super.onCreate(savedInstanceState)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(
@@ -94,15 +93,11 @@ class MainActivity : ComponentActivity() {
             val font = viewModel.font.collectAsStateWithLifecycle()
             val letterType = viewModel.letterType.collectAsStateWithLifecycle()
 
-            var showSplashScreen by rememberSaveable  { mutableStateOf(true) }
+            var showSplashScreen by rememberSaveable  { mutableStateOf(Build.VERSION.SDK_INT < Build.VERSION_CODES.S ) }
 
             LaunchedEffect(Unit) {
-
-               delay(2000L)
-
+                delay(2000L)
                 showSplashScreen = false
-
-
             }
 
             MisaleawiAnegagerTheme(
@@ -138,7 +133,7 @@ fun MisaleApp(
     theme: State<String?>,
     font: State<String?>,
     letterType: String
-             ){
+             ) {
     val viewModel = hiltViewModel<MainViewModel>()
    val showModalBottomSheet = remember{ mutableStateOf(false) }
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
@@ -171,80 +166,70 @@ fun MisaleApp(
 
 
 @Composable
-fun MisaleBottomAppBar(navController: NavController,
-                       showModalBottomSheet: MutableState<Boolean>) {
+fun MisaleBottomAppBar(
+    navController: NavController,
+    showModalBottomSheet: MutableState<Boolean>
+) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val route = currentBackStackEntry?.destination?.route
+    val currentRoute = currentBackStackEntry?.destination?.route
+
     BottomAppBar(
-        modifier = Modifier.height(56.dp)
-            .shadow(shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp), elevation = 0.dp)
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)),
-           ) {
+        modifier = Modifier
+            .height(56.dp)
+            .shadow(
+                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+                elevation = 4.dp
+            )
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+            )
+    ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .shadow(shape = RoundedCornerShape(topStart = 14.dp, topEnd = 15.dp), elevation = 0.dp)
-                .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                ),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            DataProvider.icons.keys.forEach { key ->
-                if(route == key){
-                    IconButton(
-                        onClick = {
-                            if (key == "ማስቴካክያ") {
-                                showModalBottomSheet.value = !showModalBottomSheet.value
-                            } else {
-                                navController.navigate(key)
-                            }
-                        },
-                        modifier = Modifier
-                            .size(60.dp)
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = DataProvider.icons[key]!!,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary
-                                )
-                                Text(text = key.uppercase(), style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onPrimary)
+            DataProvider.icons.forEach { (key, icon) ->
+                val isSelected = currentRoute == key
+                val alpha = if (isSelected) 1f else 0.4f
+                val tintColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+
+                IconButton(
+                    onClick = {
+                        if (key == "ማስቴካክያ") {
+                            showModalBottomSheet.value = !showModalBottomSheet.value
+                        } else if (currentRoute != key) {
+                            navController.navigate(key) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
                         }
-                    }
-                }else{
-                    IconButton(
-                        onClick = {
-                            if (key == "ማስቴካክያ") {
-                                showModalBottomSheet.value = !showModalBottomSheet.value
-                            } else {
-                                navController.navigate(key)
-                            }
-                        },
-                        modifier = Modifier
-                            .alpha(0.4f)
-                            .size(60.dp)
+                    },
+                    modifier = Modifier
+                        .size(60.dp)
+                        .alpha(alpha)
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = DataProvider.icons[key]!!,
-                                    contentDescription = null
-                                )
-                                Text(text = key.uppercase(), style = MaterialTheme.typography.bodySmall)
-                            }
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = key,
+                                tint = tintColor
+                            )
+                            Text(
+                                text = key.uppercase(),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = tintColor
+                            )
                         }
                     }
                 }
@@ -252,6 +237,7 @@ fun MisaleBottomAppBar(navController: NavController,
         }
     }
 }
+
 @Composable
 fun SplashScreen(){
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
@@ -267,7 +253,7 @@ fun SplashScreen(){
 @Composable
 fun S(){
     val navHostController = rememberNavController()
-    //MisaleApp(navHostController = navHostController)
+    MisaleBottomAppBar(navHostController, mutableStateOf(false))
 }
 
 

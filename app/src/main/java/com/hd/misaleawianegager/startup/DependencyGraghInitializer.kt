@@ -5,7 +5,7 @@ import androidx.startup.Initializer
 
 class DependencyGraphInitializer : Initializer<Unit> {
     override fun create(context: Context) {
-        // Initialize dependencies
+
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> {

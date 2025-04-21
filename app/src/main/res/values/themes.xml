@@ -2,4 +2,20 @@
 <resources>
 
     <style name="Theme.MisaleawiAnegager" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.MisaleawiAnegager.Splash" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background color -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <!-- Use your app logo -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/bitmap</item>
+
+        <!-- Optional: Set the splash screen animation duration -->
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+
+        <!-- Set the theme used for the UI after the splash screen is gone -->
+        <item name="postSplashScreenTheme">@style/Theme.MisaleawiAnegager</item>
+    </style>
+
 </resources>
+
