@@ -22,24 +22,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.TextCard(
+fun TextCard(
     item: String,
     from: String,
     first: String,
-    toDetail: (from: String, text: String, first: String) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    toDetail: (from: String, text: String, first: String) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(
-                shape = RoundedCornerShape(8.dp),
-                elevation = 2.dp
-            )
             .clickable { toDetail.invoke(from, item, first) }
-            .padding(vertical = 8.dp, horizontal = 5.dp),
+            .padding(vertical = 8.dp, horizontal = 3.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
@@ -55,13 +49,6 @@ fun SharedTransitionScope.TextCard(
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.sharedElement(
-                    state = rememberSharedContentState("text"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = { _, _ ->
-                        tween(durationMillis = 500)
-                    }
-                )
             )
         }
     }
@@ -70,21 +57,15 @@ fun SharedTransitionScope.TextCard(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.TextCardAnnotated(   item: AnnotatedString,
+fun TextCardAnnotated(   item: AnnotatedString,
                          from: String,
                          first: String,
-                         toDetail: (from: String, text: String, first: String) -> Unit,
-                                               animatedVisibilityScope: AnimatedVisibilityScope
-) {
+                         toDetail: (from: String, text: String, first: String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(
-                shape = RoundedCornerShape(8.dp),
-                elevation = 2.dp
-            )
             .clickable { toDetail.invoke(from, item.text, first) }
-            .padding(vertical = 8.dp, horizontal = 5.dp),
+            .padding(vertical = 8.dp, horizontal = 3.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
@@ -100,13 +81,6 @@ fun SharedTransitionScope.TextCardAnnotated(   item: AnnotatedString,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.sharedElement(
-                    state = rememberSharedContentState("text"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = { _, _ ->
-                        tween(durationMillis = 500)
-                    }
-                )
             )
         }
     }

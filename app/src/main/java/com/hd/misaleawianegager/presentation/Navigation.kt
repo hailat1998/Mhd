@@ -1,7 +1,9 @@
 package com.hd.misaleawianegager.presentation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -27,6 +29,8 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+
+const val ANIMATION_DURATION = 500
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -63,8 +67,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                         viewModelHome.onEvent(HomeEvent.WriteText(arg))
                         navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
                     },
-                    scrollIndex = scrollPos,
-                    animatedVisibilityScope = this
+                    scrollIndex = scrollPos
                 )
             }
 
@@ -77,7 +80,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 FavScreen(list, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
                 }, setScroll = viewModelFav::setScroll, scrollIndex = scrollIndex,
-                    animatedVisibilityScope = this)
+                   )
             }
 
             composable(MisaleScreen.Recent.route) {
@@ -88,7 +91,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 Recent(recentData = list, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
                 }, setScroll = viewModelRecent::setScroll, scrollIndex = scrollIndex,
-                    animatedVisibilityScope = this)
+                  )
 
             }
 
@@ -100,7 +103,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 }, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
                 }
-                )
+               )
             }
 
 
@@ -111,7 +114,20 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     navArgument("arg3") { type = NavType.StringType }),
                 deepLinks = listOf(
                     navDeepLink { uriPattern = "misale://selected/{from}/{arg2}/{arg3}" }
-                )) { backStackEntry ->
+                ),
+                enterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Up,
+                        animationSpec = tween(ANIMATION_DURATION)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Down,
+                        animationSpec = tween(ANIMATION_DURATION)
+                    )
+                }
+            ) { backStackEntry ->
                 val viewModel = hiltViewModel<DetailViewModel>()
                 val arg1 = backStackEntry.arguments?.getString("from")
                 val arg2 = if (arg1 == "search") backStackEntry.arguments?.getString("arg2")!!
@@ -136,8 +152,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     showModalBottomSheet = showModalBottomSheet,
                     toDest = {
                         navHostController.popBackStack()
-                    },
-                    animatedVisibilityScope = this
+                    }
                 )
             }
         }

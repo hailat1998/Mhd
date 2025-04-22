@@ -20,20 +20,31 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 
 @Composable
-fun ZoomOutImageBackground(painter: Painter) {
-    val infiniteTransition = rememberInfiniteTransition(label = "HD")
+fun RememberZoomOutImageAnimation(): Float {
 
+    val infiniteTransition = rememberInfiniteTransition(label = "ZoomAnimation")
 
     val scale by infiniteTransition.animateFloat(
         initialValue = 2f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(delayMillis = 2000 , durationMillis = 10000, easing = LinearEasing),
+            animation = tween(
+                delayMillis = 2000,
+                durationMillis = 10000,
+                easing = LinearEasing
+            ),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "HD"
+        label = "ZoomScale"
     )
 
+    return scale
+}
+
+@Composable
+fun ZoomOutImageBackground(painter: Painter) {
+
+    val scale = RememberZoomOutImageAnimation()
 
     Box(
         modifier = Modifier
@@ -45,8 +56,10 @@ fun ZoomOutImageBackground(painter: Painter) {
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.FillHeight,
-            modifier = Modifier.fillMaxSize()
+            // Fix modifier order (background should come before fillMaxSize)
+            modifier = Modifier
                 .background(Color.Black)
+                .fillMaxSize()
         )
     }
 }

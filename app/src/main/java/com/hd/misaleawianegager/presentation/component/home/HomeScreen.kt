@@ -1,9 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
@@ -71,11 +69,10 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
+fun HomeContent(homeData: State<List<String>>,
                 onHomeEvent: (HomeEvent) -> Unit,
                 onSettingEvent: (SettingEvent) -> Unit,
                 scrollIndex: State<Int>,
-                animatedVisibilityScope: AnimatedVisibilityScope,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
                   ) {
 
@@ -88,7 +85,6 @@ fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
     var showFloatButton by remember {  mutableStateOf(true) }
 
     val firstVisibleItemIndex = remember { mutableIntStateOf(0) }
-
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }
@@ -106,8 +102,6 @@ fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
             }
     }
 
-
-
     var floatLetter by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
@@ -115,7 +109,7 @@ fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
                 title = {
                     Text(
                         text = "ዋና",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                     )
                 },
                 backgroundColor = MaterialTheme.colorScheme.primaryContainer,
@@ -128,17 +122,16 @@ fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
                   )
                 },
              )
-        }  ,
+        },
+
         floatingActionButton = {
             AnimatedVisibility(visible = showFloatButton,
                 enter = slideInVertically { it },
                 exit = slideOutVertically { it }) {
             FloatingActionButton(onClick = { showBottomSheet.value = true }, modifier = Modifier.testTag("FLOAT")) {
-
-                Text(floatLetter, style = MaterialTheme.typography.displayMedium)
-
+                Text(floatLetter, style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary))
             }
-        }
+          }
         }
     ) { it ->
         Box(
@@ -155,14 +148,14 @@ fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
                 else homeData.value[0][0].toString()
 
                 floatLetter = arg3
+
                val list = homeData.value.distinct()
 
                 LazyColumn(state = lazyListState) {
                     items(list, { item -> item }) { it ->
-                        TextCard(item = it, from = "ዋና", first = arg3, toDetail = toDetail, animatedVisibilityScope)
+                        TextCard(item = it, from = "ዋና", first = arg3, toDetail = toDetail)
                     }
                 }
-                
             }
             if (showBottomSheet.value) {
                 LaunchedEffect(Unit) {
@@ -176,7 +169,6 @@ fun SharedTransitionScope.HomeContent(homeData: State<List<String>>,
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
     ExperimentalMaterialApi::class
@@ -210,6 +202,7 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
     }
   }
 }
+
 @Composable
 fun AppInfoDialog(openDialog: MutableState<Boolean>) {
 

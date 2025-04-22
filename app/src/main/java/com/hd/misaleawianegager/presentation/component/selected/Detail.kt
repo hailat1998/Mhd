@@ -3,12 +3,7 @@ package com.hd.misaleawianegager.presentation.component.selected
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
@@ -51,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -61,26 +54,28 @@ import com.hd.misaleawianegager.utils.compose.ZoomOutImageBackground
 import com.hd.misaleawianegager.utils.compose.favList
 import kotlin.random.Random
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.Selected(list : State<List<String>> = mutableStateOf(emptyList()),
+fun Selected(list : State<List<String>> = mutableStateOf(emptyList()),
              text: String,
              from: String,
              toDest: (s : String) -> Unit,
-             showModalBottomSheet: MutableState<Boolean>,
-                                   animatedVisibilityScope: AnimatedVisibilityScope) {
+             showModalBottomSheet: MutableState<Boolean>
+) {
 
     var offsetX by remember { mutableFloatStateOf(-250f) }
     val animatedOffsetX by animateFloatAsState(targetValue = offsetX)
 
-val res = when(Random.nextInt(from = 1, until = 8)){
-    1 -> Pair(R.drawable.harar, " https://en.wikipedia.org/wiki/Harar")
-    2 -> Pair(R.drawable.axum, "https://en.wikipedia.org/wiki/Obelisk_of_Axum")
-    3 -> Pair(R.drawable.tiya, "https://en.wikipedia.org/wiki/Tiya_(archaeological_site)")
-    4 -> Pair(R.drawable.gondar, "https://en.wikipedia.org/wiki/Fasil_Ghebbi")
-    5 -> Pair(R.drawable.konso , "https://en.wikipedia.org/wiki/Konso_people")
-    6 -> Pair(R.drawable.sofumer, "https://en.wikipedia.org/wiki/Sof_Omar_Caves")
-    else -> Pair(R.drawable.lalibela, "https://en.wikipedia.org/wiki/Lalibela")
+val res = remember {
+    val randomIndex = Random.nextInt(from = 1, until = 8)
+    when (randomIndex) {
+        1 -> Pair(R.drawable.harar, " https://en.wikipedia.org/wiki/Harar")
+        2 -> Pair(R.drawable.axum, "https://en.wikipedia.org/wiki/Obelisk_of_Axum")
+        3 -> Pair(R.drawable.tiya, "https://en.wikipedia.org/wiki/Tiya_(archaeological_site)")
+        4 -> Pair(R.drawable.gondar, "https://en.wikipedia.org/wiki/Fasil_Ghebbi")
+        5 -> Pair(R.drawable.konso, "https://en.wikipedia.org/wiki/Konso_people")
+        6 -> Pair(R.drawable.sofumer, "https://en.wikipedia.org/wiki/Sof_Omar_Caves")
+        else -> Pair(R.drawable.lalibela, "https://en.wikipedia.org/wiki/Lalibela")
+    }
 }
     Scaffold(topBar =  { }
     ) { it ->
@@ -111,18 +106,15 @@ val res = when(Random.nextInt(from = 1, until = 8)){
                         ) { page ->
                             ItemText(item = list.value[page],
                                 res.second ,
-                                modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f },
-                                animatedVisibilityScope
+                                modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f }
                             )
 
                         }
                     }
                 }
                 else -> {
-                    ItemText(item = text, res.second, modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f },
-                        animatedVisibilityScope
+                    ItemText(item = text, res.second, modifier = Modifier.graphicsLayer {  translationY = if(showModalBottomSheet.value) animatedOffsetX else 0f }
                     )
-
                 }
             }
         }
@@ -130,12 +122,11 @@ val res = when(Random.nextInt(from = 1, until = 8)){
 }
 
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.ItemText(item: String,
+fun ItemText(item: String,
              info: String,
              modifier: Modifier,
-             animatedVisibilityScope: AnimatedVisibilityScope){
+             ){
     var listContains by remember { mutableStateOf(favList.contains(item)) }
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
@@ -211,14 +202,7 @@ fun SharedTransitionScope.ItemText(item: String,
                         start = 10.dp,
                         end = 10.dp,
                         bottom = 10.dp
-                    )
-                        .sharedElement(
-                            state = rememberSharedContentState("text"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 500)
-                            }
-                        ),
+                    ) ,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.onPrimary

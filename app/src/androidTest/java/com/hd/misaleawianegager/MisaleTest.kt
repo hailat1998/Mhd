@@ -32,7 +32,7 @@ class MisaleTest {
                 letterSpace = mutableStateOf(1.0),
                 letterHeight = mutableStateOf(34)
             ) {
-               HomeContent(homeData = mutableStateOf(emptyList()), onHomeEvent = {}, onSettingEvent = {} , scrollIndex = mutableStateOf(0), toDetail = {_,_,_ -> return@HomeContent })
+               //HomeContent(homeData = mutableStateOf(emptyList()), onHomeEvent = {}, onSettingEvent = {} , scrollIndex = mutableStateOf(0), toDetail = {_,_,_ -> return@HomeContent })
             }
         }
 

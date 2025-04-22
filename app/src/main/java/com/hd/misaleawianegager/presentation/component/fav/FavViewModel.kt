@@ -27,8 +27,7 @@ class FavViewModel @Inject constructor( private val savedStateHandle: SavedState
     val scrollValue = MutableStateFlow(savedStateHandle.get<Int>(SCROLLINDEX) ?:0)
 
      fun setScroll(value: Int){
-
-        scrollValue.value = value
+         scrollValue.value = value
         savedStateHandle[SCROLLINDEX] = value
     }
 

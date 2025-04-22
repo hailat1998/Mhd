@@ -134,7 +134,9 @@ fun MisaleApp(
     font: State<String?>,
     letterType: String
              ) {
+
     val viewModel = hiltViewModel<MainViewModel>()
+
    val showModalBottomSheet = remember{ mutableStateOf(false) }
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
         MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, showModalBottomSheet)
@@ -201,10 +203,10 @@ fun MisaleBottomAppBar(
                         } else if (currentRoute != key) {
                             navController.navigate(key) {
                                 popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                                    saveState = false
                                 }
                                 launchSingleTop = true
-                                restoreState = true
+                                restoreState = false
                             }
                         }
                     },

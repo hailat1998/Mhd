@@ -25,8 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -48,7 +46,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +56,8 @@ import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
 fun SearchScreen(list: State<List<String>>, from : String,
                  search: (query: String) -> Unit,
                  toDest: (from: String) -> Unit,
-                 toDetail: (from: String, text: String, first:String) -> Unit){
+                 toDetail: (from: String, text: String, first:String) -> Unit,
+                ) {
     val lazyListState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
 
@@ -101,7 +102,6 @@ fun SearchScreen(list: State<List<String>>, from : String,
                                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                                 modifier = Modifier.padding(end = 8.dp)
                             )
-
                             Box(
                                 modifier = Modifier.weight(1f),
                                 contentAlignment = Alignment.CenterStart
@@ -115,7 +115,9 @@ fun SearchScreen(list: State<List<String>>, from : String,
                                     singleLine = true,
                                     textStyle = MaterialTheme.typography.bodyLarge.copy(
                                         fontFamily = FontFamily.Default,
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        fontSize = 14.sp,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        baselineShift = BaselineShift.None
                                     ),
                                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                     keyboardActions = KeyboardActions(
@@ -137,7 +139,6 @@ fun SearchScreen(list: State<List<String>>, from : String,
                                 }
                             }
 
-                            // Add a clear button when there's text
                             if (query.isNotEmpty()) {
                                 IconButton(
                                     onClick = { query = "" },
@@ -179,7 +180,10 @@ fun SearchScreen(list: State<List<String>>, from : String,
                         end = k
                     )
                 }
-               TextCardAnnotated(item = annotatedString, from = "search", first = "  " , toDetail = toDetail)
+               TextCardAnnotated(item = annotatedString,
+                   from = "search", first = "  " ,
+                   toDetail = toDetail,
+                  )
             }
         }
     }

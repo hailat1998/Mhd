@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation.component.setting
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.Divider
@@ -31,6 +33,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
@@ -48,7 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hd.misaleawianegager.R
@@ -61,6 +64,7 @@ fun SettingScreen(
     theme: State<String?>,
     font: State<String?> ,
    ) {
+
     val localFont = FontFamily.Default
     val textStyle = TextStyle(fontFamily = localFont)
 
@@ -154,6 +158,7 @@ fun SettingScreen(
                         )
 
                     }
+
                     Row(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
@@ -185,7 +190,9 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
     Box(Modifier.padding(8.dp)) {
         var expanded by remember { mutableStateOf(false) }
         Column {
-            Text(text = "FontFamily", style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold))
+            Text(text = "FontFamily",
+                style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 12.dp))
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded },
@@ -193,16 +200,38 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
                     .height(60.dp)
                     .shadow(0.dp, RoundedCornerShape(10.dp))
             ) {
-                TextField(
+                BasicTextField(
                     value = font.value!!,
                     onValueChange = {},
                     readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                    },
-                    modifier = Modifier.menuAnchor().height(50.dp),
-                    textStyle = MaterialTheme.typography.titleMedium,
-                    shape = RoundedCornerShape(10.dp),
+                    textStyle = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        baselineShift = BaselineShift.None
+                    ),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                        .background(
+                            MaterialTheme.colorScheme.surface,
+                            RoundedCornerShape(10.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    decorationBox = { innerTextField ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Box(
+                                modifier = Modifier.weight(1f),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                innerTextField()
+                            }
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        }
+                    }
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -222,8 +251,6 @@ fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
         }
     }
 }
-
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -254,7 +281,6 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -298,7 +324,6 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -349,9 +374,3 @@ fun LineHeightContent(onEvent: (SettingEvent) -> Unit) {
     }
 }
 
-
-@Preview
-@Composable
-fun Sf(){
-
-}

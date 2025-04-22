@@ -61,14 +61,14 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     }
 
     private fun setTheme(theme: String){
-        Log.i("SETTINGVIEWMODEL" , "$theme")
+
         viewModelScope.launch {
             settingRepository.setTheme(theme)
         }
     }
 
     private fun setFontSize(size: Int) {
-        Log.i("SETTINGVIEWMODEL" , "$size")
+
         if (fontSize.value + size in 5..50) {
             viewModelScope.launch {
                 settingRepository.setFontSize(fontSize.value + size)
@@ -78,7 +78,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     }
 
     private fun setLetterHeight(height: Int) {
-        Log.i("SETTINGVIEWMODEL" , "$height")
+
         if (letterHeight.value + height in 10..40) {
             viewModelScope.launch {
                 settingRepository.setLineHeight(letterHeight.value + height)
