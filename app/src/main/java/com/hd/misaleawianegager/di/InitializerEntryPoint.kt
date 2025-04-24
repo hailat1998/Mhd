@@ -13,7 +13,6 @@ import dagger.hilt.components.SingletonComponent
 interface InitializerEntryPoint {
     fun inject(workManagerInitializer: WorkManagerInitializer)
 
-
     companion object {
         fun resolve(context: Context): InitializerEntryPoint {
             val appContext = context.applicationContext ?: throw IllegalStateException()

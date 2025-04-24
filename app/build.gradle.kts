@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.kapt")
+    id("kotlinx-serialization")
+
 }
 
 android {
@@ -144,5 +146,29 @@ dependencies {
     ****************************************************** */
 
     implementation(libs.ui)
+
+    /* *****************************************************
+   **** Markdown text
+   ****************************************************** */
+
+    implementation(libs.compose.markdown)
+
+    /* *****************************************************
+      **** Ktor
+      ****************************************************** */
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.serialization.kotlinx.json.jvm)
+    implementation(libs.ktor.client.content.negotiation.jvm)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.android)
+
+
+    /* *****************************************************
+     **** Serializer
+     ****************************************************** */
+
+    implementation(libs.kotlinx.serialization.json)
+
 
 }
