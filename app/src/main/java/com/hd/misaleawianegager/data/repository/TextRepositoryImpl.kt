@@ -23,8 +23,8 @@ private const val WORK_NAME = "DailyQuoteMisale"
 
 @Singleton
 class TextRepositoryImpl @Inject constructor(private val assetsTextService: AssetsTextService ,
-                                            private val fileService: FileService ,
-                                            private val workManager: WorkManager ):
+                                             private val fileService: FileService ,
+                                             private val workManager: WorkManager ):
     TextRepository {
 
     override fun readTextAsset(context: Context, type: String): Flow<Resources<String>> {
@@ -49,10 +49,10 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
     override fun readTextFile(context: Context, type: Int): Flow<Resources<String>> {
     return flow{
-        fileService.readTexts(context, type ).collect{ it ->
+        fileService.readTexts(context, type ).collect{
             emit(Resources.Success(it))
         }
-     }
+      }
     }
 
     override fun writeTextFile(context: Context, type: Int, text: String): Boolean {

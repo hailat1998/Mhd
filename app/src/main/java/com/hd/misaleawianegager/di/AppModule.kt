@@ -18,6 +18,8 @@ import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.domain.remote.ProverbApi
 import com.hd.misaleawianegager.domain.repository.SettingRepository
 import com.hd.misaleawianegager.domain.repository.TextRepository
+import com.hd.misaleawianegager.utils.CacheManager
+import com.hd.misaleawianegager.utils.CacheManagerImp
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -47,28 +49,34 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+
     @Singleton
     @IoDispatcher
     @Provides
     fun bindIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
 
     @Singleton
     @MainDispatcher
     @Provides
     fun bindMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 
+
     @Singleton
     @DefaultDispatcher
     @Provides
     fun bindDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 
+
     @Singleton
     @Provides
     fun provideFileService(@ApplicationContext context: Context): FileService = FileServiceImp(context)
 
+
     @Singleton
     @Provides
     fun provideAssetsService(): AssetsTextService = AssetsTextServiceImp()
+
 
 //    @Singleton
 //    @Provides
@@ -81,9 +89,11 @@ object AppModule {
         return WorkManager.getInstance(context)
     }
 
+
     @Provides
     @Singleton
     fun provideSettingRepo(dataStoreManager: DataStoreManager): SettingRepository = SettingRepositoryImpl(dataStoreManager)
+
 
     @Provides
     @Singleton
@@ -113,6 +123,12 @@ object AppModule {
             }
         }
     }
+
+
+    @Provides
+    @Singleton
+    fun provideCacheManager(): CacheManager = CacheManagerImp(hashMapOf())
+
 }
 
 
