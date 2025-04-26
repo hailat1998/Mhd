@@ -1,7 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
@@ -26,8 +25,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
@@ -36,10 +33,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -67,7 +67,7 @@ import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(homeData: State<List<String>>,
                 onHomeEvent: (HomeEvent) -> Unit,
@@ -109,19 +109,26 @@ fun HomeContent(homeData: State<List<String>>,
                 title = {
                     Text(
                         text = "ዋና",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     )
                 },
-                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                actions = { Icon(Icons.Default.Info , "INFO",  modifier = Modifier
-                    .size(35.dp)
-                   .offset(x= (-25).dp)
-                    .clickable {
-                        openDialog.value = true
-                    }
-                  )
+                actions = {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "INFO",
+                        modifier = Modifier
+                            .size(35.dp)
+                            .offset(x = (-25).dp)
+                            .clickable { openDialog.value = true }
+                    )
                 },
-             )
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
         },
 
         floatingActionButton = {

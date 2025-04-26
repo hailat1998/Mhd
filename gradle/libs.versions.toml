@@ -1,6 +1,5 @@
 [versions]
 composeMarkdown = "0.3.6"
-composescrollbars = "1.0.4"
 kotlinxSerializationJson = "1.8.0"
 ktorClientAndroid = "3.1.2"
 ktorClientContentNegotiationJvm = "3.1.2"
@@ -9,12 +8,13 @@ ktorClientLogging = "3.1.2"
 ktorSerializationKotlinxJsonJvm = "3.1.2"
 library = "8.0.2"
 agp = "8.2.2"
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.2"
+
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 
@@ -120,7 +120,6 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
 compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "composeMarkdown" }
-composescrollbars = { module = "com.github.GIGAMOLE:ComposeScrollbars", version.ref = "composescrollbars" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -257,6 +256,7 @@ androidx-navigation-testing = { group = "androidx.navigation", name = "navigatio
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 library = { id = "com.android.library", version.ref = "library" }
 ksp = {id = "com.google.devtools.ksp", version.ref = "ksp"}

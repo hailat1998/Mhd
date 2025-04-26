@@ -1,14 +1,12 @@
 package com.hd.misaleawianegager.presentation.component.search
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.repository.TextRepository
+import com.hd.misaleawianegager.utils.MisaleSpellChecker
+import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -16,22 +14,96 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val textRepository: TextRepository ,
-                      @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
-                      @ApplicationContext private val context: Context) : ViewModel() {
+                            @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
+                            @ApplicationContext private val context: Context,
+                            private val misaleSpellChecker: MisaleSpellChecker) : ViewModel() {
 
    private var _searchResult = MutableStateFlow(emptyList<String>())
     val searchResult get() = _searchResult.asStateFlow()
 
-    fun search(query: String){
+    private var _wordResult = MutableStateFlow(SearchUiState())
+    val wordResult = _wordResult.asStateFlow()
+
+    fun onEvent(searchEvent: SearchEvent){
+        when(searchEvent) {
+            is SearchEvent.SearchProverb -> {
+                search(query = searchEvent.query)
+            }
+            is SearchEvent.ConvertWord -> {
+                convert(word = searchEvent.word)
+            }
+            is SearchEvent.LoadSingle -> {
+                readSingle()
+            }
+        }
+    }
+
+    private fun readSingle() {
+        viewModelScope.launch(coroutineDispatcher) {
+            val list = mutableListOf<String>()
+            textRepository.readSingle().collect{
+                list.add(it.data!!)
+            }
+            _searchResult.value = list
+        }
+    }
+
+    private fun search(query: String){
         viewModelScope.launch(coroutineDispatcher) {
             val list = mutableListOf<String>()
            textRepository.search( context, query).collect{
                list.add(it.data!!)
             }
             _searchResult.value = list
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        misaleSpellChecker.closeSession()
+    }
+    private fun convert(word: String) {
+        viewModelScope.launch(coroutineDispatcher) {
+
+            val isValid = suspendCoroutine<Boolean> { continuation ->
+                misaleSpellChecker.checkWord(word) { isValid ->
+                    continuation.resume(isValid)
+                }
+            }
+
+            val flow = if (isValid) {
+                textRepository.en2am(word)
+            } else {
+                textRepository.la2am(word)
+            }
+
+
+            flow.collect { result ->
+                when (result) {
+                    is Resources.Loading -> {
+                        _wordResult.value = SearchUiState(isLoading = true)
+                    }
+
+                    is Resources.Error -> {
+                        _wordResult.value = SearchUiState(
+                            isLoading = false,
+                            error = result.message ?: "Unknown error"
+                        )
+                    }
+
+                    is Resources.Success -> {
+                        _wordResult.value = SearchUiState(
+                            isLoading = false,
+                            word = result.data
+                        )
+                    }
+                }
+            }
         }
     }
 }

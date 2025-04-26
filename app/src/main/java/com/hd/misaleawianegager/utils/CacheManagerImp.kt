@@ -14,4 +14,8 @@ class CacheManagerImp @Inject constructor(private val hashMap: HashMap<String, P
     override fun get(proverb: String) : ProverbResponse? {
         return hashMap[proverb]
     }
+
+    override fun contains(proverb: String): Boolean {
+       return hashMap.contains(proverb)
+    }
 }

@@ -24,7 +24,6 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
     private val _detailStateFlow = MutableStateFlow(emptyList<String>())
     val detailStateFlow get() = _detailStateFlow.asStateFlow()
 
-
     fun onEvent(e: DetailEvent){
         when(e){
             is DetailEvent.LoadLetter ->{
@@ -39,9 +38,8 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
         }
     }
 
-
     private fun detailFeedQuery(context: Context, query: String){
-        viewModelScope.launch {
+
             viewModelScope.launch(coroutineDispatcher) {
                 val list = mutableListOf<String>()
                 val text = DataProvider.letterMap[query]
@@ -49,8 +47,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                      list.add(it.data!!.trim())
                 }
                    _detailStateFlow.value = list
-            }
-        }
+          }
     }
 
     private fun detailFeedRecent(context: Context) {

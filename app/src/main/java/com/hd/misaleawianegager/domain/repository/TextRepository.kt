@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.domain.repository
 
 import android.content.Context
+import com.hd.misaleawianegager.domain.remote.ProverbResponse
 import com.hd.misaleawianegager.utils.Resources
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -15,4 +16,12 @@ interface TextRepository {
     fun search(context: Context, query: String): Flow<Resources<String>>
 
     fun enqueueWork(): Flow<String>
+
+    fun getFromNetWork(proverb: String): Flow<Resources<ProverbResponse>>
+
+    fun la2am(latinAmharicText: String): Flow<Resources<String>>
+
+    fun en2am(englishText: String): Flow<Resources<String>>
+
+    fun readSingle(): Flow<Resources<String>>
 }

@@ -20,6 +20,8 @@ import com.hd.misaleawianegager.domain.repository.SettingRepository
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.utils.CacheManager
 import com.hd.misaleawianegager.utils.CacheManagerImp
+import com.hd.misaleawianegager.utils.MisaleSpellChecker
+import com.hd.misaleawianegager.utils.MisaleSpellCheckerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -193,4 +195,15 @@ abstract class ProverbModule {
         impl: ProverbApiImpl
     ): ProverbApi
 
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class SpellCheckerModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindMisaleSpellChecker(
+        misaleSpellCheckerImpl: MisaleSpellCheckerImpl
+    ): MisaleSpellChecker
 }

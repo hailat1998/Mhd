@@ -71,8 +71,6 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 )
             }
 
-
-
             composable(MisaleScreen.Fav.route) {
                 viewModelFav.readFavList()
                 val list = viewModelFav.favStateFlow.collectAsStateWithLifecycle()
@@ -98,15 +96,14 @@ fun MisaleBodyContent(navHostController: NavHostController,
             composable(MisaleScreen.Search.route) {
                 val viewModel = hiltViewModel<SearchViewModel>()
                 val list = viewModel.searchResult.collectAsStateWithLifecycle()
-                SearchScreen(list = list, from = "ዋና", search = viewModel::search, toDest = {
+                val word = viewModel.wordResult.collectAsStateWithLifecycle()
+                SearchScreen(list = list, word = word, from = "ዋና", onSearchEvent = viewModel::onEvent, toDest = {
                     navHostController.popBackStack()
                 }, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-                }
+                 }
                )
             }
-
-
 
             composable(MisaleScreen.Detail.route.plus("/{from}/{arg2}/{arg3}"),
                 arguments = listOf(navArgument("from") { type = NavType.StringType },
