@@ -159,7 +159,6 @@ abstract class RepositoryModule {
 
 }
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class WorkerServiceModule{
@@ -184,7 +183,6 @@ abstract class DataStoreManagerModule {
 
 }
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ProverbModule {
@@ -206,4 +204,5 @@ abstract class SpellCheckerModule {
     abstract fun bindMisaleSpellChecker(
         misaleSpellCheckerImpl: MisaleSpellCheckerImpl
     ): MisaleSpellChecker
+
 }

@@ -75,7 +75,7 @@ fun SearchScreen(list: State<List<String>>, from : String,
     }
 
     val currentWord = word.value.word
-    if (!word.value.isLoading && currentWord != null && currentWord.isNotEmpty()) {
+    if (!word.value.isLoading && !currentWord.isNullOrEmpty()) {
         query.value = currentWord
     }
 

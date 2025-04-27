@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.presentation.DataProvider
+import com.hd.misaleawianegager.utils.Resources
 import com.hd.misaleawianegager.utils.compose.favList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,23 +25,28 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
     private val _detailStateFlow = MutableStateFlow(emptyList<String>())
     val detailStateFlow get() = _detailStateFlow.asStateFlow()
 
+    private val _detailsAITextStateFlow = MutableStateFlow(DetailUiState())
+    val detailsAITextStateFlow = _detailsAITextStateFlow.asStateFlow()
+
     fun onEvent(e: DetailEvent){
         when(e){
-            is DetailEvent.LoadLetter ->{
+            is DetailEvent.LoadLetter -> {
                 detailFeedQuery(context, e.q)
               }
-            is DetailEvent.LoadFav ->{
+            is DetailEvent.LoadFav -> {
                 detailFeedFav()
               }
-            is DetailEvent.LoadRecent ->{
+            is DetailEvent.LoadRecent -> {
                 detailFeedRecent(context)
+            }
+            is DetailEvent.LoadAIContent -> {
+                detailAIFeed(e.proverb)
             }
         }
     }
 
     private fun detailFeedQuery(context: Context, query: String){
-
-            viewModelScope.launch(coroutineDispatcher) {
+         viewModelScope.launch(coroutineDispatcher) {
                 val list = mutableListOf<String>()
                 val text = DataProvider.letterMap[query]
                 textRepository.readTextAsset(context, text!!).collect{
@@ -66,4 +72,21 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
         _detailStateFlow.value = list
     }
 
+    private fun detailAIFeed(proverb: String) {
+        viewModelScope.launch(coroutineDispatcher) {
+            textRepository.getFromNetwork(proverb).collect{ it ->
+                when(it) {
+                    is Resources.Loading -> {
+                        _detailsAITextStateFlow.value = DetailUiState(isLoading = true)
+                    }
+                    is Resources.Success -> {
+                       _detailsAITextStateFlow.value = DetailUiState(isLoading = false, enMeaning = it.data?.enMeaning, amMeaning = it.data?.amMeaning)
+                    }
+                    is Resources.Error -> {
+                      _detailsAITextStateFlow.value = DetailUiState(isLoading = false, error = it.message)
+                    }
+                }
+            }
+        }
+    }
 }

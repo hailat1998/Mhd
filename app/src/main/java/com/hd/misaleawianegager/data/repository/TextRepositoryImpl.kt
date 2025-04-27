@@ -37,6 +37,8 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
                                              @ApplicationContext private val context: Context):
     TextRepository {
 
+
+
     override fun readTextAsset(context: Context, type: String): Flow<Resources<String>> {
         return flow{
        assetsTextService.readTexts(context , type).collect{data ->
@@ -98,7 +100,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
         }
     }
 
-    override fun getFromNetWork(proverb: String): Flow<Resources<ProverbResponse>> {
+    override fun getFromNetwork(proverb: String): Flow<Resources<ProverbResponse>> {
         return flow {
 
             emit(Resources.Loading(true))
@@ -110,10 +112,12 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             }
 
             try {
+
                 val proverbResponse = api.meaning(proverb)
 
                 cacheManager.set(proverbResponse, proverb)
                 emit(Resources.Success(proverbResponse))
+
             } catch (ex: IOException) {
                 emit(Resources.Error("Network error: ${ex.localizedMessage}"))
             } catch (ex: Exception) {
