@@ -1,8 +1,8 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
 data class DetailUiState(
-    val enMeaning: String? = null,
-    val amMeaning: String? = null,
-    val isLoading: Boolean? = null,
-    val error: String? = null
+    var enMeaning: String? = null,
+    var amMeaning: String? = null,
+    var isLoading: Boolean? = null,
+    var error: String? = null
 )

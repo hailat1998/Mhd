@@ -1,9 +1,12 @@
 package com.hd.misaleawianegager.presentation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +32,7 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.compose.favList
+import kotlinx.coroutines.delay
 
 const val ANIMATION_DURATION = 500
 
@@ -144,7 +148,18 @@ fun MisaleBodyContent(navHostController: NavHostController,
 
                 val list = viewModelDetail.detailStateFlow.collectAsStateWithLifecycle()
 
-                val textAi = viewModelDetail.detailsAITextStateFlow.collectAsStateWithLifecycle()
+                val textAi by viewModelDetail.detailsAITextStateFlow.collectAsStateWithLifecycle()
+
+
+                Log.i("NAVIGATION", "${textAi.amMeaning}")
+                Log.i("NAVIGATION", "${textAi.isLoading}")
+
+                LaunchedEffect(Unit) {
+                    delay(3000L)
+                    Log.i("NAVIGATION2", "${textAi.amMeaning}")
+                    Log.i("NAVIGATION2", "${textAi.isLoading}")
+                }
+
 
                 Selected(
                     list = list,

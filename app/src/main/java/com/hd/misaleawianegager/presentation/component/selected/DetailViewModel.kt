@@ -14,6 +14,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -75,23 +79,43 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
 
     private fun detailAIFeed(proverb: String) {
 
-        Log.i("DETAILVIEWMODEL", "Called")
+        Log.i("CALLED FOR", proverb)
 
         viewModelScope.launch(coroutineDispatcher) {
-            textRepository.getFromNetwork(proverb).collect{ it ->
-                when(it) {
-                    is Resources.Loading -> {
-                        _detailsAITextStateFlow.value = DetailUiState(isLoading = true)
-                    }
-                    is Resources.Success -> {
-                       _detailsAITextStateFlow.value = DetailUiState(isLoading = false, enMeaning = it.data?.enMeaning, amMeaning = it.data?.amMeaning)
-                        it.data?.let { it1 -> Log.i("DETAILVIEWMODEL", it1.amMeaning) }
-                    }
-                    is Resources.Error -> {
-                      _detailsAITextStateFlow.value = DetailUiState(isLoading = false, error = it.message)
+            textRepository.getFromNetwork(proverb)
+                .onStart { Log.d("LOADING", "Flow started") }
+                .onCompletion { Log.d("LOADING", "Flow completed") }
+                .catch { e -> Log.e("LOADING", "Flow error", e) }
+                .collect { resource ->
+                    Log.d("STATE", "Processing: ${resource.javaClass.simpleName}")
+                    _detailsAITextStateFlow.update { currentState ->
+                        val newState = when (resource) {
+                            is Resources.Loading -> {
+                                currentState.copy(isLoading = true)
+                            }
+                            is Resources.Success -> {
+                                currentState.copy(
+                                    isLoading = false,
+                                    enMeaning = resource.data?.enMeaning,
+                                    amMeaning = resource.data?.amMeaning,
+                                    error = null
+                                )
+
+                            }
+                            is Resources.Error -> {
+                                currentState.copy(
+                                    isLoading = false,
+                                    error = resource.message
+                                )
+                            }
+                        }
+
+                        Log.i("LOADED", "${_detailsAITextStateFlow.value}")
+
+                        Log.d("STATE", "Transition: ${currentState.isLoading} -> ${newState.isLoading}")
+                        newState
                     }
                 }
-            }
         }
     }
 }

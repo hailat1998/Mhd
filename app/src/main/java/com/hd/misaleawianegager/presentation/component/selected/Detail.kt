@@ -81,6 +81,7 @@ import com.hd.misaleawianegager.utils.compose.HorizontalShimmer
 import com.hd.misaleawianegager.utils.compose.ZoomOutImageBackground
 import com.hd.misaleawianegager.utils.compose.favList
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.random.Random
 
@@ -89,7 +90,7 @@ import kotlin.random.Random
 fun Selected(
     list: State<List<String>>, // List of items for the pager
     favList: SnapshotStateList<String>, // <<< ADDED: Pass the favourites list state
-    textAi: State<DetailUiState>, // State for AI-generated text (meanings)
+    textAi: DetailUiState, // State for AI-generated text (meanings)
     text: String, // The initially selected text item
     from: String, // Source identifier ("ምርጥ", "ዋና", "የቅርብ" for pager)
     onPageChanged: (String) -> Unit, // Callback when pager page changes
@@ -216,7 +217,7 @@ fun Selected(
 fun NeatItemDisplay(
     item: String,
     info: String, // URL for info icon
-    textAi: State<DetailUiState>,
+    textAi: DetailUiState,
     favList: SnapshotStateList<String>,
     // Optional: Add callbacks for actions if navigation/ViewModel interaction is needed
     onNavigateBack: (() -> Unit)? = null, // Example callback
@@ -229,7 +230,15 @@ fun NeatItemDisplay(
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) } // Save tab index across config changes
     val tabs = listOf("አማርኛ", "English")
     val scrollState = rememberScrollState()
-    val currentState = textAi.value // Read state once per composition
+    val currentState = textAi // Read state once per composition
+    LaunchedEffect(Unit) {
+
+        delay(5000L)
+
+        Log.i("DETAIL SCREEN", "${textAi.amMeaning}")
+        Log.i("DETAIL SCREEN22", "${textAi.isLoading}")
+
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
