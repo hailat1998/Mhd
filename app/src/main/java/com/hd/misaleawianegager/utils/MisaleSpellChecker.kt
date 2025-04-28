@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.utils
 
+
 interface MisaleSpellChecker {
-    fun checkWord(word: String, callback: (Boolean) -> Unit)
+    suspend fun checkWord(word: String): Boolean
     fun closeSession()
 }

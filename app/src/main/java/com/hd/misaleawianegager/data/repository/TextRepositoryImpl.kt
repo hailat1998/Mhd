@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.asFlow
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -113,7 +114,11 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
             try {
 
+                Log.i("REPOSITORY", "api called")
+
                 val proverbResponse = api.meaning(proverb)
+
+                Log.i("REPOSITORY", "$proverbResponse")
 
                 cacheManager.set(proverbResponse, proverb)
                 emit(Resources.Success(proverbResponse))

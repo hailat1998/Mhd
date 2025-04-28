@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation.component.selected
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -215,56 +216,6 @@ fun ItemText(
                 )
             }
 
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = item,
-                    modifier = Modifier.padding(
-                        top = 20.dp,
-                        start = 10.dp,
-                        end = 10.dp,
-                        bottom = 10.dp
-                    ),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-
-
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                indicator = { tabPositions ->
-                    SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        height = 3.dp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
-                            )
-                        },
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-            }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -273,14 +224,71 @@ fun ItemText(
                         color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .padding(16.dp)
+                    .padding(3.dp)
             ) {
-                if (textAi.value.isLoading == true) {
-                    HorizontalShimmer()
-                } else {
-                    when (selectedTabIndex) {
-                        0 -> textAi.value.amMeaning?.let { MarkdownContent(it) }
-                        1 -> textAi.value.enMeaning?.let { MarkdownContent(it) }
+
+                Column {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = item,
+                            modifier = Modifier.padding(
+                                top = 20.dp,
+                                start = 10.dp,
+                                end = 10.dp,
+                                bottom = 10.dp
+                            ),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.displaySmall,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+
+
+                    TabRow(
+                        selectedTabIndex = selectedTabIndex,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        indicator = { tabPositions ->
+                            SecondaryIndicator(
+                                modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                                height = 3.dp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    ) {
+                        tabs.forEachIndexed { index, title ->
+                            Tab(
+                                selected = selectedTabIndex == index,
+                                onClick = { selectedTabIndex = index },
+                                text = {
+                                    Text(
+                                        text = title,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                },
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                    }
+
+
+//                    if (textAi.value.isLoading == true) {
+//
+//                        Log.i("DETAIL", "Loading")
+//                        HorizontalShimmer()
+//
+//                    } else {
+                        when (selectedTabIndex) {
+                            0 -> textAi.value.amMeaning?.let { MarkdownContent(Modifier, it) }
+                            1 -> textAi.value.enMeaning?.let { MarkdownContent(Modifier, it) }
+                        //}
                     }
                 }
             }
@@ -289,8 +297,10 @@ fun ItemText(
 }
 
 @Composable
-fun MarkdownContent(markdownContent1: String) {
-       MarkdownText(markdownContent1, Modifier.fillMaxWidth())
+fun MarkdownContent(modifier: Modifier = Modifier.fillMaxSize(), markdownContent1: String = getMarkText()) {
+       Box(modifier.fillMaxSize()){
+           MarkdownText(markdownContent1, Modifier.fillMaxWidth())
+       }
 }
 
 @Preview
@@ -308,4 +318,32 @@ fun Mark() {
 }
 
 
-
+fun getMarkText(): String {
+    return "# \uD83D\uDCDA Virtual Book Store\n" +
+            "\n" +
+            "A modern digital library system built with Spring Boot that offers comprehensive book management features.\n" +
+            "\n" +
+            "## \uD83C\uDF1F Features\n" +
+            "\n" +
+            "- \uD83D\uDCD6 Search and view books\n" +
+            "- \uD83D\uDED2 Purchase books online\n" +
+            "- \uD83D\uDCF1 Borrow digital copies\n" +
+            "- \uD83D\uDD10 Secure authentication system\n" +
+            "- \uD83D\uDCBE Persistent data storage\n" +
+            "- ⚡ Redis caching for improved performance\n" +
+            "- \uD83D\uDD11 Role-based access control\n" +
+            "\n" +
+            "## \uD83C\uDFD7\uFE0F Architecture\n" +
+            "\n" +
+            "The project follows a modular architecture with the following components:\n" +
+            "\n" +
+            "- **App Module**: Contains the main class and also data initialization before loading the application context\n" +
+            "- **Api Module**: Defines the endpoints\n" +
+            "- **Commons Module**: Contains DTOs and exception class\n" +
+            "- **REST Client Module**: Independent module for API testing and logging\n" +
+            "- **Core Module**: Contains the main services throughout the app and application level configurations\n" +
+            " - **Security Module**: Configurations for security\n" +
+            " - **Domain Module**: Defines the Business logic of the app\n" +
+            " - **Data Module**: Persistence  layer for recording entities\n" +
+            " - **Web Module**: UI repository (Coming Soon)"
+}

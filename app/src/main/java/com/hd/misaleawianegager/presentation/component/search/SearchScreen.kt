@@ -70,11 +70,13 @@ fun SearchScreen(list: State<List<String>>, from : String,
     val query = remember { mutableStateOf("") }
     var k: Int
     var j: Int
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
     val currentWord = word.value.word
+
     if (!word.value.isLoading && !currentWord.isNullOrEmpty()) {
         query.value = currentWord
     }

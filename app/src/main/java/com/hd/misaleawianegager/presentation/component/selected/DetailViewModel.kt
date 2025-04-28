@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
@@ -73,6 +74,9 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
     }
 
     private fun detailAIFeed(proverb: String) {
+
+        Log.i("DETAILVIEWMODEL", "Called")
+
         viewModelScope.launch(coroutineDispatcher) {
             textRepository.getFromNetwork(proverb).collect{ it ->
                 when(it) {
@@ -81,6 +85,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                     }
                     is Resources.Success -> {
                        _detailsAITextStateFlow.value = DetailUiState(isLoading = false, enMeaning = it.data?.enMeaning, amMeaning = it.data?.amMeaning)
+                        it.data?.let { it1 -> Log.i("DETAILVIEWMODEL", it1.amMeaning) }
                     }
                     is Resources.Error -> {
                       _detailsAITextStateFlow.value = DetailUiState(isLoading = false, error = it.message)

@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val textRepository: TextRepository ,
@@ -70,11 +68,7 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
     private fun convert(word: String) {
         viewModelScope.launch(coroutineDispatcher) {
 
-            val isValid = suspendCoroutine<Boolean> { continuation ->
-                misaleSpellChecker.checkWord(word) { isValid ->
-                    continuation.resume(isValid)
-                }
-            }
+            val isValid = misaleSpellChecker.checkWord(word)
 
             val flow = if (isValid) {
                 textRepository.en2am(word)

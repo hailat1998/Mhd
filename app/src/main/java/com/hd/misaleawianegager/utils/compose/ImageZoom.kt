@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
-fun RememberZoomOutImageAnimation(): Float {
+fun rememberZoomOutImageAnimation(): Float {
 
     val infiniteTransition = rememberInfiniteTransition(label = "ZoomAnimation")
 
@@ -46,7 +46,7 @@ fun RememberZoomOutImageAnimation(): Float {
 @Composable
 fun ZoomOutImageBackground(painter: Painter) {
 
-    val scale = RememberZoomOutImageAnimation()
+    val scale = rememberZoomOutImageAnimation()
 
     Box(
         modifier = Modifier
