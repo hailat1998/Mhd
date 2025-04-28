@@ -14,9 +14,13 @@ import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.domain.remote.ProverbApi
 import com.hd.misaleawianegager.domain.remote.ProverbResponse
 import com.hd.misaleawianegager.domain.repository.TextRepository
+import com.hd.misaleawianegager.enMap
+import com.hd.misaleawianegager.laMap
+import com.hd.misaleawianegager.map
 import com.hd.misaleawianegager.utils.CacheManager
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -115,8 +119,10 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             try {
 
                 Log.i("REPOSITORY", "api called")
+                  delay(2000L)
+             //   val proverbResponse = api.meaning(proverb)
 
-                val proverbResponse = api.meaning(proverb)
+                val proverbResponse = map[proverb]!!
 
                 Log.i("REPOSITORY", "$proverbResponse")
 
@@ -140,7 +146,12 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
         return flow {
             emit(Resources.Loading(true))
             try {
-                val amharicText = api.la2am(latinAmharicText)
+
+                delay(2000L)
+
+               // val amharicText = api.la2am(latinAmharicText)
+
+                val amharicText = laMap[latinAmharicText]!!
 
                 emit(Resources.Success(amharicText))
             } catch (ex: IOException) {
@@ -162,7 +173,12 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             emit(Resources.Loading(true))
 
             try {
-                val amharicText = api.la2am(englishText)
+
+                delay(2000L)
+
+            //    val amharicText = api.la2am(englishText)
+
+                val amharicText = enMap[englishText]!!
 
                 emit(Resources.Success(amharicText))
             } catch (ex: IOException) {

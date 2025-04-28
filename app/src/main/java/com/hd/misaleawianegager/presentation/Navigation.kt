@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +28,7 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.compose.favList
 
 const val ANIMATION_DURATION = 500
 
@@ -146,13 +148,10 @@ fun MisaleBodyContent(navHostController: NavHostController,
 
                 Selected(
                     list = list,
+                    favList = favList.toMutableStateList() ,
                     textAi = textAi,
                     text = arg2!!,
                    from = arg1!!,
-                    showModalBottomSheet = showModalBottomSheet,
-                    toDest = {
-                        navHostController.popBackStack()
-                    },
                     onPageChanged = { proverb -> viewModelDetail.onEvent(DetailEvent.LoadAIContent(proverb)) }
                 )
             }
