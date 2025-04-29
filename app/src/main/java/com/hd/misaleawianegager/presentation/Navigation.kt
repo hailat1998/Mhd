@@ -146,29 +146,27 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     viewModelDetail.onEvent(DetailEvent.LoadRecent)
                 }
 
-                val list = viewModelDetail.detailStateFlow.collectAsStateWithLifecycle()
+//                val list = viewModelDetail.detailStateFlow.collectAsStateWithLifecycle()
+//
+//                val textAi = viewModelDetail.detailsAITextStateFlow
 
-                val textAi by viewModelDetail.detailsAITextStateFlow.collectAsStateWithLifecycle()
-
-
-                Log.i("NAVIGATION", "${textAi.amMeaning}")
-                Log.i("NAVIGATION", "${textAi.isLoading}")
-
-                LaunchedEffect(Unit) {
-                    delay(3000L)
-                    Log.i("NAVIGATION2", "${textAi.amMeaning}")
-                    Log.i("NAVIGATION2", "${textAi.isLoading}")
-                }
+//                Log.i("NAVIGATION", "${textAi.value.amMeaning}")
+//                Log.i("NAVIGATION", "${textAi.value.isLoading}")
+//
+//                LaunchedEffect(Unit) {
+//                    delay(3000L)
+//                    Log.i("NAVIGATION2", "${textAi.value.amMeaning}")
+//                    Log.i("NAVIGATION2", "${textAi.value.isLoading}")
+//                }
 
 
                 Selected(
-                    list = list,
-                    favList = favList.toMutableStateList() ,
-                    textAi = textAi,
-                    text = arg2!!,
-                   from = arg1!!,
-                    onPageChanged = { proverb -> viewModelDetail.onEvent(DetailEvent.LoadAIContent(proverb)) }
-                )
+                viewModelDetail,
+                    page = arg2!!,
+                ) {
+                    Log.i("NAVIGATION", it)
+                    viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
+                }
             }
         }
     }

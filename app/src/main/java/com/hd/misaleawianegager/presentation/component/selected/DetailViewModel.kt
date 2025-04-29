@@ -78,7 +78,6 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
     }
 
     private fun detailAIFeed(proverb: String) {
-
         Log.i("CALLED FOR", proverb)
 
         viewModelScope.launch(coroutineDispatcher) {
@@ -91,7 +90,8 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                     _detailsAITextStateFlow.update { currentState ->
                         val newState = when (resource) {
                             is Resources.Loading -> {
-                                currentState.copy(isLoading = true)
+                                // Use the loading value from the resource
+                                currentState.copy(isLoading = resource.isLoading)
                             }
                             is Resources.Success -> {
                                 currentState.copy(
@@ -100,7 +100,6 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                                     amMeaning = resource.data?.amMeaning,
                                     error = null
                                 )
-
                             }
                             is Resources.Error -> {
                                 currentState.copy(
@@ -111,11 +110,10 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                         }
 
                         Log.i("LOADED", "${_detailsAITextStateFlow.value}")
-
                         Log.d("STATE", "Transition: ${currentState.isLoading} -> ${newState.isLoading}")
                         newState
                     }
                 }
-        }
+          }
     }
 }

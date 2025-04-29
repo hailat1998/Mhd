@@ -107,33 +107,29 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
     override fun getFromNetwork(proverb: String): Flow<Resources<ProverbResponse>> {
         return flow {
-
             emit(Resources.Loading(true))
 
             if (cacheManager.contains(proverb)) {
                 emit(Resources.Success(cacheManager.get(proverb) as ProverbResponse))
-                emit(Resources.Loading(false))
+                // Don't emit Loading(false) here - will be handled in finally
                 return@flow
             }
 
             try {
-
                 Log.i("REPOSITORY", "api called")
-                  delay(2000L)
-             //   val proverbResponse = api.meaning(proverb)
-
+                delay(2000L)
+                // val proverbResponse = api.meaning(proverb)
                 val proverbResponse = map[proverb]!!
-
                 Log.i("REPOSITORY", "$proverbResponse")
 
                 cacheManager.set(proverbResponse, proverb)
                 emit(Resources.Success(proverbResponse))
-
             } catch (ex: IOException) {
                 emit(Resources.Error("Network error: ${ex.localizedMessage}"))
             } catch (ex: Exception) {
                 emit(Resources.Error("Error fetching proverb meaning: ${ex.localizedMessage}"))
             } finally {
+                // Only emit Loading(false) once, at the end
                 emit(Resources.Loading(false))
             }
         }.catch { e ->
@@ -141,7 +137,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             emit(Resources.Loading(false))
         }
     }
-
     override fun la2am(latinAmharicText: String): Flow<Resources<String>> {
         return flow {
             emit(Resources.Loading(true))
