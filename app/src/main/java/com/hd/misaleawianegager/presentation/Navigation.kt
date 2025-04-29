@@ -6,8 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,8 +29,6 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
-import com.hd.misaleawianegager.utils.compose.favList
-import kotlinx.coroutines.delay
 
 const val ANIMATION_DURATION = 500
 
@@ -101,8 +97,9 @@ fun MisaleBodyContent(navHostController: NavHostController,
             composable(MisaleScreen.Search.route) {
 
                 val list = viewModelSearch.searchResult.collectAsStateWithLifecycle()
-                val word = viewModelSearch.wordResult.collectAsStateWithLifecycle()
-                SearchScreen(list = list, word = word, from = "ዋና", onSearchEvent = viewModelSearch::onEvent, toDest = {
+                val word = viewModelSearch.wordResult
+
+                SearchScreen(viewModelSearch ,list = list, wordFlow = word, from = "ዋና", onSearchEvent = viewModelSearch::onEvent, toDest = {
                     navHostController.popBackStack()
                 }, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))

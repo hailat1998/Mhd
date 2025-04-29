@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.search
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,16 +51,23 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun SearchScreen(list: State<List<String>>, from : String,
-                 word: State<SearchUiState>,
-                 onSearchEvent: (s: SearchEvent) -> Unit,
-                 toDest: (from: String) -> Unit,
-                 toDetail: (from: String, text: String, first:String) -> Unit,
+fun SearchScreen(
+    viewModel: SearchViewModel,
+    list: State<List<String>>,
+    from : String,
+    wordFlow: StateFlow<SearchUiState>,
+    onSearchEvent: (s: SearchEvent) -> Unit,
+    toDest: (from: String) -> Unit,
+    toDetail: (from: String, text: String, first:String) -> Unit,
                 ) {
+
+    val word = viewModel.wordResult.collectAsStateWithLifecycle()
     
     val lazyListState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
@@ -73,6 +81,10 @@ fun SearchScreen(list: State<List<String>>, from : String,
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+
+    LaunchedEffect(word.value) {
+        Log.i("SEARCHSCREEN", word.value.toString())
     }
 
     val currentWord = word.value.word
@@ -205,7 +217,9 @@ fun SearchTopBar(query: MutableState<String>,
         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         actions = {
             if (word.value.isLoading) {
-                CircularProgressIndicator()
+                IconButton(onClick = {}) {
+                    CircularProgressIndicator()
+                }
             }else {
                 IconButton(onClick = { onSearchEvent.invoke(SearchEvent.ConvertWord(query.value) )})  {
                     Icon(painterResource(R.drawable.swap_vert_24px), null)

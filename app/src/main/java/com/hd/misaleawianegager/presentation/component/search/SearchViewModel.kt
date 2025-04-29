@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.search
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
@@ -12,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,35 +67,23 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
         super.onCleared()
         misaleSpellChecker.closeSession()
     }
+
+
     private fun convert(word: String) {
         viewModelScope.launch(coroutineDispatcher) {
-
-            val isValid = misaleSpellChecker.checkWord(word)
-
-            val flow = if (isValid) {
-                textRepository.en2am(word)
-            } else {
-                textRepository.la2am(word)
-            }
-
-
-            flow.collect { result ->
-                when (result) {
-                    is Resources.Loading -> {
-                        _wordResult.value = SearchUiState(isLoading = true)
-                    }
-
-                    is Resources.Error -> {
-                        _wordResult.value = SearchUiState(
+            textRepository.en2am(word).collect { result ->
+                _wordResult.update { currentState ->
+                    when (result) {
+                        is Resources.Loading -> currentState.copy(isLoading = result.isLoading)
+                        is Resources.Error -> currentState.copy(
                             isLoading = false,
-                            error = result.message ?: "Unknown error"
+                            error = result.message ?: "Unknown error",
+                            word = result.data ?: currentState.word
                         )
-                    }
-
-                    is Resources.Success -> {
-                        _wordResult.value = SearchUiState(
+                        is Resources.Success -> currentState.copy(
                             isLoading = false,
-                            word = result.data
+                            word = result.data ?: currentState.word,
+                            error = null
                         )
                     }
                 }

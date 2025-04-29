@@ -137,6 +137,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             emit(Resources.Loading(false))
         }
     }
+
     override fun la2am(latinAmharicText: String): Flow<Resources<String>> {
         return flow {
             emit(Resources.Loading(true))
