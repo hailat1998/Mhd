@@ -169,4 +169,9 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+    /* *****************************************************
+      **** Animation
+      ****************************************************** */
+    implementation("androidx.compose.animation:animation:1.7.8")
+
 }
