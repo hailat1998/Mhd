@@ -29,6 +29,7 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.compose.favList
 
 const val ANIMATION_DURATION = 500
 
@@ -160,6 +161,8 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 Selected(
                 viewModelDetail,
                     page = arg2!!,
+                    from = arg1!!,
+                    favList = favList,
                 ) {
                     Log.i("NAVIGATION", it)
                     viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))

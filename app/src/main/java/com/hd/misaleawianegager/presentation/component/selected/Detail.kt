@@ -1,10 +1,19 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -12,14 +21,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
@@ -33,12 +45,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,8 +66,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hd.misaleawianegager.R
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -63,13 +80,20 @@ import kotlinx.coroutines.delay
 fun Selected(
     viewModel: DetailViewModel,
     page: String,
+    favList: MutableList<String>,
+    from: String,
     onNextPage: (String) -> Unit
 ) {
 
     val textAi = viewModel.detailsAITextStateFlow.collectAsStateWithLifecycle()
-    val list = viewModel.detailStateFlow.collectAsStateWithLifecycle()
+    val list = if (from == "search") {
+        remember { mutableStateListOf<String>().apply { add(page) } }
+    } else {
+        viewModel.detailStateFlow.collectAsStateWithLifecycle().value
+    }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val isFavorite = remember{ mutableStateOf(true) }
+    val isFavorite = remember{ mutableStateOf(false) }
+    var pageIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         delay(3000L)
@@ -77,31 +101,58 @@ fun Selected(
         Log.i("DETAIL2", "${textAi.value}")
     }
 
+    LaunchedEffect(isFavorite.value) {
+        if (list.isNotEmpty() && !isFavorite.value) {
+            favList.remove(list[pageIndex])
+        } else if (list.isNotEmpty()) {
+            favList.add(list[pageIndex])
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        Box(contentAlignment = Alignment.Center,
-            modifier = Modifier.scrollable(rememberScrollState(), Orientation.Horizontal),
+
+        Column(Modifier.fillMaxSize()) {
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.scrollable(rememberScrollState(), Orientation.Horizontal)
+                    .weight(1f)
+                    .fillMaxWidth(),
             ) {
 
-            Column {
-                if (list.value.isEmpty()) {
+                if (list.isEmpty()) {
                     CircularProgressIndicator()
                 } else {
 
                     val pager = rememberPagerState(
                         initialPage = 0,
-                        pageCount = { list.value.size }
+                        pageCount = { list.size }
                     )
 
                     LaunchedEffect(Unit) {
-                        pager.scrollToPage(list.value.indexOf(page))
+                        pager.scrollToPage(list.indexOf(page))
                     }
 
                     LaunchedEffect(pager.currentPage) {
-                        onNextPage.invoke(list.value[pager.targetPage])
-                        Log.i("DETAIL3", list.value[pager.targetPage])
+                        onNextPage.invoke(list[pager.targetPage])
+                        Log.i("DETAIL3", list[pager.targetPage])
                     }
 
-                    HorizontalPager(state = pager, Modifier.fillMaxWidth()) { page ->
+                    HorizontalPager(state = pager, Modifier
+                        .fillMaxWidth()
+//                        .pointerInput(Unit) {
+//                            detectVerticalDragGestures { change, dragAmount ->
+//                               // change.consume()
+//                               // dragAmount.
+//                            }
+//                        }
+                        ,
+                    ) { page ->
+
+                        isFavorite.value = favList.contains(list[page])
+
+                        pageIndex = page
+
                         Column {
                             Card(
                                 modifier = Modifier
@@ -115,7 +166,7 @@ fun Selected(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = list.value[page],
+                                        text = list[page],
                                         style = MaterialTheme.typography.bodyLarge,
                                         textAlign = TextAlign.Center
                                     )
@@ -145,7 +196,7 @@ fun Selected(
                                         } else if (uiState.isLoading != true && uiState.error != null) {
                                             Text("ERROR")
                                         } else if (uiState.isLoading != true && uiState.enMeaning != null) {
-                                            MarkdownContent(uiState.amMeaning!!)
+                                            MarkdownContent(uiState.enMeaning!!)
                                         }
                                     }
                                 }
@@ -154,26 +205,49 @@ fun Selected(
                     }
                 }
             }
-        }
-        Box(Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.BottomCenter){
-            FootInteraction(isFavorite)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                FootInteraction(isFavorite)
+            }
         }
     }
 }
 
 
 @Composable
-fun MarkdownContent(markdownText: String) {
-    MarkdownText(
-        markdown = markdownText,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    )
+fun MarkdownContent(
+    markdownText: String,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    onLinkClicked: ((String) -> Unit)? = null
+) {
+    Column() {
+        MarkdownText(
+            markdown = markdownText,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.bodyLarge,
+            onClick = onClick,
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = "ℹ️ AI-generated content—may contain errors. Verify important info.",
+            fontSize = 10.sp,
+            color = Color.Gray,
+            modifier = modifier.padding(top = 4.dp).fillMaxWidth()
+        )
+    }
 }
 
-
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TwoTabLayout(
     selectedTabIndex: Int,
@@ -181,53 +255,102 @@ fun TwoTabLayout(
     firstTabTitle: String = "Tab 1",
     secondTabTitle: String = "Tab 2",
     firstTabContent: @Composable () -> Unit,
-    secondTabContent: @Composable () -> Unit
+    secondTabContent: @Composable () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Tab Row
+    Column(modifier = modifier.fillMaxSize()) {
+        // Enhanced Tab Row with animation
         TabRow(
             selectedTabIndex = selectedTabIndex,
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.primary,
+            indicator = { tabPositions ->
+                SecondaryIndicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+                        .padding(horizontal = 24.dp),
+                    height = 3.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            divider = {
+               Divider()
+            }
         ) {
-
             Tab(
                 selected = selectedTabIndex == 0,
                 onClick = { onTabSelected(0) },
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .animateContentSize(),
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 text = {
                     Text(
                         text = firstTabTitle,
                         style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             )
-
 
             Tab(
                 selected = selectedTabIndex == 1,
                 onClick = { onTabSelected(1) },
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .animateContentSize(),
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 text = {
                     Text(
                         text = secondTabTitle,
                         style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             )
         }
 
-        // Content based on selected tab
-        when (selectedTabIndex) {
-            0 -> firstTabContent()
-            1 -> secondTabContent()
+        // Animated content transition
+        AnimatedContent(
+            targetState = selectedTabIndex,
+            transitionSpec = {
+                // Get the direction of the swipe based on initial and target states
+                val direction = if (targetState > initialState) 1 else -1
+
+                // Create the content transform with the appropriate animations
+                val slideIn = slideInHorizontally(
+                    animationSpec = tween(durationMillis = 300),
+                    initialOffsetX = { fullWidth -> direction * fullWidth }
+                ) + fadeIn(animationSpec = tween(durationMillis = 300))
+
+                val slideOut = slideOutHorizontally(
+                    animationSpec = tween(durationMillis = 300),
+                    targetOffsetX = { fullWidth -> -direction * fullWidth }
+                ) + fadeOut(animationSpec = tween(durationMillis = 300))
+
+                // Combine the animations using togetherWith
+                slideIn togetherWith slideOut
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            label = "TabContentAnimation" // Useful for animation debugging
+        ) { index ->
+            when (index) {
+                0 -> firstTabContent()
+                1 -> secondTabContent()
+            }
         }
     }
 }
-
 @Composable
 fun FootInteraction(isFavorite: MutableState<Boolean>) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
