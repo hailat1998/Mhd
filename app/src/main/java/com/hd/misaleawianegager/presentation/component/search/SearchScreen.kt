@@ -218,7 +218,7 @@ fun SearchTopBar(query: MutableState<String>,
         actions = {
             if (word.value.isLoading) {
                 IconButton(onClick = {}) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(modifier = Modifier.padding(10.dp))
                 }
             }else {
                 IconButton(onClick = { onSearchEvent.invoke(SearchEvent.ConvertWord(query.value) )})  {

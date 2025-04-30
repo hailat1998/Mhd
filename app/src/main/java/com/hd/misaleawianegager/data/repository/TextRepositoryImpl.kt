@@ -114,12 +114,14 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
                 // Don't emit Loading(false) here - will be handled in finally
                 return@flow
             }
-
             try {
+
                 Log.i("REPOSITORY", "api called")
                 delay(2000L)
-                // val proverbResponse = api.meaning(proverb)
-                val proverbResponse = map[proverb]!!
+
+                val proverbResponse = api.meaning(proverb)
+
+               // val proverbResponse = map[proverb]!!
                 Log.i("REPOSITORY", "$proverbResponse")
 
                 cacheManager.set(proverbResponse, proverb)
@@ -138,16 +140,14 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
         }
     }
 
-    override fun la2am(latinAmharicText: String): Flow<Resources<String>> {
+    override fun laOren2am(latinAmharicText: String): Flow<Resources<String>> {
         return flow {
             emit(Resources.Loading(true))
             try {
 
-                delay(2000L)
+                val amharicText = api.enOrLa(latinAmharicText)
 
-               // val amharicText = api.la2am(latinAmharicText)
-
-                val amharicText = laMap[latinAmharicText]!!
+               // val amharicText = laMap[latinAmharicText]!!
 
                 emit(Resources.Success(amharicText))
             } catch (ex: IOException) {

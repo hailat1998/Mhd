@@ -18,11 +18,10 @@ class ProverbApiImpl @Inject constructor(private val client: HttpClient) : Prove
     }
 
     override suspend fun meaning(proverb: String): ProverbResponse {
-
         return client.post("$BASE_URL/meaning") {
             contentType(ContentType.Application.Json)
-            setBody(mapOf("text" to proverb)) // or "proverb" depending on server
-            Log.i("API", "Sending request to: $BASE_URL/meaning with body: ${mapOf("text" to proverb)}")
+            setBody(mapOf("proverb" to proverb)) // or "proverb" depending on server
+            Log.i("API", "Sending request to: $BASE_URL/meaning with body: ${mapOf("proverb" to proverb)}")
         }.body<ProverbResponse>().also {
             Log.i("API", "Received response: $it")
         }
@@ -43,6 +42,16 @@ class ProverbApiImpl @Inject constructor(private val client: HttpClient) : Prove
         return client.post("$BASE_URL/translate/en2am"){
             setBody(mapOf("text" to englishText))
             Log.i("API", "Sending request to: $BASE_URL/meaning with body: ${mapOf("text" to englishText)}")
+        }.body<String>().also {
+            Log.i("API", "Received response: $it")
+        }
+    }
+
+    override suspend fun enOrLa(laOren: String): String {
+        Log.i("API", "Sending request to $BASE_URL")
+        return client.post("$BASE_URL/translate/enOrLa2am"){
+            setBody(mapOf("laOren" to laOren))
+            Log.i("API", "Sending request to: $BASE_URL/meaning with body: ${mapOf("text" to laOren)}")
         }.body<String>().also {
             Log.i("API", "Received response: $it")
         }

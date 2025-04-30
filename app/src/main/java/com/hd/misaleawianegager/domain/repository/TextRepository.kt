@@ -19,7 +19,7 @@ interface TextRepository {
 
     fun getFromNetwork(proverb: String): Flow<Resources<ProverbResponse>>
 
-    fun la2am(latinAmharicText: String): Flow<Resources<String>>
+    fun laOren2am(latinAmharicText: String): Flow<Resources<String>>
 
     fun en2am(englishText: String): Flow<Resources<String>>
 

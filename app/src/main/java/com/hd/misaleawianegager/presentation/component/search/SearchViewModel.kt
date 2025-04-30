@@ -71,7 +71,7 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
 
     private fun convert(word: String) {
         viewModelScope.launch(coroutineDispatcher) {
-            textRepository.en2am(word).collect { result ->
+            textRepository.laOren2am(word).collect { result ->
                 _wordResult.update { currentState ->
                     when (result) {
                         is Resources.Loading -> currentState.copy(isLoading = result.isLoading)
