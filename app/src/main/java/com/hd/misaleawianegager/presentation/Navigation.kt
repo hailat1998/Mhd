@@ -38,7 +38,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                       modifier: Modifier,
                       letterType: String ,
                       onSettingEvent: (SettingEvent) -> Unit,
-                      showModalBottomSheet: MutableState<Boolean>) {
+                      ) {
 
             val viewModelDetailHome: HomeViewModel = hiltViewModel()
 
@@ -143,20 +143,6 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 if (arg1 == "የቅርብ") {
                     viewModelDetail.onEvent(DetailEvent.LoadRecent)
                 }
-
-//                val list = viewModelDetail.detailStateFlow.collectAsStateWithLifecycle()
-//
-//                val textAi = viewModelDetail.detailsAITextStateFlow
-
-//                Log.i("NAVIGATION", "${textAi.value.amMeaning}")
-//                Log.i("NAVIGATION", "${textAi.value.isLoading}")
-//
-//                LaunchedEffect(Unit) {
-//                    delay(3000L)
-//                    Log.i("NAVIGATION2", "${textAi.value.amMeaning}")
-//                    Log.i("NAVIGATION2", "${textAi.value.isLoading}")
-//                }
-
 
                 Selected(
                 viewModelDetail,

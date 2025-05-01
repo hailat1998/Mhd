@@ -63,6 +63,7 @@ fun SettingScreen(
     onEvent: (SettingEvent) -> Unit,
     theme: State<String?>,
     font: State<String?> ,
+    showOthers: State<Boolean>
    ) {
 
     val localFont = FontFamily.Default
@@ -102,10 +103,12 @@ fun SettingScreen(
                         item { ThemeContent(theme = theme, onEvent) }
                         item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
                         item { FontContent(font = font, onEvent) }
-                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                        item { FontSizeContent(onEvent) }
-                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                        item { LetterSpaceContent(onEvent) }
+                        if (showOthers.value) {
+                            item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                            item { FontSizeContent(onEvent) }
+                            item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                            item { LetterSpaceContent(onEvent) }
+                        }
                     }
                 }
             }

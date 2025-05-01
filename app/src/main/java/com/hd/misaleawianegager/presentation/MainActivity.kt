@@ -125,7 +125,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun MisaleApp(
     navHostController: NavHostController,
@@ -136,15 +135,26 @@ fun MisaleApp(
              ) {
 
     val viewModel = hiltViewModel<MainViewModel>()
-
+    val showOthers = remember { mutableStateOf(true) }
    val showModalBottomSheet = remember{ mutableStateOf(false) }
+
+    val currentBackStackEntry by navHostController.currentBackStackEntryAsState()
+
+    LaunchedEffect(currentBackStackEntry?.destination) {
+        val route = currentBackStackEntry?.destination?.route
+        Log.d("Navigation", "LaunchedEffect triggered with route: $route")
+        showOthers.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ"
+        Log.d("Navigation", "showOthers set to: ${showOthers.value}")
+    }
+
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, showModalBottomSheet)
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent)
         if(showModalBottomSheet.value){
             SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,
                 theme = theme,
                 font = font,
+                showOthers = showOthers
                 )
              }
            }

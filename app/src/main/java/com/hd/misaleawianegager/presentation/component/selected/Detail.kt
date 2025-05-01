@@ -141,7 +141,6 @@ fun Selected(
                 ) { page ->
                     pageIndex.intValue = page
 
-                    // Use a scrollable column for the page content
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
