@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -83,9 +84,6 @@ fun SearchScreen(
         focusRequester.requestFocus()
     }
 
-    LaunchedEffect(word.value) {
-        Log.i("SEARCHSCREEN", word.value.toString())
-    }
 
     val currentWord = word.value.word
 
@@ -133,6 +131,7 @@ fun SearchTopBar(query: MutableState<String>,
                  onSearchEvent: (s: SearchEvent) -> Unit,
                  word: State<SearchUiState>
                  ){
+
     TopAppBar(
         title = {
             Box(
@@ -192,6 +191,7 @@ fun SearchTopBar(query: MutableState<String>,
                         if (query.value.isEmpty()) {
                             Text(
                                 "Search...",
+                                fontSize = 13.sp,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -228,7 +228,8 @@ fun SearchTopBar(query: MutableState<String>,
             IconButton(onClick = { onSearchEvent.invoke(SearchEvent.LoadSingle ) } )  {
                 Icon(painterResource(R.drawable.baseline_shuffle_24), null)
             }
-        }
+        },
+        modifier = Modifier.height(49.dp)
     )
 }
 

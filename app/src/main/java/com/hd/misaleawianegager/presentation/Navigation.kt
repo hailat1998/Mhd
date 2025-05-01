@@ -162,7 +162,6 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 viewModelDetail,
                     page = arg2!!,
                     from = arg1!!,
-                    favList = favList,
                 ) {
                     Log.i("NAVIGATION", it)
                     viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))

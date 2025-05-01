@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -14,7 +15,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +31,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
@@ -63,37 +63,45 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hd.misaleawianegager.R
+import com.hd.misaleawianegager.utils.compose.AnimatedPreloader
+import com.hd.misaleawianegager.utils.compose.ShimmerEffect
+import com.hd.misaleawianegager.utils.compose.favList
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalFoundationApi::class) // Opt-in for Pager APIs
+
 @Composable
 fun Selected(
     viewModel: DetailViewModel,
     page: String,
-    favList: MutableList<String>,
     from: String,
     onNextPage: (String) -> Unit
 ) {
-
     val textAi = viewModel.detailsAITextStateFlow.collectAsStateWithLifecycle()
+
     val list = if (from == "search") {
         remember { mutableStateListOf<String>().apply { add(page) } }
     } else {
         viewModel.detailStateFlow.collectAsStateWithLifecycle().value
     }
+
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val isFavorite = remember{ mutableStateOf(false) }
-    var pageIndex by remember { mutableIntStateOf(0) }
+    val pageIndex = remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         delay(3000L)
@@ -101,130 +109,124 @@ fun Selected(
         Log.i("DETAIL2", "${textAi.value}")
     }
 
-    LaunchedEffect(isFavorite.value) {
-        if (list.isNotEmpty() && !isFavorite.value) {
-            favList.remove(list[pageIndex])
-        } else if (list.isNotEmpty()) {
-            favList.add(list[pageIndex])
-        }
-    }
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Main content area with pager - takes all available space except what's needed for footer
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .weight(1f, fill = true) // Use weight with fill=true to take all available space
+                .fillMaxWidth()
+        ) {
+            if (list.isEmpty()) {
+                CircularProgressIndicator()
+            } else {
+                val pager = rememberPagerState(
+                    initialPage = 0,
+                    pageCount = { list.size }
+                )
 
-    Box(modifier = Modifier.fillMaxSize()) {
+                LaunchedEffect(Unit) {
+                    pager.scrollToPage(list.indexOf(page))
+                }
 
-        Column(Modifier.fillMaxSize()) {
+                LaunchedEffect(pager.currentPage) {
+                    onNextPage.invoke(list[pager.targetPage])
+                }
 
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.scrollable(rememberScrollState(), Orientation.Horizontal)
-                    .weight(1f)
-                    .fillMaxWidth(),
-            ) {
+                HorizontalPager(
+                    state = pager,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { page ->
+                    pageIndex.intValue = page
 
-                if (list.isEmpty()) {
-                    CircularProgressIndicator()
-                } else {
-
-                    val pager = rememberPagerState(
-                        initialPage = 0,
-                        pageCount = { list.size }
-                    )
-
-                    LaunchedEffect(Unit) {
-                        pager.scrollToPage(list.indexOf(page))
-                    }
-
-                    LaunchedEffect(pager.currentPage) {
-                        onNextPage.invoke(list[pager.targetPage])
-                        Log.i("DETAIL3", list[pager.targetPage])
-                    }
-
-                    HorizontalPager(state = pager, Modifier
-                        .fillMaxWidth()
-//                        .pointerInput(Unit) {
-//                            detectVerticalDragGestures { change, dragAmount ->
-//                               // change.consume()
-//                               // dragAmount.
-//                            }
-//                        }
-                        ,
-                    ) { page ->
-
-                        isFavorite.value = favList.contains(list[page])
-
-                        pageIndex = page
-
-                        Column {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    // Use a scrollable column for the page content
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(bottom = 8.dp, top = 25.dp)
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(10.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .padding(10.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = list[page],
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        textAlign = TextAlign.Center
-                                    )
+                                Text(
+                                    text = list[page],
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+
+                        TwoTabLayout(
+                            selectedTabIndex = selectedTabIndex,
+                            onTabSelected = { selectedTabIndex = it },
+                            firstTabTitle = "አማርኛ",
+                            secondTabTitle = "English",
+                            firstTabContent = {
+                                textAi.value.let { uiState ->
+                                    if (uiState.isLoading == true) {
+                                        ShimmerEffect(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(200.dp)
+                                        )
+                                    } else if (uiState.isLoading != true && uiState.error != null) {
+                                        AnimatedPreloader(Modifier.fillMaxWidth().height(200.dp), R.raw.animation_error)
+                                    } else if (uiState.isLoading != true && uiState.amMeaning != null) {
+                                        MarkdownContent(uiState.amMeaning!!)
+                                    }
+                                }
+                            },
+                            secondTabContent = {
+                                textAi.value.let { uiState ->
+                                    if (uiState.isLoading == true) {
+                                        ShimmerEffect(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(200.dp)
+                                        )
+                                    } else if (uiState.isLoading != true && uiState.error != null) {
+                                        AnimatedPreloader(Modifier.fillMaxWidth().height(200.dp), R.raw.animation_error)
+                                    } else if (uiState.isLoading != true && uiState.enMeaning != null) {
+                                        MarkdownContent(uiState.enMeaning!!)
+                                    }
                                 }
                             }
-
-                            TwoTabLayout(
-                                selectedTabIndex = selectedTabIndex,
-                                onTabSelected = { selectedTabIndex = it },
-                                firstTabTitle = "አማርኛ",
-                                secondTabTitle = "English",
-                                firstTabContent = {
-                                    textAi.value.let { uiState ->
-                                        if (uiState.isLoading == true) {
-                                            Text("Loading")
-                                        } else if (uiState.isLoading != true && uiState.error != null) {
-                                            Text("ERROR")
-                                        } else if (uiState.isLoading != true && uiState.amMeaning != null) {
-                                            MarkdownContent(uiState.amMeaning!!)
-                                        }
-                                    }
-                                },
-                                secondTabContent = {
-                                    textAi.value.let { uiState ->
-                                        if (uiState.isLoading == true) {
-                                            Text("Loading")
-                                        } else if (uiState.isLoading != true && uiState.error != null) {
-                                            Text("ERROR")
-                                        } else if (uiState.isLoading != true && uiState.enMeaning != null) {
-                                            MarkdownContent(uiState.enMeaning!!)
-                                        }
-                                    }
-                                }
-                            )
-                        }
+                        )
                     }
                 }
             }
+        }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                FootInteraction(isFavorite)
-            }
+        // Footer - not part of the weight calculation, takes only the space it needs
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp, top = 8.dp), // Added top padding for better spacing
+            contentAlignment = Alignment.Center
+        ) {
+            FootInteraction(
+                list = list,
+                index = pageIndex
+            )
         }
     }
 }
-
 
 @Composable
 fun MarkdownContent(
     markdownText: String,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    onLinkClicked: ((String) -> Unit)? = null
 ) {
     Column() {
         MarkdownText(
@@ -247,7 +249,7 @@ fun MarkdownContent(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+
 @Composable
 fun TwoTabLayout(
     selectedTabIndex: Int,
@@ -259,7 +261,7 @@ fun TwoTabLayout(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        // Enhanced Tab Row with animation
+
         TabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier
@@ -274,9 +276,6 @@ fun TwoTabLayout(
                     height = 3.dp,
                     color = MaterialTheme.colorScheme.primary
                 )
-            },
-            divider = {
-               Divider()
             }
         ) {
             Tab(
@@ -316,14 +315,14 @@ fun TwoTabLayout(
             )
         }
 
-        // Animated content transition
+
         AnimatedContent(
             targetState = selectedTabIndex,
             transitionSpec = {
-                // Get the direction of the swipe based on initial and target states
+
                 val direction = if (targetState > initialState) 1 else -1
 
-                // Create the content transform with the appropriate animations
+
                 val slideIn = slideInHorizontally(
                     animationSpec = tween(durationMillis = 300),
                     initialOffsetX = { fullWidth -> direction * fullWidth }
@@ -334,13 +333,13 @@ fun TwoTabLayout(
                     targetOffsetX = { fullWidth -> -direction * fullWidth }
                 ) + fadeOut(animationSpec = tween(durationMillis = 300))
 
-                // Combine the animations using togetherWith
+
                 slideIn togetherWith slideOut
             },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
-            label = "TabContentAnimation" // Useful for animation debugging
+            label = "TabContentAnimation"
         ) { index ->
             when (index) {
                 0 -> firstTabContent()
@@ -349,54 +348,107 @@ fun TwoTabLayout(
         }
     }
 }
+
 @Composable
-fun FootInteraction(isFavorite: MutableState<Boolean>) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 8.dp,
-            focusedElevation = 6.dp
-        ),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f)
-        )
-    ) {
-        Row(
+fun FootInteraction(
+    list: List<String>,
+    index: MutableState<Int>
+) {
+
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+
+    if (list.isEmpty()) {
+        Box(
+            Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+
+    } else {
+
+        var isFavorite by remember(index.value) { mutableStateOf(favList.contains(list[index.value])) }
+
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp,
+                pressedElevation = 8.dp,
+                focusedElevation = 6.dp
+            ),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f)
+            )
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
 
-            InteractionButton(
-                icon = if (isFavorite.value) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = "Favorite",
-                tintColor = if (isFavorite.value) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                onClick = { isFavorite.value = !isFavorite.value },
-                label = "Like",
-                isSelected = isFavorite.value
-            )
+                if (isFavorite) {
 
-            InteractionButton(
-                icon = null,
-                painter = painterResource(R.drawable.baseline_content_copy_24),
-                contentDescription = "Copy",
-                onClick = { /* Copy functionality */ },
-                label = "Copy"
-            )
+                    InteractionButton(
+                        icon = Icons.Filled.Favorite,
+                        contentDescription = "Favorite",
+                        tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                        onClick = {
+                                isFavorite = false
+                                favList.remove(list[index.value])
+                                Log.i("FOOTINT", "FOOTINT Bool")
+                                  },
+                        label = "Like",
+                        isSelected = isFavorite
+                    )
+                } else {
+                    InteractionButton(
+                        icon = Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                        onClick = {
+                                isFavorite = true
+                                favList.add(list[index.value])
+                                Log.i("FOOTINT", "FOOTINT Bool")
+                        },
+                        label = "Like",
+                        isSelected = isFavorite
+                    )
+                }
+                InteractionButton(
+                    icon = null,
+                    painter = painterResource(R.drawable.baseline_content_copy_24),
+                    contentDescription = "Copy",
+                    onClick = {
+                        val annotatedString = buildAnnotatedString {
+                            withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
+                                append(list[index.value])
+                            }
+                        }
+                        clipboardManager.setText(annotatedString)
+                    },
+                    label = "Copy"
+                )
 
-
-            InteractionButton(
-                icon = Icons.Default.Share,
-                contentDescription = "Share",
-                onClick = { /* Share functionality */ },
-                label = "Share"
-            )
+                InteractionButton(
+                    icon = Icons.Default.Share,
+                    contentDescription = "Share",
+                    onClick = {
+                        val shareText = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"  // Fixed content type
+                            putExtra(Intent.EXTRA_TEXT, list[index.value])
+                        }
+                        val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
+                        context.startActivity(chooserIntent)
+                    },
+                    label = "Share"
+                )
+            }
         }
     }
 }
@@ -528,32 +580,3 @@ fun TwoTabLayoutPreview() {
 //}
 
 
-fun getMarkText(): String {
-    return "# \uD83D\uDCDA Virtual Book Store\n" +
-            "\n" +
-            "A modern digital library system built with Spring Boot that offers comprehensive book management features.\n" +
-            "\n" +
-            "## \uD83C\uDF1F Features\n" +
-            "\n" +
-            "- \uD83D\uDCD6 Search and view books\n" +
-            "- \uD83D\uDED2 Purchase books online\n" +
-            "- \uD83D\uDCF1 Borrow digital copies\n" +
-            "- \uD83D\uDD10 Secure authentication system\n" +
-            "- \uD83D\uDCBE Persistent data storage\n" +
-            "- ⚡ Redis caching for improved performance\n" +
-            "- \uD83D\uDD11 Role-based access control\n" +
-            "\n" +
-            "## \uD83C\uDFD7\uFE0F Architecture\n" +
-            "\n" +
-            "The project follows a modular architecture with the following components:\n" +
-            "\n" +
-            "- **App Module**: Contains the main class and also data initialization before loading the application context\n" +
-            "- **Api Module**: Defines the endpoints\n" +
-            "- **Commons Module**: Contains DTOs and exception class\n" +
-            "- **REST Client Module**: Independent module for API testing and logging\n" +
-            "- **Core Module**: Contains the main services throughout the app and application level configurations\n" +
-            " - **Security Module**: Configurations for security\n" +
-            " - **Domain Module**: Defines the Business logic of the app\n" +
-            " - **Data Module**: Persistence  layer for recording entities\n" +
-            " - **Web Module**: UI repository (Coming Soon)"
-}
