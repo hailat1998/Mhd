@@ -21,7 +21,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(private val textRepository: TextRepository ,
                             @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
                             @ApplicationContext private val context: Context,
-                            private val misaleSpellChecker: MisaleSpellChecker) : ViewModel() {
+                            ) : ViewModel() {
 
    private var _searchResult = MutableStateFlow(emptyList<String>())
     val searchResult get() = _searchResult.asStateFlow()
@@ -49,7 +49,7 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
             textRepository.readSingle().collect{
                 list.add(it.data!!)
             }
-            _searchResult.value = list
+            _searchResult.update { list }
         }
     }
 
@@ -62,12 +62,6 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
             _searchResult.value = list
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        misaleSpellChecker.closeSession()
-    }
-
 
     private fun convert(word: String) {
         viewModelScope.launch(coroutineDispatcher) {

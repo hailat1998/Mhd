@@ -6,6 +6,7 @@ import com.hd.misaleawianegager.utils.compose.favList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 
@@ -34,6 +35,6 @@ class FavViewModel @Inject constructor( private val savedStateHandle: SavedState
 
 
              fun readFavList(){
-               _favStateFlow.value = favList
+               _favStateFlow.update{ favList }
               }
            }

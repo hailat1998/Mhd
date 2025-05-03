@@ -8,6 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SettingRepositoryImpl @Inject constructor(private val dataStoreManager: DataStoreManager) : SettingRepository{
+
     override val theme: Flow<String?> = dataStoreManager.theme
     override val font: Flow<String?> = dataStoreManager.font
     override val letterType: Flow<String?> = dataStoreManager.letterType

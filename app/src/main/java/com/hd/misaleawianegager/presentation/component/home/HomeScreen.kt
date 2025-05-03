@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +35,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,11 +53,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -67,6 +72,7 @@ import com.hd.misaleawianegager.presentation.DataProvider
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,14 +123,12 @@ fun HomeContent(homeData: State<List<String>>,
                     )
                 },
                 actions = {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "INFO",
-                        modifier = Modifier
-                            .size(35.dp)
-                            .offset(x = (-25).dp)
-                            .clickable { openDialog.value = true }
-                    )
+                    IconButton(onClick = { openDialog.value = true }, Modifier.padding(end = 13.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "INFO"
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -137,7 +141,8 @@ fun HomeContent(homeData: State<List<String>>,
             AnimatedVisibility(visible = showFloatButton,
                 enter = slideInVertically { it },
                 exit = slideOutVertically { it }) {
-            FloatingActionButton(onClick = { showBottomSheet.value = true }, modifier = Modifier.testTag("FLOAT")) {
+            FloatingActionButton(onClick = { showBottomSheet.value = true }, modifier = Modifier.testTag("FLOAT")
+            ) {
                 Text(floatLetter, style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary))
             }
           }
@@ -160,7 +165,7 @@ fun HomeContent(homeData: State<List<String>>,
 
                val list = homeData.value.distinct()
 
-                LazyColumn(state = lazyListState) {
+                LazyColumn(state = lazyListState,modifier = Modifier.padding(8.dp)) {
                     items(list, { item -> item }) { it ->
                         TextCard(item = it, from = "ዋና", first = arg3, toDetail = toDetail)
                     }

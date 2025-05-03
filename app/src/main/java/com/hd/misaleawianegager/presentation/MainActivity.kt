@@ -164,7 +164,6 @@ fun MisaleApp(
         onPause = { viewModel.writeFavList(favList) },
     )
 
-
     val worker = viewModel.working.collectAsState(initial = "RUNNING")
 
     LifeCycleObserver(
@@ -173,9 +172,7 @@ fun MisaleApp(
         onPause = { Log.i("HOMEVIEWMODEL", worker.value) },
         onStop = { Log.i("HOMEVIEWMODEL", worker.value) }
     )
-
 }
-
 
 @Composable
 fun MisaleBottomAppBar(

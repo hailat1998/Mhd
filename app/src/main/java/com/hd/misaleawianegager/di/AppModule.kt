@@ -104,31 +104,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(): HttpClient {
-        return HttpClient(Android) {
-            install(ContentNegotiation) {
-                json(Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                })
-            }
-
-            install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.HEADERS
-            }
-
-            defaultRequest {
-                contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
-            }
-        }
-    }
-
-
-    @Provides
-    @Singleton
     fun provideCacheManager(): CacheManager = CacheManagerImp(hashMapOf())
 
 }
@@ -180,18 +155,6 @@ abstract class DataStoreManagerModule {
     abstract fun bindDataStoreManager(
         impl: DataStoreManagerImpl
     ): DataStoreManager
-
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class ProverbModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindProverbApi(
-        impl: ProverbApiImpl
-    ): ProverbApi
 
 }
 

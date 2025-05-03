@@ -71,7 +71,7 @@ fun Recent(recentData: State<List<String>>,
                 CircularProgressIndicator()
             }else{
                 val list = recentData.value.distinct().reversed()
-                LazyColumn(state = lazyListState) {
+                LazyColumn(state = lazyListState, modifier = Modifier.padding(8.dp)) {
                     items(list, {item -> item}){
                        TextCard(item = it, from = "የቅርብ", first = " " , toDetail = toDetail)
                     }

@@ -92,6 +92,7 @@ fun Selected(
     from: String,
     onNextPage: (String) -> Unit
 ) {
+
     val textAi = viewModel.detailsAITextStateFlow.collectAsStateWithLifecycle()
 
     val list = if (from == "search") {
@@ -101,7 +102,7 @@ fun Selected(
     }
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val pageIndex = remember { mutableIntStateOf(0) }
+    val str = remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         delay(3000L)
@@ -112,11 +113,11 @@ fun Selected(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Main content area with pager - takes all available space except what's needed for footer
+
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .weight(1f, fill = true) // Use weight with fill=true to take all available space
+                .weight(1f, fill = true)
                 .fillMaxWidth()
         ) {
             if (list.isEmpty()) {
@@ -139,7 +140,8 @@ fun Selected(
                     state = pager,
                     modifier = Modifier.fillMaxWidth(),
                 ) { page ->
-                    pageIndex.intValue = page
+
+                    str.value = list[page]
 
                     Column(
                         modifier = Modifier
@@ -151,7 +153,8 @@ fun Selected(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(10.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
                         ) {
                             Box(
                                 modifier = Modifier.padding(10.dp),
@@ -175,11 +178,11 @@ fun Selected(
                                     if (uiState.isLoading == true) {
                                         ShimmerEffect(
                                             modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(200.dp)
+                                                .fillMaxSize()
+                                                .height(420.dp)
                                         )
                                     } else if (uiState.isLoading != true && uiState.error != null) {
-                                        AnimatedPreloader(Modifier.fillMaxWidth().height(200.dp), R.raw.animation_error)
+                                        AnimatedPreloader(Modifier.fillMaxSize().height(420.dp), R.raw.animation_error)
                                     } else if (uiState.isLoading != true && uiState.amMeaning != null) {
                                         MarkdownContent(uiState.amMeaning!!)
                                     }
@@ -191,10 +194,10 @@ fun Selected(
                                         ShimmerEffect(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .height(200.dp)
+                                                .height(420.dp)
                                         )
                                     } else if (uiState.isLoading != true && uiState.error != null) {
-                                        AnimatedPreloader(Modifier.fillMaxWidth().height(200.dp), R.raw.animation_error)
+                                        AnimatedPreloader(Modifier.fillMaxWidth().height(420.dp), R.raw.animation_error)
                                     } else if (uiState.isLoading != true && uiState.enMeaning != null) {
                                         MarkdownContent(uiState.enMeaning!!)
                                     }
@@ -206,16 +209,15 @@ fun Selected(
             }
         }
 
-        // Footer - not part of the weight calculation, takes only the space it needs
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp, top = 8.dp), // Added top padding for better spacing
+                .padding(bottom = 16.dp, top = 8.dp),
             contentAlignment = Alignment.Center
         ) {
             FootInteraction(
-                list = list,
-                index = pageIndex
+                str
             )
         }
     }
@@ -321,7 +323,6 @@ fun TwoTabLayout(
 
                 val direction = if (targetState > initialState) 1 else -1
 
-
                 val slideIn = slideInHorizontally(
                     animationSpec = tween(durationMillis = 300),
                     initialOffsetX = { fullWidth -> direction * fullWidth }
@@ -350,24 +351,32 @@ fun TwoTabLayout(
 
 @Composable
 fun FootInteraction(
-    list: List<String>,
-    index: MutableState<Int>
+   cur: MutableState<String>
 ) {
 
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
-    if (list.isEmpty()) {
+    if (cur.value == "") {
         Box(
             Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
-
     } else {
 
-        var isFavorite by remember(index.value) { mutableStateOf(favList.contains(list[index.value])) }
+        val isFavorite = remember {
+            mutableStateOf(favList.contains(cur.value))
+        }
+
+        LaunchedEffect(Unit) {
+            isFavorite.value = favList.contains(cur.value)
+        }
+
+        LaunchedEffect(cur.value) {
+            isFavorite.value = favList.contains(cur.value)
+        }
 
         Card(
             modifier = Modifier
@@ -380,7 +389,7 @@ fun FootInteraction(
             ),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f)
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
             )
         ) {
             Row(
@@ -391,34 +400,23 @@ fun FootInteraction(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
 
-                if (isFavorite) {
-
-                    InteractionButton(
-                        icon = Icons.Filled.Favorite,
-                        contentDescription = "Favorite",
-                        tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                        onClick = {
-                                isFavorite = false
-                                favList.remove(list[index.value])
-                                Log.i("FOOTINT", "FOOTINT Bool")
-                                  },
-                        label = "Like",
-                        isSelected = isFavorite
-                    )
-                } else {
-                    InteractionButton(
-                        icon = Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                        onClick = {
-                                isFavorite = true
-                                favList.add(list[index.value])
-                                Log.i("FOOTINT", "FOOTINT Bool")
-                        },
-                        label = "Like",
-                        isSelected = isFavorite
-                    )
-                }
+                InteractionButton(
+                    icon = if (isFavorite.value) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = "Favorite",
+                    tintColor = if (isFavorite.value) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    onClick = {
+                        if (isFavorite.value) {
+                            favList.remove(cur.value)
+                        } else {
+                            favList.add(cur.value)
+                        }
+                        // Update state after modifying the list
+                        isFavorite.value = !isFavorite.value
+                        Log.i("FOOTINT", "FOOTINT Bool: $isFavorite")
+                    },
+                    label = "Like",
+                    isSelected = isFavorite.value
+                )
                 InteractionButton(
                     icon = null,
                     painter = painterResource(R.drawable.baseline_content_copy_24),
@@ -426,7 +424,7 @@ fun FootInteraction(
                     onClick = {
                         val annotatedString = buildAnnotatedString {
                             withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
-                                append(list[index.value])
+                                append(cur.value)
                             }
                         }
                         clipboardManager.setText(annotatedString)
@@ -440,7 +438,7 @@ fun FootInteraction(
                     onClick = {
                         val shareText = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"  // Fixed content type
-                            putExtra(Intent.EXTRA_TEXT, list[index.value])
+                            putExtra(Intent.EXTRA_TEXT, cur.value)
                         }
                         val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
                         context.startActivity(chooserIntent)

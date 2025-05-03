@@ -74,7 +74,7 @@ fun FavScreen(favList: State<List<String>> ,
                 CircularProgressIndicator()
             } else {
                 val list = favList.value.distinct()
-                LazyColumn(state = lazyListState) {
+                LazyColumn(state = lazyListState, modifier = Modifier.padding(8.dp)) {
                     items(list, { item -> item }) { text ->
                         if(text.isNotEmpty()){
                             TextCard(item = text, from = "ምርጥ", first = " ", toDetail = toDetail)

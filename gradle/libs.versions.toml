@@ -1,10 +1,18 @@
 [versions]
+androidxJunit = "1.1.5"
 composeMarkdown = "0.3.6"
+espressoCoreVersion = "3.5.1"
+hiltAndroidTesting = "2.48"
+hiltAndroidCompiler = "2.48"
+hiltAndroidTestingVersion = "2.44"
+kotlinxCoroutinesTest = "1.10.1"
 kotlinxSerializationJson = "1.8.0"
 ktorClientAndroid = "3.1.2"
 ktorClientContentNegotiationJvm = "3.1.2"
 ktorClientCore = "3.1.2"
 ktorClientLogging = "3.1.2"
+ktorClientMock = "2.2.3"
+ktorClientMockJvm = "3.1.2"
 ktorSerializationKotlinxJsonJvm = "3.1.2"
 library = "8.0.2"
 agp = "8.2.2"
@@ -26,6 +34,7 @@ material = "1.12.0"
 constraintlayout = "2.1.4"
 androidx-appcompat = "1.7.0"
 materialVersion = "1.6.8"
+mockkAndroid = "1.14.2"
 multidex = "2.0.1"
 
 #Accompanist
@@ -60,6 +69,7 @@ glide = "4.15.1"
 
 #Lifecycle
 lifecycle-version = "2.8.2"
+robolectric = "4.14"
 runtime-livedata = "1.6.8"
 lifecycle-extensions = "2.2.0"
 
@@ -107,19 +117,26 @@ jsoup = "1.15.4"
 
 #Download File
 startupRuntime = "1.1.1"
+truth = "1.4.4"
 ui = "1.7.8"
 work-runtime-ktx = "2.9.0"
 
 #KSP
 ksp = "1.9.20-1.0.14"
 navigationTesting = "2.7.7"
+core = "1.48.0"
 
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
+androidx-junit-v115 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
 compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "composeMarkdown" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
+hilt-android-testing-v244 = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTestingVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -139,16 +156,22 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 generativeai = {group = "com.google.ai.client.generativeai", name = "generativeai", version.ref ="generativeai"}
 
 
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 ktor-client-content-negotiation-jvm = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktorClientContentNegotiationJvm" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorClientLogging" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktorClientMock" }
+ktor-client-mock-jvm = { module = "io.ktor:ktor-client-mock-jvm", version.ref = "ktorClientMockJvm" }
 ktor-serialization-kotlinx-json-jvm = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktorSerializationKotlinxJsonJvm" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 multidex = { group = "androidx.multidex", name = "multidex" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 
@@ -251,6 +274,7 @@ work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version
 # PDFium
 pdfium-android = { group = "com.github.barteksc", name = "pdfium-android", version.ref = "pdfium-android" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigationTesting" }
+core = { group = "com.google.ar", name = "core", version.ref = "core" }
 #android-pdf-viewer = { group = "com.github.barteksc", name = "android-pdf-viewer", version.ref = "android-pdf-viewer" }
 
 [plugins]

@@ -100,7 +100,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 val list = viewModelSearch.searchResult.collectAsStateWithLifecycle()
                 val word = viewModelSearch.wordResult
 
-                SearchScreen(viewModelSearch ,list = list, wordFlow = word, from = "ዋና", onSearchEvent = viewModelSearch::onEvent, toDest = {
+                SearchScreen(list = list, wordFlow = word, from = "ዋና", onSearchEvent = viewModelSearch::onEvent, toDest = {
                     navHostController.popBackStack()
                 }, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))

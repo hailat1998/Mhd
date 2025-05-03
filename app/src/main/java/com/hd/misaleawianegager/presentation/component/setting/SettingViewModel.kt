@@ -25,8 +25,6 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         }
     }
 
-
-
     val letterSpace = settingRepository.letterSpace
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0.5 )
 
@@ -69,7 +67,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
 
     private fun setFontSize(size: Int) {
 
-        if (fontSize.value + size in 5..50) {
+        if (fontSize.value + size in 5..30) {
             viewModelScope.launch {
                 settingRepository.setFontSize(fontSize.value + size)
                 settingRepository.setLineHeight(letterHeight.value + 3)

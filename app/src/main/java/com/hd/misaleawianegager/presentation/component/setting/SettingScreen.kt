@@ -32,8 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
@@ -102,7 +100,7 @@ fun SettingScreen(
                     ) {
                         item { ThemeContent(theme = theme, onEvent) }
                         item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                        item { FontContent(font = font, onEvent) }
+                        item { FontContent(font = font, onEvent, showOthers) }
                         if (showOthers.value) {
                             item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
                             item { FontSizeContent(onEvent) }
@@ -185,14 +183,14 @@ fun SettingScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FontContent( font: State<String?> , onEvent: (SettingEvent) -> Unit){
+fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOthers: State<Boolean>){
     val fontList = listOf(
         "abyssinica_gentium", "andikaafr_r", "charterbr_roman", "desta_gentium", "gfzemen_regular",
         "jiret", "nyala", "washrasb", "wookianos", "yebse", "serif", "Default"
     )
     Box(Modifier.padding(8.dp)) {
         var expanded by remember { mutableStateOf(false) }
-        Column {
+        Column(Modifier.padding(bottom= if(showOthers.value)0.dp else 48.dp)) {
             Text(text = "FontFamily",
                 style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 12.dp))

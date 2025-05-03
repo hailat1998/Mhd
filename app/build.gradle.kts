@@ -56,6 +56,16 @@ android {
     lint {
         baseline = file("lint-baseline.xml")
     }
+    defaultConfig {
+        // ...
+        testInstrumentationRunner = "com.hd.misaleawianegager.HiltTestRunner"
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -69,6 +79,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.testing)
+    implementation(libs.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -174,4 +185,22 @@ dependencies {
       ****************************************************** */
     implementation("androidx.compose.animation:animation:1.7.8")
 
+
+    /* *****************************************************
+     **** Test
+     ****************************************************** */
+
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.truth)
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.android.compiler)
+    implementation(libs.ktor.client.mock.jvm)
+    androidTestImplementation(libs.androidx.junit.v115)
+    androidTestImplementation(libs.androidx.espresso.core.v351)
+    androidTestImplementation(libs.hilt.android.testing.v244)
+    kaptAndroidTest(libs.hilt.android.compiler)
+    androidTestImplementation(libs.ktor.client.mock)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    implementation("org.mockito:mockito-android:5.14.2")
 }

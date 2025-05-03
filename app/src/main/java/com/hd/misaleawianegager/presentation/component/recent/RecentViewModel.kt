@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,7 +42,7 @@ class RecentViewModel @Inject constructor(private val textRepository: TextReposi
                 println(it)
                 list.add(it.data!!.trim())
             }
-            _recentStateFlow.value = list
+            _recentStateFlow.update { list }
         }
     }
 
