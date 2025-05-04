@@ -3,7 +3,6 @@ package com.hd.misaleawianegager.presentation.component.selected
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -15,8 +14,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,12 +47,12 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,6 +91,12 @@ fun Selected(
 ) {
 
     val textAi = viewModel.detailsAITextStateFlow.collectAsStateWithLifecycle()
+    var isFavorite by remember { mutableStateOf(false) }
+
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var str by remember { mutableStateOf("") }
 
     val list = if (from == "search") {
         remember { mutableStateListOf<String>().apply { add(page) } }
@@ -101,13 +104,8 @@ fun Selected(
         viewModel.detailStateFlow.collectAsStateWithLifecycle().value
     }
 
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val str = remember { mutableStateOf("") }
-
     LaunchedEffect(Unit) {
         delay(3000L)
-        Log.i("DETAIL2", "${textAi.value}")
-        Log.i("DETAIL2", "${textAi.value}")
     }
 
     Column(
@@ -141,7 +139,9 @@ fun Selected(
                     modifier = Modifier.fillMaxWidth(),
                 ) { page ->
 
-                    str.value = list[page]
+                    str = list[page]
+
+                    isFavorite = favList.contains(str)
 
                     Column(
                         modifier = Modifier
@@ -209,7 +209,6 @@ fun Selected(
             }
         }
 
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -217,7 +216,32 @@ fun Selected(
             contentAlignment = Alignment.Center
         ) {
             FootInteraction(
-                str
+                isFavorite,
+                onFavChanged = {
+                    if (isFavorite) {
+                        favList.remove(str)
+                    } else {
+                        favList.add(str)
+                    }
+                    isFavorite = !isFavorite
+                    Log.i("FOOTINT", "FOOTINT Bool: $isFavorite")
+                },
+                onCopy = {
+                    val annotatedString = buildAnnotatedString {
+                        withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
+                            append(str)
+                        }
+                    }
+                    clipboardManager.setText(annotatedString)
+                },
+                onShare = {
+                    val shareText = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"  // Fixed content type
+                        putExtra(Intent.EXTRA_TEXT, str)
+                    }
+                    val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
+                    context.startActivity(chooserIntent)
+                }
             )
         }
     }
@@ -316,7 +340,6 @@ fun TwoTabLayout(
             )
         }
 
-
         AnimatedContent(
             targetState = selectedTabIndex,
             transitionSpec = {
@@ -351,32 +374,15 @@ fun TwoTabLayout(
 
 @Composable
 fun FootInteraction(
-   cur: MutableState<String>
+    isFavorite : Boolean,
+    onFavChanged: () -> Unit,
+    onCopy: () -> Unit,
+    onShare: () -> Unit
 ) {
 
-    val clipboardManager = LocalClipboardManager.current
-    val context = LocalContext.current
-
-    if (cur.value == "") {
-        Box(
-            Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
-    } else {
-
-        val isFavorite = remember {
-            mutableStateOf(favList.contains(cur.value))
-        }
-
-        LaunchedEffect(Unit) {
-            isFavorite.value = favList.contains(cur.value)
-        }
-
-        LaunchedEffect(cur.value) {
-            isFavorite.value = favList.contains(cur.value)
-        }
+    val latestFavChanged by rememberUpdatedState(onFavChanged)
+    val latestCopy by rememberUpdatedState(onCopy)
+    val latestShare by rememberUpdatedState(onShare)
 
         Card(
             modifier = Modifier
@@ -401,33 +407,21 @@ fun FootInteraction(
             ) {
 
                 InteractionButton(
-                    icon = if (isFavorite.value) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    icon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = "Favorite",
-                    tintColor = if (isFavorite.value) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                     onClick = {
-                        if (isFavorite.value) {
-                            favList.remove(cur.value)
-                        } else {
-                            favList.add(cur.value)
-                        }
-                        // Update state after modifying the list
-                        isFavorite.value = !isFavorite.value
-                        Log.i("FOOTINT", "FOOTINT Bool: $isFavorite")
+                       latestFavChanged.invoke()
                     },
                     label = "Like",
-                    isSelected = isFavorite.value
+                    isSelected = isFavorite
                 )
                 InteractionButton(
                     icon = null,
                     painter = painterResource(R.drawable.baseline_content_copy_24),
                     contentDescription = "Copy",
                     onClick = {
-                        val annotatedString = buildAnnotatedString {
-                            withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
-                                append(cur.value)
-                            }
-                        }
-                        clipboardManager.setText(annotatedString)
+                       latestCopy.invoke()
                     },
                     label = "Copy"
                 )
@@ -436,18 +430,12 @@ fun FootInteraction(
                     icon = Icons.Default.Share,
                     contentDescription = "Share",
                     onClick = {
-                        val shareText = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"  // Fixed content type
-                            putExtra(Intent.EXTRA_TEXT, cur.value)
-                        }
-                        val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
-                        context.startActivity(chooserIntent)
+                       latestShare.invoke()
                     },
                     label = "Share"
                 )
             }
         }
-    }
 }
 
 @Composable
