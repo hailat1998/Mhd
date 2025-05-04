@@ -22,6 +22,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
             is SettingEvent.LetterSpace -> setLetterSpace(event.value)
             is SettingEvent.LineHeight -> setLetterHeight(event.value)
             is SettingEvent.LetterType -> setLetterType(event.value)
+            is SettingEvent.SetBoarding -> setBoarding(event.isShown)
         }
     }
 
@@ -43,12 +44,14 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     val letterType = settingRepository.letterType
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "01Ha.txt" )
 
+    val boardingShown = settingRepository.onBoardingShown
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+
    private fun setFont(font: String){
        viewModelScope.launch {
            settingRepository.setFont(font)
        }
    }
-
 
     private fun setLetterSpace(space: Double) {
         if (letterSpace.value + space in 0.1 .. 7.0) {
@@ -59,14 +62,12 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     }
 
     private fun setTheme(theme: String){
-
         viewModelScope.launch {
             settingRepository.setTheme(theme)
         }
     }
 
     private fun setFontSize(size: Int) {
-
         if (fontSize.value + size in 5..30) {
             viewModelScope.launch {
                 settingRepository.setFontSize(fontSize.value + size)
@@ -89,4 +90,11 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
             settingRepository.setLetterType(type)
         }
     }
+
+    private fun setBoarding(isShown: Boolean) {
+        viewModelScope.launch {
+            settingRepository.setOnBoarding(isShown)
+        }
+    }
+
 }

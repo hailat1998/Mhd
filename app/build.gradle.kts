@@ -89,6 +89,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.startup.runtime)
+    implementation("mx.platacard:compose-pager-indicator:0.0.8")
 
     /* *****************************************************
      **** Lifecycle

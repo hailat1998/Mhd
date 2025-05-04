@@ -47,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -73,11 +74,15 @@ class MainActivity : ComponentActivity() {
             ActivityResultContracts.RequestPermission()
         ) {}
 
+   lateinit var splashScreen: SplashScreen
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            installSplashScreen()
+            splashScreen = installSplashScreen()
         }
+
         super.onCreate(savedInstanceState)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(
@@ -142,9 +147,7 @@ fun MisaleApp(
 
     LaunchedEffect(currentBackStackEntry?.destination) {
         val route = currentBackStackEntry?.destination?.route
-        Log.d("Navigation", "LaunchedEffect triggered with route: $route")
         showOthers.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ"
-        Log.d("Navigation", "showOthers set to: ${showOthers.value}")
     }
 
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {

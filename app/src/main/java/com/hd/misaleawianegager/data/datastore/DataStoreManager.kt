@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.data.datastore
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 private val Context.dataStore by preferencesDataStore(name = "settings")
 
 @Singleton
-class DataStoreManagerImpl @Inject constructor( @ApplicationContext private val context: Context):
+abstract class DataStoreManagerImpl @Inject constructor(@ApplicationContext private val context: Context):
     DataStoreManager {
 
     companion object {
@@ -27,6 +28,7 @@ class DataStoreManagerImpl @Inject constructor( @ApplicationContext private val 
         val LETTER_SPACE_KEY = doublePreferencesKey("letterSpace")
         val FONT_SIZE_KEY = intPreferencesKey("font size")
         val LINE_HEIGHT_KEY = intPreferencesKey("line height")
+        val ONBOARD_SHOWN = booleanPreferencesKey("onBoard")
     }
 
     override val theme: Flow<String> = context.dataStore.data
@@ -61,6 +63,12 @@ class DataStoreManagerImpl @Inject constructor( @ApplicationContext private val 
         .map { preferences ->
             preferences[LINE_HEIGHT_KEY] ?: 24
         }
+    override val onBoardShown: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[ONBOARD_SHOWN] ?: false
+        }
+
+
 
     override suspend fun setTheme(theme: String) {
         context.dataStore.edit { preferences ->
@@ -86,10 +94,15 @@ class DataStoreManagerImpl @Inject constructor( @ApplicationContext private val 
         }
     }
 
-
     override suspend fun setLineHeight(lineHeight: Int){
         context.dataStore.edit { preferences ->
             preferences[LINE_HEIGHT_KEY] =  lineHeight
+        }
+    }
+
+    override suspend fun setOnBoarding(isShown: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[ONBOARD_SHOWN] =  isShown
         }
     }
 

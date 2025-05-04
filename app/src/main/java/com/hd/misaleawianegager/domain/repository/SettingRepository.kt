@@ -9,6 +9,7 @@ interface SettingRepository {
     val letterType: Flow<String?>
     val fontSize: Flow<Int>
     val letterHeight: Flow<Int>
+    val onBoardingShown: Flow<Boolean>
 
     suspend fun setTheme(theme: String)
 
@@ -21,4 +22,6 @@ interface SettingRepository {
     suspend fun setLineHeight(lineHeight: Int)
 
     suspend fun setFontSize(fontSize: Int)
+
+    suspend fun setOnBoarding(isShown: Boolean)
 }

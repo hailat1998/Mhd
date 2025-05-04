@@ -79,18 +79,19 @@ import com.hd.misaleawianegager.utils.compose.AnimatedPreloader
 import com.hd.misaleawianegager.utils.compose.ShimmerEffect
 import com.hd.misaleawianegager.utils.compose.favList
 import dev.jeziellago.compose.markdowntext.MarkdownText
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 
 
 @Composable
 fun Selected(
-    viewModel: DetailViewModel,
+    listFlow: StateFlow<List<String>>,
+    textAiFlow: StateFlow<DetailUiState>,
     page: String,
     from: String,
     onNextPage: (String) -> Unit
 ) {
 
-    val textAi = viewModel.detailsAITextStateFlow.collectAsStateWithLifecycle()
+    val textAi = textAiFlow.collectAsStateWithLifecycle()
     var isFavorite by remember { mutableStateOf(false) }
 
     val clipboardManager = LocalClipboardManager.current
@@ -101,11 +102,7 @@ fun Selected(
     val list = if (from == "search") {
         remember { mutableStateListOf<String>().apply { add(page) } }
     } else {
-        viewModel.detailStateFlow.collectAsStateWithLifecycle().value
-    }
-
-    LaunchedEffect(Unit) {
-        delay(3000L)
+        listFlow.collectAsStateWithLifecycle().value
     }
 
     Column(
@@ -261,19 +258,37 @@ fun MarkdownContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Start,
+            fontSize = 14.sp,
             style = MaterialTheme.typography.bodyLarge,
             onClick = onClick,
         )
         Spacer(Modifier.height(10.dp))
-        Text(
-            text = "ℹ️ AI-generated content—may contain errors. Verify important info.",
-            fontSize = 10.sp,
-            color = Color.Gray,
-            modifier = modifier.padding(top = 4.dp).fillMaxWidth()
-        )
+
+        Row(Modifier.fillMaxWidth()) {
+            Text(
+                text = "ℹ\uFE0F ",
+                fontSize = 23.sp,
+                color = Color.Gray,
+                modifier = modifier.padding(end = 4.dp, top = 5.dp)
+            )
+            Column {
+                Text(
+                    text = "AI-generated content—may contain errors. Verify important info.",
+                    fontSize = 10.sp,
+                    color = Color.Gray,
+                    modifier = modifier.padding(top = 4.dp).fillMaxWidth()
+                )
+
+                Text(
+                    text = "በአርቴፊሻል ኢንተለጀንስ የተፈጠረ ይዘት — ስህተቶች ሊኖሩት ይችላል። አስፈላጊ መረጃን ያረጋግጡ።",
+                    fontSize = 10.sp,
+                    color = Color.Gray,
+                    modifier = modifier.padding(top = 4.dp).fillMaxWidth()
+                )
+            }
+        }
     }
 }
-
 
 @Composable
 fun TwoTabLayout(
@@ -548,20 +563,27 @@ fun TwoTabLayoutPreview() {
 }
 
 
+@Preview(showBackground = true)
+@Composable
+fun MarkDown(){
+    MarkdownContent(markdownText = getMarkDown())
+}
+
+fun getMarkDown() = "# Contributing to Virtual Book Store\n" +
+        "\n" +
+        "Thank you for considering contributing to Virtual Book Store! We welcome all contributions, whether it's bug fixes, new features, documentation improvements, or other enhancements.\n" +
+        "\n" +
+        "## Getting Started\n" +
+        "\n" +
+        "### 1. Fork the Repository\n" +
+        "Click the **Fork** button on the top right of the repository page to create a copy of the repository under your GitHub account.\n" +
+        "\n" +
+        "### 2. Clone the Repository\n" +
+        "Clone your forked repository to your local machine:\n" +
+        "```sh\n"
 
 
-//@Preview
-//@Composable
-//fun Mark() {
-////    val modifier = Modifier
-////    Column(
-////        modifier = modifier.fillMaxSize(),
-////        horizontalAlignment = Alignment.CenterHorizontally
-////    ) {
-////        ItemText("Hello world", "uri://cscscs/scscsc", modifier = Modifier)
-////        Spacer(modifier = Modifier.height(20.dp))
-////        ItemTextAI(modifier = modifier)
-////    }
-//}
+
+
 
 

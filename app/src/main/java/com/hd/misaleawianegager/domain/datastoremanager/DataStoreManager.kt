@@ -10,6 +10,7 @@ interface DataStoreManager {
     val letterSpace: Flow<Double>
     val fontSize: Flow<Int>
     val lineHeight: Flow<Int>
+    val onBoardShown: Flow<Boolean>
 
     suspend fun setTheme(theme: String)
     suspend fun setFont(font: String)
@@ -17,4 +18,5 @@ interface DataStoreManager {
     suspend fun setLetterSpace(letterSpace: Double)
     suspend fun setFontSize(fontSize: Int)
     suspend fun setLineHeight(lineHeight: Int)
+    suspend fun setOnBoarding(isShown: Boolean)
 }

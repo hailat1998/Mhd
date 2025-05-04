@@ -46,8 +46,6 @@ fun MisaleBodyContent(navHostController: NavHostController,
 
             val viewModelDetailFav: FavViewModel = hiltViewModel()
 
-            val viewModelDetail: DetailViewModel = hiltViewModel()
-
             val viewModelSearch: SearchViewModel = hiltViewModel()
 
 
@@ -129,6 +127,8 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 }
             ) { backStackEntry ->
 
+                val viewModelDetail: DetailViewModel = hiltViewModel()
+
                 val arg1 = backStackEntry.arguments?.getString("from")
                 val arg2 = if (arg1 == "search") backStackEntry.arguments?.getString("arg2")!!
                     .replace('_', ' ')
@@ -145,11 +145,11 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 }
 
                 Selected(
-                viewModelDetail,
+                    viewModelDetail.detailStateFlow,
+                    viewModelDetail.detailsAITextStateFlow,
                     page = arg2!!,
                     from = arg1!!,
                 ) {
-                    Log.i("NAVIGATION", it)
                     viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
                 }
             }
