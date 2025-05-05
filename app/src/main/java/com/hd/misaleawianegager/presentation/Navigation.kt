@@ -4,8 +4,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +20,7 @@ import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.home.HomeContent
 import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.presentation.component.home.HomeViewModel
+import com.hd.misaleawianegager.presentation.component.onboard.MisaleAwiOnboardingScreen
 import com.hd.misaleawianegager.presentation.component.recent.Recent
 import com.hd.misaleawianegager.presentation.component.recent.RecentViewModel
 import com.hd.misaleawianegager.presentation.component.search.SearchScreen
@@ -29,7 +29,6 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
-import com.hd.misaleawianegager.utils.compose.favList
 
 const val ANIMATION_DURATION = 500
 
@@ -38,9 +37,10 @@ fun MisaleBodyContent(navHostController: NavHostController,
                       modifier: Modifier,
                       letterType: String ,
                       onSettingEvent: (SettingEvent) -> Unit,
+                      onboardShown: State<Boolean>
                       ) {
 
-            val viewModelDetailHome: HomeViewModel = hiltViewModel()
+            val viewModelHome: HomeViewModel = hiltViewModel()
 
             val viewModelDetailRecent: RecentViewModel = hiltViewModel()
 
@@ -51,24 +51,34 @@ fun MisaleBodyContent(navHostController: NavHostController,
 
         NavHost(
             navController = navHostController,
-            startDestination = MisaleScreen.Home.route,
+            startDestination = MisaleScreen.Onboarding.route,
             modifier = modifier
         ) {
 
-            composable(MisaleScreen.Home.route) {
+            composable(MisaleScreen.Onboarding.route) {
 
-                viewModelDetailHome.onEvent(HomeEvent.LoadLetter(letterType))
-                val list = viewModelDetailHome.homeStateFlow.collectAsStateWithLifecycle()
-                val scrollPos = viewModelDetailHome.scrollValue.collectAsStateWithLifecycle()
+                if(!onboardShown.value) {
+                    navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
+                }
+                MisaleAwiOnboardingScreen(onSettingEvent) { navHostController.navigateSingleTopTo(MisaleScreen.Home.route) }
+            }
+
+            composable(MisaleScreen.Home.route) {
+                viewModelHome.onEvent(HomeEvent.LoadLetter(letterType))
+                val list = viewModelHome.homeStateFlow.collectAsStateWithLifecycle()
+                val scrollPos = viewModelHome.scrollValue.collectAsStateWithLifecycle()
                 HomeContent(
                     homeData = list,
-                    onHomeEvent = viewModelDetailHome::onEvent,
+                    onHomeEvent = viewModelHome::onEvent,
                     onSettingEvent,
                     toDetail = { home, arg, arg2 ->
-                        viewModelDetailHome.onEvent(HomeEvent.WriteText(arg))
+                        viewModelHome.onEvent(HomeEvent.WriteText(arg))
                         navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$home/$arg/$arg2"))
                     },
-                    scrollIndex = scrollPos
+                    scrollIndex = scrollPos,
+                    toBoarding = {
+                        navHostController.navigateSingleTopTo(MisaleScreen.Onboarding.route)
+                    }
                 )
             }
 
@@ -78,7 +88,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 val scrollIndex = viewModelDetailFav.scrollValue.collectAsStateWithLifecycle()
                 FavScreen(list, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-                }, setScroll = viewModelDetailFav::setScroll, scrollIndex = scrollIndex,
+                     }, setScroll = viewModelDetailFav::setScroll, scrollIndex = scrollIndex,
                    )
             }
 

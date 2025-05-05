@@ -24,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -35,19 +34,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.R
+import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import kotlinx.coroutines.launch
 import mx.platacard.pagerindicator.PagerIndicator
 import mx.platacard.pagerindicator.PagerIndicatorOrientation
 
-
 @Composable
 fun MisaleAwiOnboardingScreen(
+    onSettingEvent: (SettingEvent) -> Unit,
     onOnboardingComplete: () -> Unit
 ) {
-    val pageCount = OnboardingConstants.totalPages // Now 3
+    val pageCount = OnboardingConstants.totalPages
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val scope = rememberCoroutineScope()
 
@@ -64,39 +65,43 @@ fun MisaleAwiOnboardingScreen(
     Scaffold(
         bottomBar = {
             Column(modifier = Modifier.fillMaxWidth()) {
-                PagerIndicator(
-                    pagerState = pagerState,
-                    activeDotColor = Color.Green,
-                    dotColor = Color.LightGray,
-                    dotCount = 5,
-                    orientation = PagerIndicatorOrientation.Horizontal
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+                Spacer(Modifier.height(15.dp))
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()){
+                    PagerIndicator(
+                        pagerState = pagerState,
+                        activeDotColor = MaterialTheme.colorScheme.primary,
+                        dotColor = MaterialTheme.colorScheme.onPrimary,
+                        dotCount = 3,
+                        orientation = PagerIndicatorOrientation.Horizontal
+                    )
+                }
+                Spacer(Modifier.height(15.dp))
+
                     if (!isLastPage) {
-                        CoolFinishButton(modifier = Modifier, onClick = {
-                            onOnboardingComplete.invoke()
-                        })
-                    } else {
-                        Spacer(modifier = Modifier.weight(1f))
+                        CoolFinishButton(
+                            modifier = Modifier,
+                            onClick = {
+                                onOnboardingComplete.invoke()
+                                onSettingEvent.invoke(SettingEvent.ShowBoarding(true))
+                            }
+                        )
                     }
 
-                    CoolNextButton(isLastPage = isLastPage, modifier = Modifier , onClick = {
-                        if (isLastPage) {
-                            onOnboardingComplete()
-                        } else {
-                            scope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    CoolNextButton(
+                        isLastPage = isLastPage,
+                        modifier = Modifier,
+                        onClick = {
+                            if (isLastPage) {
+                                onOnboardingComplete()
+                                onSettingEvent.invoke(SettingEvent.ShowBoarding(true))
+                            } else {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
                             }
                         }
-                    })
+                    )
                 }
-            }
         }
     ) { innerPadding ->
         HorizontalPager(
@@ -109,7 +114,6 @@ fun MisaleAwiOnboardingScreen(
             StyledOnboardingPage(
                 imageRes = imageResList[pageIndex]
             ) {
-
                 when (pageIndex) {
                     0 -> Page1Content()
                     1 -> Page2Content()
@@ -140,7 +144,7 @@ fun CoolNextButton(
             .clip(RoundedCornerShape(20.dp))
             .background(
                 brush = Brush.horizontalGradient(
-                    colors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
+                    colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary)
                 )
             )
     ) {
@@ -166,8 +170,8 @@ fun CoolNextButton(
                 Icon(icon, contentDescription = null)
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(horizontalAlignment = Alignment.Start) {
-                    Text(text = amharicText, style = MaterialTheme.typography.labelLarge)
-                    Text(text = englishText, style = MaterialTheme.typography.bodySmall)
+                    Text(text = amharicText, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                    Text(text = englishText, style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                 }
             }
         }
@@ -192,7 +196,7 @@ fun CoolFinishButton(
             .clip(RoundedCornerShape(20.dp))
             .background(
                 brush = Brush.horizontalGradient(
-                    colors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
+                    colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary)
                 )
             )
     ) {
@@ -218,8 +222,8 @@ fun CoolFinishButton(
 
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(horizontalAlignment = Alignment.Start) {
-                    Text(text = amharicText, style = MaterialTheme.typography.labelLarge)
-                    Text(text = englishText, style = MaterialTheme.typography.bodySmall)
+                    Text(text = amharicText, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                    Text(text = englishText, style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                 }
             }
         }
@@ -232,6 +236,6 @@ fun CoolFinishButton(
 @Composable
 fun MisaleAwiOnboardingScreenMultiPagePreview() {
     MaterialTheme {
-        MisaleAwiOnboardingScreen(onOnboardingComplete = { })
+        MisaleAwiOnboardingScreen(onOnboardingComplete = { }, onSettingEvent = {})
     }
 }

@@ -1,5 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.home
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,6 +64,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -81,6 +85,7 @@ fun HomeContent(homeData: State<List<String>>,
                 onSettingEvent: (SettingEvent) -> Unit,
                 scrollIndex: State<Int>,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
+                toBoarding: () -> Unit
                   ) {
 
     val openDialog = remember { mutableStateOf(false)    }
@@ -92,6 +97,12 @@ fun HomeContent(homeData: State<List<String>>,
     var showFloatButton by remember {  mutableStateOf(true) }
 
     val firstVisibleItemIndex = remember { mutableIntStateOf(0) }
+
+    val context = LocalContext.current as Activity
+
+    BackHandler {
+        context.finish()
+    }
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }
@@ -178,7 +189,7 @@ fun HomeContent(homeData: State<List<String>>,
                 HomeBottomSheet(dismissReq = showBottomSheet, onHomeEvent, onSettingEvent)
             }
             if(openDialog.value){
-                AppInfoDialog(openDialog = openDialog)
+                AppInfoDialog(openDialog = openDialog, toBoarding = toBoarding)
             }
         }
     }
@@ -213,12 +224,12 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
              }
            }
         }
-    }
+     }
   }
 }
 
 @Composable
-fun AppInfoDialog(openDialog: MutableState<Boolean>) {
+fun AppInfoDialog(openDialog: MutableState<Boolean>, toBoarding:() -> Unit) {
 
     val localFont = FontFamily.Default
     val textStyle = TextStyle(fontFamily = localFont)
@@ -243,8 +254,16 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>) {
                             Text(text = "Version: 1.0.0")
                             Text(text = "Developer: Haile Temesgen")
                             Text(text = "Email: htemesgen400@gmail.com")
+                            Spacer(Modifier.height(20.dp))
+                            Text(
+                                text = "Go to Introduction",
+                                color = Color.Blue,
+                                modifier = Modifier.clickable { toBoarding.invoke() }
+                            )
+
                         }
                     }
+
                 },
                 confirmButton = {
                     Button(onClick = { openDialog.value = false }) {

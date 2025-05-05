@@ -22,7 +22,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
             is SettingEvent.LetterSpace -> setLetterSpace(event.value)
             is SettingEvent.LineHeight -> setLetterHeight(event.value)
             is SettingEvent.LetterType -> setLetterType(event.value)
-            is SettingEvent.SetBoarding -> setBoarding(event.isShown)
+            is SettingEvent.ShowBoarding -> setBoarding(event.isShown)
         }
     }
 

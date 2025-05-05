@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -114,6 +115,7 @@ fun Selected(
             modifier = Modifier
                 .weight(1f, fill = true)
                 .fillMaxWidth()
+                .background(Color.Transparent)
         ) {
             if (list.isEmpty()) {
                 CircularProgressIndicator()
@@ -145,6 +147,7 @@ fun Selected(
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
                             .padding(bottom = 8.dp, top = 25.dp)
+                            .background(Color.Transparent)
                     ) {
                         Card(
                             modifier = Modifier
@@ -209,7 +212,8 @@ fun Selected(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp, top = 8.dp),
+                .padding(bottom = 16.dp, top = 8.dp)
+                .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
             FootInteraction(
@@ -221,7 +225,7 @@ fun Selected(
                         favList.add(str)
                     }
                     isFavorite = !isFavorite
-                    Log.i("FOOTINT", "FOOTINT Bool: $isFavorite")
+
                 },
                 onCopy = {
                     val annotatedString = buildAnnotatedString {
@@ -258,7 +262,7 @@ fun MarkdownContent(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Start,
-            fontSize = 14.sp,
+            fontSize = 17.sp,
             style = MaterialTheme.typography.bodyLarge,
             onClick = onClick,
         )
@@ -329,7 +333,7 @@ fun TwoTabLayout(
                 text = {
                     Text(
                         text = firstTabTitle,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -347,7 +351,7 @@ fun TwoTabLayout(
                 text = {
                     Text(
                         text = secondTabTitle,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -397,6 +401,7 @@ fun FootInteraction(
 
     val latestFavChanged by rememberUpdatedState(onFavChanged)
     val latestCopy by rememberUpdatedState(onCopy)
+
     val latestShare by rememberUpdatedState(onShare)
 
         Card(

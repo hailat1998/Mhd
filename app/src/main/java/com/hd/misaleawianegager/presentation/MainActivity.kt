@@ -9,6 +9,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -90,6 +94,8 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+
+            var keepSP by remember { mutableStateOf(true) }
             val viewModel = hiltViewModel<SettingViewModel>()
             val fontSize = viewModel.fontSize.collectAsStateWithLifecycle()
             val letterSpace = viewModel.letterSpace.collectAsStateWithLifecycle()
@@ -97,6 +103,18 @@ class MainActivity : ComponentActivity() {
             val theme = viewModel.theme.collectAsStateWithLifecycle()
             val font = viewModel.font.collectAsStateWithLifecycle()
             val letterType = viewModel.letterType.collectAsStateWithLifecycle()
+            val onboardShown = viewModel.boardingShown.collectAsStateWithLifecycle()
+
+
+
+            LaunchedEffect(Unit) {
+                delay(500L)
+                keepSP = false
+            }
+
+           splashScreen.setKeepOnScreenCondition {
+               keepSP
+           }
 
             var showSplashScreen by rememberSaveable  { mutableStateOf(Build.VERSION.SDK_INT < Build.VERSION_CODES.S ) }
 
@@ -122,7 +140,8 @@ class MainActivity : ComponentActivity() {
               onEvent = viewModel::onEvent,
               theme = theme,
               font = font,
-              letterTypeLatest
+              letterType =  letterTypeLatest,
+              onboardShown = onboardShown
               )
                 }
             }
@@ -136,22 +155,24 @@ fun MisaleApp(
     onEvent: (SettingEvent) -> Unit,
     theme: State<String?>,
     font: State<String?>,
-    letterType: String
+    letterType: String,
+    onboardShown: State<Boolean>
              ) {
-
     val viewModel = hiltViewModel<MainViewModel>()
     val showOthers = remember { mutableStateOf(true) }
    val showModalBottomSheet = remember{ mutableStateOf(false) }
+    val showBottomBar = remember { mutableStateOf(false) }
 
     val currentBackStackEntry by navHostController.currentBackStackEntryAsState()
 
     LaunchedEffect(currentBackStackEntry?.destination) {
         val route = currentBackStackEntry?.destination?.route
         showOthers.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ"
+        showBottomBar.value = route != "onboard"
     }
 
-    Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet)} ) {
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent)
+    Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet, showBottomBar)} ) {
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, onboardShown)
         if(showModalBottomSheet.value){
             SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,
@@ -180,68 +201,76 @@ fun MisaleApp(
 @Composable
 fun MisaleBottomAppBar(
     navController: NavController,
-    showModalBottomSheet: MutableState<Boolean>
+    showModalBottomSheet: MutableState<Boolean>,
+    showBottomBar: MutableState<Boolean>
 ) {
+
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
-    BottomAppBar(
-        modifier = Modifier
-            .height(56.dp)
-            .shadow(
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                elevation = 4.dp
-            )
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-            )
+    AnimatedVisibility(
+        visible = showBottomBar.value,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it })
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+        BottomAppBar(
+            modifier = Modifier
+                .height(56.dp)
+                .shadow(
+                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+                    elevation = 4.dp
+                )
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                )
         ) {
-            DataProvider.icons.forEach { (key, icon) ->
-                val isSelected = currentRoute == key
-                val alpha = if (isSelected) 1f else 0.4f
-                val tintColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                DataProvider.icons.forEach { (key, icon) ->
+                    val isSelected = currentRoute == key
+                    val alpha = if (isSelected) 1f else 0.4f
+                    val tintColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
-                IconButton(
-                    onClick = {
-                        if (key == "ማስቴካክያ") {
-                            showModalBottomSheet.value = !showModalBottomSheet.value
-                        } else if (currentRoute != key) {
-                            navController.navigate(key) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = false
+                    IconButton(
+                        onClick = {
+                            if (key == "ማስቴካክያ") {
+                                showModalBottomSheet.value = !showModalBottomSheet.value
+                            } else if (currentRoute != key) {
+                                navController.navigate(key) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = false
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = false
                                 }
-                                launchSingleTop = true
-                                restoreState = false
                             }
-                        }
-                    },
-                    modifier = Modifier
-                        .size(60.dp)
-                        .alpha(alpha)
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
+                        },
+                        modifier = Modifier
+                            .size(60.dp)
+                            .alpha(alpha)
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = key,
-                                tint = tintColor
-                            )
-                            Text(
-                                text = key.uppercase(),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = tintColor
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = key,
+                                    tint = tintColor
+                                )
+                                Text(
+                                    text = key.uppercase(),
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = tintColor
+                                )
+                            }
                         }
                     }
                 }
@@ -265,7 +294,7 @@ fun SplashScreen(){
 @Composable
 fun S(){
     val navHostController = rememberNavController()
-    MisaleBottomAppBar(navHostController, mutableStateOf(false))
+    MisaleBottomAppBar(navHostController, mutableStateOf(false),mutableStateOf(true) )
 }
 
 

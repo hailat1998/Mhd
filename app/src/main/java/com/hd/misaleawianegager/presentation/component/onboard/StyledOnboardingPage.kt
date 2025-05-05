@@ -20,7 +20,7 @@ fun StyledOnboardingPage(
     modifier: Modifier = Modifier,
     overlayBrush: Brush = Brush.verticalGradient(
         colors = listOf(
-            Color.Black.copy(alpha = 0.2f),
+            Color.Black.copy(alpha = 0.5f),
             Color.Black.copy(alpha = 0.6f)
         )
     ),

@@ -5,6 +5,6 @@ sealed class MisaleScreen(val route : String) {
     data object Fav: MisaleScreen("ምርጥ")
     data object Recent: MisaleScreen("የቅርብ")
     data object Search: MisaleScreen("ፈልግ")
-    data object Setting: MisaleScreen("ማስቴካክያ")
     data object Detail: MisaleScreen("selected")
+    data object Onboarding: MisaleScreen("onboard")
 }
