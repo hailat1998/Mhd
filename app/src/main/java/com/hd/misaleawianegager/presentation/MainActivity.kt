@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
 
 
             LaunchedEffect(Unit) {
-                delay(500L)
+                delay(1000L)
                 keepSP = false
             }
 
@@ -172,7 +172,7 @@ fun MisaleApp(
     }
 
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet, showBottomBar)} ) {
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, onboardShown)
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, onboardShown, showOthers)
         if(showModalBottomSheet.value){
             SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,

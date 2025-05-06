@@ -4,7 +4,12 @@ import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +34,7 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.compose.favList
 
 const val ANIMATION_DURATION = 500
 
@@ -37,7 +43,8 @@ fun MisaleBodyContent(navHostController: NavHostController,
                       modifier: Modifier,
                       letterType: String ,
                       onSettingEvent: (SettingEvent) -> Unit,
-                      onboardShown: State<Boolean>
+                      onboardShown: State<Boolean>,
+                      showOthers: MutableState<Boolean>
                       ) {
 
             val viewModelHome: HomeViewModel = hiltViewModel()
@@ -48,18 +55,25 @@ fun MisaleBodyContent(navHostController: NavHostController,
 
             val viewModelSearch: SearchViewModel = hiltViewModel()
 
-
         NavHost(
             navController = navHostController,
-            startDestination = MisaleScreen.Onboarding.route,
+            startDestination = MisaleScreen.Home.route,
             modifier = modifier
         ) {
 
-            composable(MisaleScreen.Onboarding.route) {
+            composable(MisaleScreen.Onboarding.route.plus("/{home}"),
+                arguments = listOf(navArgument("home") { type = NavType.StringType })) { backStackEntry ->
 
-                if(!onboardShown.value) {
-                    navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
-                }
+                Log.i("Onboard", "MAIN")
+
+              val arg = backStackEntry.arguments?.getString("home")
+
+                    if(onboardShown.value || arg != null) {
+                        navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
+                    }
+
+                Log.i("Onboard2", "MAIN")
+
                 MisaleAwiOnboardingScreen(onSettingEvent) { navHostController.navigateSingleTopTo(MisaleScreen.Home.route) }
             }
 
@@ -77,7 +91,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     },
                     scrollIndex = scrollPos,
                     toBoarding = {
-                        navHostController.navigateSingleTopTo(MisaleScreen.Onboarding.route)
+                        navHostController.navigateSingleTopTo(MisaleScreen.Onboarding.route.plus("/home"))
                     }
                 )
             }
@@ -154,14 +168,24 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     viewModelDetail.onEvent(DetailEvent.LoadRecent)
                 }
 
+                val favListHere = remember { favList.toMutableStateList() }
+
                 Selected(
                     viewModelDetail.detailStateFlow,
                     viewModelDetail.detailsAITextStateFlow,
                     page = arg2!!,
                     from = arg1!!,
-                ) {
+                    favListHere = favListHere,
+                     onNextPage =  {
                     viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
-                }
+                   },
+                    onFavoriteToggle = { item ->
+                        if (favListHere.contains(item)) {
+                            favListHere.remove(item)
+                        } else {
+                            favListHere.add(item)
+                        }
+                    })
             }
         }
     }

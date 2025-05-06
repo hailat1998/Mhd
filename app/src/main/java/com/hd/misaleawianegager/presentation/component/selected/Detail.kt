@@ -47,8 +47,11 @@ import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -89,16 +92,33 @@ fun Selected(
     textAiFlow: StateFlow<DetailUiState>,
     page: String,
     from: String,
-    onNextPage: (String) -> Unit
+    onNextPage: (String) -> Unit,
+    favListHere: List<String>,
+    onFavoriteToggle: (String) -> Unit
 ) {
 
     val textAi = textAiFlow.collectAsStateWithLifecycle()
-    var isFavorite by remember { mutableStateOf(false) }
+    var str by remember { mutableStateOf("") }
+
+    var currentPage by remember { mutableStateOf(page) }
+
+    val isFavorite by remember(currentPage, favListHere) {
+        derivedStateOf { favListHere.contains(currentPage) }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            Log.i("FROM DISPOSE", "IN")
+    favList = favListHere.toMutableList()
+            Log.i("FROM DISPOSE", "${favList.size}")
+        }
+    }
+
 
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var str by remember { mutableStateOf("") }
+
 
     val list = if (from == "search") {
         remember { mutableStateListOf<String>().apply { add(page) } }
@@ -130,7 +150,9 @@ fun Selected(
                 }
 
                 LaunchedEffect(pager.currentPage) {
-                    onNextPage.invoke(list[pager.targetPage])
+                    val newPage = list[pager.targetPage]
+                    currentPage = newPage
+                    onNextPage.invoke(newPage)
                 }
 
                 HorizontalPager(
@@ -139,8 +161,6 @@ fun Selected(
                 ) { page ->
 
                     str = list[page]
-
-                    isFavorite = favList.contains(str)
 
                     Column(
                         modifier = Modifier
@@ -219,13 +239,7 @@ fun Selected(
             FootInteraction(
                 isFavorite,
                 onFavChanged = {
-                    if (isFavorite) {
-                        favList.remove(str)
-                    } else {
-                        favList.add(str)
-                    }
-                    isFavorite = !isFavorite
-
+                    onFavoriteToggle(currentPage)
                 },
                 onCopy = {
                     val annotatedString = buildAnnotatedString {
@@ -399,11 +413,12 @@ fun FootInteraction(
     onShare: () -> Unit
 ) {
 
-    val latestFavChanged by rememberUpdatedState(onFavChanged)
-    val latestCopy by rememberUpdatedState(onCopy)
+    Log.i("FOOTINT", "Recomposed")
 
-    val latestShare by rememberUpdatedState(onShare)
-
+        val rememberedOnFavChanged = rememberUpdatedState(onFavChanged)
+        val rememberedOnCopy = rememberUpdatedState(onCopy)
+        val rememberedOnShare = rememberUpdatedState(onShare)
+    key(isFavorite) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -431,7 +446,7 @@ fun FootInteraction(
                     contentDescription = "Favorite",
                     tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                     onClick = {
-                       latestFavChanged.invoke()
+                        rememberedOnFavChanged.value.invoke()
                     },
                     label = "Like",
                     isSelected = isFavorite
@@ -441,7 +456,7 @@ fun FootInteraction(
                     painter = painterResource(R.drawable.baseline_content_copy_24),
                     contentDescription = "Copy",
                     onClick = {
-                       latestCopy.invoke()
+                        rememberedOnCopy.value.invoke()
                     },
                     label = "Copy"
                 )
@@ -450,12 +465,13 @@ fun FootInteraction(
                     icon = Icons.Default.Share,
                     contentDescription = "Share",
                     onClick = {
-                       latestShare.invoke()
+                        rememberedOnShare.value.invoke()
                     },
                     label = "Share"
                 )
             }
         }
+    }
 }
 
 @Composable
@@ -468,6 +484,8 @@ private fun InteractionButton(
     tintColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     isSelected: Boolean = false
 ) {
+    // Remember the onClick callback to prevent recreation
+    val rememberedOnClick = rememberUpdatedState(onClick)
 
     val scale by animateFloatAsState(
         targetValue = if (isSelected) 1.2f else 1f,
@@ -487,7 +505,7 @@ private fun InteractionButton(
         label = "tint"
     )
 
-   Surface(
+    Surface(
         modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         color = Color.Transparent
@@ -497,11 +515,11 @@ private fun InteractionButton(
             verticalArrangement = Arrangement.Center
         ) {
             IconButton(
-                onClick = onClick,
+                onClick = { rememberedOnClick.value() },
                 modifier = Modifier.size(48.dp)
             ) {
-                if (icon != null) {
-                    Icon(
+                when {
+                    icon != null -> Icon(
                         imageVector = icon,
                         contentDescription = contentDescription,
                         tint = animatedTint,
@@ -509,8 +527,7 @@ private fun InteractionButton(
                             .size(28.dp)
                             .scale(scale)
                     )
-                } else if (painter != null) {
-                    Icon(
+                    painter != null -> Icon(
                         painter = painter,
                         contentDescription = contentDescription,
                         tint = animatedTint,

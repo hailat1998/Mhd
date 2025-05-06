@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.onboard
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,9 +49,12 @@ fun MisaleAwiOnboardingScreen(
     onSettingEvent: (SettingEvent) -> Unit,
     onOnboardingComplete: () -> Unit
 ) {
+
     val pageCount = OnboardingConstants.totalPages
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val scope = rememberCoroutineScope()
+
+    Log.i("Onboard3", "MAIN")
 
     val isLastPage by remember {
         derivedStateOf { pagerState.currentPage == pageCount - 1 }
@@ -81,6 +85,7 @@ fun MisaleAwiOnboardingScreen(
                         CoolFinishButton(
                             modifier = Modifier,
                             onClick = {
+                                Log.i("Onboard4", "MAIN")
                                 onOnboardingComplete.invoke()
                                 onSettingEvent.invoke(SettingEvent.ShowBoarding(true))
                             }
