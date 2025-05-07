@@ -51,16 +51,12 @@ class NetworkModule {
             }
         }
     }
-}
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class ProverbModule {
-
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindProverbApi(
-        impl: ProverbApiImpl
-    ): ProverbApi
-
+    fun provideProverbApi(httpClient: HttpClient): ProverbApi {
+        return ProverbApiImpl(httpClient)
+    }
+    
 }
+

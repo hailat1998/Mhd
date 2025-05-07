@@ -63,12 +63,11 @@ class DataStoreManagerImpl @Inject constructor(@ApplicationContext private val c
         .map { preferences ->
             preferences[LINE_HEIGHT_KEY] ?: 24
         }
+
     override val onBoardShown: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
             preferences[ONBOARD_SHOWN] ?: false
         }
-
-
 
     override suspend fun setTheme(theme: String) {
         context.dataStore.edit { preferences ->

@@ -50,15 +50,20 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
         }
     }
 
-    private fun detailFeedQuery(context: Context, query: String){
-         viewModelScope.launch(coroutineDispatcher) {
-                val list = mutableListOf<String>()
-                val text = DataProvider.letterMap[query]
-                textRepository.readTextAsset(context, text!!).collect{
-                     list.add(it.data!!.trim())
+    private fun detailFeedQuery(context: Context, query: String) {
+        viewModelScope.launch(coroutineDispatcher) {
+            val list = mutableListOf<String>()
+            DataProvider.letterMap[query]?.let { assetName ->
+                textRepository.readTextAsset(context, assetName).collect { resource ->
+                    resource.data?.let { data ->
+                        list.add(data.trim())
+                    }
                 }
-                   _detailStateFlow.value = list
-          }
+                _detailStateFlow.update { list }
+            } ?: run {
+                _detailStateFlow.update { emptyList() }
+            }
+        }
     }
 
     private fun detailFeedRecent(context: Context) {
@@ -67,26 +72,24 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
             textRepository.readTextFile(context, 1).collect {
                 list.add(it.data!!)
             }
-            _detailStateFlow.value = list.reversed()
+            _detailStateFlow.update { list.reversed() }
         }
     }
 
     private fun detailFeedFav(){
         val list = mutableListOf<String>()
         list.addAll(favList)
-        _detailStateFlow.value = list
+        _detailStateFlow.update { list }
     }
 
     private fun detailAIFeed(proverb: String) {
-        Log.i("CALLED FOR", proverb)
 
         viewModelScope.launch(coroutineDispatcher) {
             textRepository.getFromNetwork(proverb)
-                .onStart { Log.d("LOADING", "Flow started") }
-                .onCompletion { Log.d("LOADING", "Flow completed") }
-                .catch { e -> Log.e("LOADING", "Flow error", e) }
+                .onStart { }
+                .onCompletion {  }
+                .catch { }
                 .collect { resource ->
-                    Log.d("STATE", "Processing: ${resource.javaClass.simpleName}")
                     _detailsAITextStateFlow.update { currentState ->
                         val newState = when (resource) {
                             is Resources.Loading -> {
@@ -109,9 +112,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                             }
                         }
 
-                        Log.i("LOADED", "${_detailsAITextStateFlow.value}")
-                        Log.d("STATE", "Transition: ${currentState.isLoading} -> ${newState.isLoading}")
-                        newState
+                      newState
                     }
                 }
           }

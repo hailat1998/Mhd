@@ -199,9 +199,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit.v115)
     androidTestImplementation(libs.androidx.espresso.core.v351)
     androidTestImplementation(libs.hilt.android.testing.v244)
+    androidTestImplementation("org.assertj:assertj-core:3.27.3")
     kaptAndroidTest(libs.hilt.android.compiler)
     androidTestImplementation(libs.ktor.client.mock)
     androidTestImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.robolectric)
-    implementation("org.mockito:mockito-android:5.14.2")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("app.cash.turbine:turbine:1.2.0")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
 }

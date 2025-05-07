@@ -162,6 +162,7 @@ fun MisaleApp(
     val showOthers = remember { mutableStateOf(true) }
    val showModalBottomSheet = remember{ mutableStateOf(false) }
     val showBottomBar = remember { mutableStateOf(false) }
+    val startDestination = if(onboardShown.value) MisaleScreen.Home.route else MisaleScreen.Onboarding.route
 
     val currentBackStackEntry by navHostController.currentBackStackEntryAsState()
 
@@ -172,7 +173,9 @@ fun MisaleApp(
     }
 
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet, showBottomBar)} ) {
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, onboardShown, showOthers)
+
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, startDestination)
+
         if(showModalBottomSheet.value){
             SettingScreen( showModalBottomSheet ,
                 onEvent = onEvent,

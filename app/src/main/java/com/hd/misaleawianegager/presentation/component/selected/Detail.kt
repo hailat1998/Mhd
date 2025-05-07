@@ -83,6 +83,7 @@ import com.hd.misaleawianegager.utils.compose.AnimatedPreloader
 import com.hd.misaleawianegager.utils.compose.ShimmerEffect
 import com.hd.misaleawianegager.utils.compose.favList
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 
@@ -108,9 +109,7 @@ fun Selected(
 
     DisposableEffect(Unit) {
         onDispose {
-            Log.i("FROM DISPOSE", "IN")
-    favList = favListHere.toMutableList()
-            Log.i("FROM DISPOSE", "${favList.size}")
+            favList = favListHere as MutableList<String>
         }
     }
 
@@ -604,6 +603,12 @@ fun getMarkDown() = "# Contributing to Virtual Book Store\n" +
         "Clone your forked repository to your local machine:\n" +
         "```sh\n"
 
+
+@Preview(showBackground = true)
+@Composable
+fun SelectedPreview() {
+    Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {})
+}
 
 
 

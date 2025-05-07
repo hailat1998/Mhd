@@ -43,8 +43,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                       modifier: Modifier,
                       letterType: String ,
                       onSettingEvent: (SettingEvent) -> Unit,
-                      onboardShown: State<Boolean>,
-                      showOthers: MutableState<Boolean>
+                      startDestination: String
                       ) {
 
             val viewModelHome: HomeViewModel = hiltViewModel()
@@ -57,22 +56,11 @@ fun MisaleBodyContent(navHostController: NavHostController,
 
         NavHost(
             navController = navHostController,
-            startDestination = MisaleScreen.Home.route,
+            startDestination = startDestination,
             modifier = modifier
         ) {
 
-            composable(MisaleScreen.Onboarding.route.plus("/{home}"),
-                arguments = listOf(navArgument("home") { type = NavType.StringType })) { backStackEntry ->
-
-                Log.i("Onboard", "MAIN")
-
-              val arg = backStackEntry.arguments?.getString("home")
-
-                    if(onboardShown.value || arg != null) {
-                        navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
-                    }
-
-                Log.i("Onboard2", "MAIN")
+            composable(MisaleScreen.Onboarding.route) {
 
                 MisaleAwiOnboardingScreen(onSettingEvent) { navHostController.navigateSingleTopTo(MisaleScreen.Home.route) }
             }
@@ -91,7 +79,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     },
                     scrollIndex = scrollPos,
                     toBoarding = {
-                        navHostController.navigateSingleTopTo(MisaleScreen.Onboarding.route.plus("/home"))
+                        navHostController.navigateSingleTopTo(MisaleScreen.Onboarding.route)
                     }
                 )
             }

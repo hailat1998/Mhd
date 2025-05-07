@@ -1,7 +1,6 @@
 package com.hd.misaleawianegager.data.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.asFlow
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -15,12 +14,9 @@ import com.hd.misaleawianegager.domain.remote.ProverbApi
 import com.hd.misaleawianegager.domain.remote.ProverbResponse
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.enMap
-import com.hd.misaleawianegager.laMap
-import com.hd.misaleawianegager.map
 import com.hd.misaleawianegager.utils.CacheManager
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -109,18 +105,13 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
             if (cacheManager.contains(proverb)) {
                 emit(Resources.Success(cacheManager.get(proverb) as ProverbResponse))
-                // Don't emit Loading(false) here - will be handled in finally
+                emit(Resources.Loading(false))
                 return@flow
             }
+
             try {
 
-                Log.i("REPOSITORY", "api called")
-                delay(2000L)
-
                 val proverbResponse = api.meaning(proverb)
-
-               // val proverbResponse = map[proverb]!!
-                Log.i("REPOSITORY", "$proverbResponse")
 
                 cacheManager.set(proverbResponse, proverb)
                 emit(Resources.Success(proverbResponse))
@@ -145,8 +136,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
                 val amharicText = api.enOrLa(latinAmharicText)
 
-               // val amharicText = laMap[latinAmharicText]!!
-
                 emit(Resources.Success(amharicText))
             } catch (ex: IOException) {
                 emit(Resources.Error("Network error: ${ex.localizedMessage}"))
@@ -167,10 +156,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             emit(Resources.Loading(true))
 
             try {
-
-                delay(2000L)
-
-            //    val amharicText = api.la2am(englishText)
 
                 val amharicText = enMap[englishText]!!
 
@@ -193,5 +178,4 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             emit(Resources.Success(workerTextService.readSingleText(context)))
         }
     }
-
 }

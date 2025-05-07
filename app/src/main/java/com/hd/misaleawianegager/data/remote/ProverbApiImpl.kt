@@ -51,7 +51,6 @@ class ProverbApiImpl @Inject constructor(private val client: HttpClient) : Prove
         Log.i("API", "Sending request to $BASE_URL")
         return client.post("$BASE_URL/translate/enOrLa2am"){
             setBody(mapOf("laOren" to laOren))
-            Log.i("API", "Sending request to: $BASE_URL/meaning with body: ${mapOf("text" to laOren)}")
         }.body<String>().also {
             Log.i("API", "Received response: $it")
         }

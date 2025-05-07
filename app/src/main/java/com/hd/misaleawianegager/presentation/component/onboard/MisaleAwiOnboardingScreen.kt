@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.onboard
 
-import android.util.Log
+
+import androidx.compose.ui.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,15 +13,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -54,7 +60,6 @@ fun MisaleAwiOnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val scope = rememberCoroutineScope()
 
-    Log.i("Onboard3", "MAIN")
 
     val isLastPage by remember {
         derivedStateOf { pagerState.currentPage == pageCount - 1 }
@@ -85,9 +90,8 @@ fun MisaleAwiOnboardingScreen(
                         CoolFinishButton(
                             modifier = Modifier,
                             onClick = {
-                                Log.i("Onboard4", "MAIN")
-                                onOnboardingComplete.invoke()
                                 onSettingEvent.invoke(SettingEvent.ShowBoarding(true))
+                                onOnboardingComplete.invoke()
                             }
                         )
                     }
@@ -97,8 +101,8 @@ fun MisaleAwiOnboardingScreen(
                         modifier = Modifier,
                         onClick = {
                             if (isLastPage) {
-                                onOnboardingComplete()
                                 onSettingEvent.invoke(SettingEvent.ShowBoarding(true))
+                                onOnboardingComplete()
                             } else {
                                 scope.launch {
                                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -106,9 +110,11 @@ fun MisaleAwiOnboardingScreen(
                             }
                         }
                     )
-                }
+             }
         }
+
     ) { innerPadding ->
+
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
@@ -236,6 +242,40 @@ fun CoolFinishButton(
 }
 
 
+@Composable
+fun TransparentSkipFab(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier,
+        contentAlignment = Alignment.TopEnd) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            FloatingActionButton(
+                onClick = onClick,
+                containerColor = Color.White.copy(alpha = 0.3f),
+                contentColor = Color.White,
+                shape = CircleShape,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Skip"
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Skip",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium,
+                color = Color.White
+            )
+        }
+    }
+}
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000) // Preview with dark background
 @Composable

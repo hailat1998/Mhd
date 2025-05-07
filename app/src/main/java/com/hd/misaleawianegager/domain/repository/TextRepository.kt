@@ -5,6 +5,7 @@ import com.hd.misaleawianegager.domain.remote.ProverbResponse
 import com.hd.misaleawianegager.utils.Resources
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import java.io.IOException
 
 interface TextRepository {
     fun readTextAsset(context: Context, type: String) : Flow<Resources<String>>
@@ -16,6 +17,7 @@ interface TextRepository {
     fun search(context: Context, query: String): Flow<Resources<String>>
 
     fun enqueueWork(): Flow<String>
+
 
     fun getFromNetwork(proverb: String): Flow<Resources<ProverbResponse>>
 
