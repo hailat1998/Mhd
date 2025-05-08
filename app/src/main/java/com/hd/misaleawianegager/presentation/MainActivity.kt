@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
             ActivityResultContracts.RequestPermission()
         ) {}
 
-   lateinit var splashScreen: SplashScreen
+   private lateinit var splashScreen: SplashScreen
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -297,7 +297,9 @@ fun SplashScreen(){
 @Composable
 fun S(){
     val navHostController = rememberNavController()
-    MisaleBottomAppBar(navHostController, mutableStateOf(false),mutableStateOf(true) )
+    val showModalBottomSheet = remember { mutableStateOf(false) }
+    val showBottombar = remember { mutableStateOf(true) }
+    MisaleBottomAppBar(navHostController, showModalBottomSheet,showBottombar )
 }
 
 

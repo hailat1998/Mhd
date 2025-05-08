@@ -23,7 +23,6 @@ class RecentViewModel @Inject constructor(private val textRepository: TextReposi
     private val _recentStateFlow = MutableStateFlow(emptyList<String>())
     val recentStateFlow get() = _recentStateFlow.asStateFlow()
 
-
     companion object {
         private const val SCROLLINDEX = "scrollIndex"
     }
@@ -31,7 +30,7 @@ class RecentViewModel @Inject constructor(private val textRepository: TextReposi
     val scrollValue = MutableStateFlow(savedStateHandle.get<Int>(SCROLLINDEX) ?:0)
 
      fun setScroll(value: Int){
-         scrollValue.value = value
+         scrollValue.update { value }
         savedStateHandle[SCROLLINDEX] = value
     }
 
@@ -39,7 +38,6 @@ class RecentViewModel @Inject constructor(private val textRepository: TextReposi
         viewModelScope.launch(coroutineDispatcher) {
             val list = mutableListOf<String>()
             textRepository.readTextFile(context, 1).collect{
-                println(it)
                 list.add(it.data!!.trim())
             }
             _recentStateFlow.update { list }

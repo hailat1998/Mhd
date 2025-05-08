@@ -1,12 +1,10 @@
 package com.hd.misaleawianegager.presentation.component.search
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.repository.TextRepository
-import com.hd.misaleawianegager.utils.MisaleSpellChecker
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

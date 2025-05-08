@@ -1,8 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.search
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -38,14 +36,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -60,7 +57,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -76,6 +72,7 @@ fun SearchScreen(
     
     val lazyListState = rememberLazyListState()
     val focusRequester = remember { FocusRequester() }
+
 
     val localFont = FontFamily.Default
     val textStyle = TextStyle(fontFamily = localFont)
@@ -142,6 +139,7 @@ fun SearchTopBar(query: MutableState<String>,
         blue = originalColor.blue * 0.6f,
         alpha = 0.8f
     )
+    val context = LocalContext.current
 
     TopAppBar(
         title = {
@@ -227,7 +225,12 @@ fun SearchTopBar(query: MutableState<String>,
                     CircularProgressIndicator(modifier = Modifier.padding(8.dp))
                 }
             }else {
-                IconButton(onClick = { onSearchEvent.invoke(SearchEvent.ConvertWord(query.value) )}
+                IconButton(onClick = {
+                    if(query.value.isEmpty()) {
+                       Toast.makeText(context,  "Type in English/Amharic (Latin) to convert to Amharic fidel.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        onSearchEvent.invoke(SearchEvent.ConvertWord(query.value) )}
+                    }
                 )  {
                     Icon(painterResource(R.drawable.swap_vert_24px), null)
                  }

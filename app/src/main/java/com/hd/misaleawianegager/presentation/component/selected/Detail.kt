@@ -29,6 +29,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -124,7 +125,7 @@ fun Selected(
     } else {
         listFlow.collectAsStateWithLifecycle().value
     }
-
+ SelectionContainer {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -181,6 +182,7 @@ fun Selected(
                             ) {
                                 Text(
                                     text = list[page],
+                                    fontSize = 21.sp,
                                     style = MaterialTheme.typography.bodyLarge,
                                     textAlign = TextAlign.Center
                                 )
@@ -259,6 +261,7 @@ fun Selected(
             )
         }
     }
+ }
 }
 
 @Composable
@@ -267,7 +270,7 @@ fun MarkdownContent(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
-    Column() {
+    Column {
         MarkdownText(
             markdown = markdownText,
             modifier = modifier

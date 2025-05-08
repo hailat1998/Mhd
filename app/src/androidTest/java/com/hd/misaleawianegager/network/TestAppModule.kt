@@ -48,9 +48,16 @@ object TestAppModule {
     fun provideHttpClient(engine: HttpClientEngine, json: Json): HttpClient {
         return HttpClient(engine) {
             install(ContentNegotiation) {
-                json(json)
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    classDiscriminator = "type"
+                })
             }
+            expectSuccess = true
         }
+
     }
 
     @Provides

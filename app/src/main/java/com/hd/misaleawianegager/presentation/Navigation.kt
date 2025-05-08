@@ -1,13 +1,10 @@
 package com.hd.misaleawianegager.presentation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
@@ -20,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.hd.misaleawianegager.presentation.DataProvider.orderMapNav
 import com.hd.misaleawianegager.presentation.component.fav.FavScreen
 import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.home.HomeContent
@@ -61,11 +59,57 @@ fun MisaleBodyContent(navHostController: NavHostController,
         ) {
 
             composable(MisaleScreen.Onboarding.route) {
-
                 MisaleAwiOnboardingScreen(onSettingEvent) { navHostController.navigateSingleTopTo(MisaleScreen.Home.route) }
             }
 
-            composable(MisaleScreen.Home.route) {
+            composable(
+                MisaleScreen.Home.route,
+                enterTransition = {
+                    val prevRoute = navHostController.previousBackStackEntry?.destination?.route
+                    val prevIndex = if (prevRoute != null) orderMapNav[prevRoute] ?: -1 else -1
+                    val currentIndex = orderMapNav[MisaleScreen.Home.route] ?: 2 // Default to its known position
+
+                    if (prevIndex > currentIndex) {
+
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else if (prevIndex < currentIndex) {
+
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else {
+
+                        EnterTransition.None
+                    }
+                },
+                exitTransition = {
+                    val targetRoute = targetState.destination.route
+                    val targetIndex = if (targetRoute != null) orderMapNav[targetRoute] ?: -1 else -1
+                    val currentIndex = orderMapNav[MisaleScreen.Home.route] ?: 2
+
+                    if (targetIndex > currentIndex) {
+
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else if (targetIndex < currentIndex) {
+
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else {
+
+                        ExitTransition.None
+                    }
+                }
+            )
+            {
                 viewModelHome.onEvent(HomeEvent.LoadLetter(letterType))
                 val list = viewModelHome.homeStateFlow.collectAsStateWithLifecycle()
                 val scrollPos = viewModelHome.scrollValue.collectAsStateWithLifecycle()
@@ -84,7 +128,49 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 )
             }
 
-            composable(MisaleScreen.Fav.route) {
+            composable(MisaleScreen.Fav.route,
+                enterTransition = {
+                    val prevRoute = navHostController.previousBackStackEntry?.destination?.route
+                    val prevIndex = if (prevRoute != null) orderMapNav[prevRoute] ?: -1 else -1
+                    val currentIndex = orderMapNav[MisaleScreen.Fav.route] ?: 1 // Default to its known position
+
+                    if (prevIndex > currentIndex) {
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else if (prevIndex < currentIndex) {
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else {
+                        EnterTransition.None
+                    }
+                },
+                exitTransition = {
+                    val targetRoute = targetState.destination.route
+                    val targetIndex = if (targetRoute != null) orderMapNav[targetRoute] ?: -1 else -1
+                    val currentIndex = orderMapNav[MisaleScreen.Home.route] ?: 2
+
+                    if (targetIndex > currentIndex) {
+
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else if (targetIndex < currentIndex) {
+
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(ANIMATION_DURATION)
+                        )
+                    } else {
+
+                        ExitTransition.None
+                    }
+                }
+            ) {
                 viewModelDetailFav.readFavList()
                 val list = viewModelDetailFav.favStateFlow.collectAsStateWithLifecycle()
                 val scrollIndex = viewModelDetailFav.scrollValue.collectAsStateWithLifecycle()
@@ -94,7 +180,13 @@ fun MisaleBodyContent(navHostController: NavHostController,
                    )
             }
 
-            composable(MisaleScreen.Recent.route) {
+            composable(MisaleScreen.Recent.route,
+                enterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = tween(ANIMATION_DURATION)
+                    )
+                }) {
                 val context = LocalContext.current
                 viewModelDetailRecent.readText(context)
                 val list = viewModelDetailRecent.recentStateFlow.collectAsStateWithLifecycle()
@@ -105,7 +197,13 @@ fun MisaleBodyContent(navHostController: NavHostController,
                   )
             }
 
-            composable(MisaleScreen.Search.route) {
+            composable(MisaleScreen.Search.route,
+                enterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = tween(ANIMATION_DURATION)
+                    )
+                }) {
 
                 val list = viewModelSearch.searchResult.collectAsStateWithLifecycle()
                 val word = viewModelSearch.wordResult

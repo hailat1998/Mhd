@@ -47,4 +47,15 @@ object DataProvider {
         "ፀ" to "31Xe.txt",
         "ፈ" to "32Fe.txt"
     )
+
+
+    val orderMapNav = mapOf(
+        MisaleScreen.Recent.route to 0,
+        MisaleScreen.Fav.route to 1,
+        MisaleScreen.Home.route to 2,
+        MisaleScreen.Search.route to 3,
+        MisaleScreen.Detail.route to 4,
+        MisaleScreen.Onboarding.route to 5
+    )
+
 }

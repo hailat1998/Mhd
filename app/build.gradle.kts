@@ -18,7 +18,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.hd.misaleawianegager.HiltTestRunner"
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -56,10 +57,6 @@ android {
     lint {
         baseline = file("lint-baseline.xml")
     }
-    defaultConfig {
-        // ...
-        testInstrumentationRunner = "com.hd.misaleawianegager.HiltTestRunner"
-    }
 
     testOptions {
         unitTests {
@@ -94,6 +91,7 @@ dependencies {
     /* *****************************************************
      **** Lifecycle
      ****************************************************** */
+
     implementation(libs.lifecycle.extensions)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
@@ -208,5 +206,12 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("app.cash.turbine:turbine:1.2.0")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+    implementation("androidx.test:runner:1.6.2")
+    implementation("androidx.test:rules:1.6.1")
 
+    /* *****************************************************
+        **** Util
+        ****************************************************** */
+
+    implementation("androidx.multidex:multidex:2.0.0")
 }
