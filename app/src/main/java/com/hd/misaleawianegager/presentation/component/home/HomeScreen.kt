@@ -281,20 +281,7 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>, toBoarding: () -> Unit) {
                     }
                 }
             },
-            confirmButton = {
-                Button(
-                    onClick = { openDialog.value = false },
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Text(
-                        "OK",
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            },
+            confirmButton = { },
             dismissButton = {
                 OutlinedButton(
                     onClick = { openDialog.value = false },
@@ -304,7 +291,7 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>, toBoarding: () -> Unit) {
                     )
                 ) {
                     Text(
-                        "Dismiss",
+                        "OK",
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -312,7 +299,6 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>, toBoarding: () -> Unit) {
             modifier = Modifier.padding(16.dp)
         )
     }
-
 
 @Composable
 fun InfoRow(label: String, value: String) {
