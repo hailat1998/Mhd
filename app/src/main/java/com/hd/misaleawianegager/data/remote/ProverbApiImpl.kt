@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.data.remote
 
 import android.util.Log
+import com.hd.misaleawianegager.BuildConfig
 import com.hd.misaleawianegager.domain.remote.ProverbApi
 import com.hd.misaleawianegager.domain.remote.ProverbResponse
 import io.ktor.client.HttpClient
@@ -15,7 +16,7 @@ import javax.inject.Inject
 class ProverbApiImpl @Inject constructor(private val client: HttpClient) : ProverbApi {
 
     companion object {
-        private const val BASE_URL = "https://misale-latest.onrender.com"
+       private const val BASE_URL = BuildConfig.BASE_URL
     }
 
     override suspend fun meaning(proverb: String): ProverbResponse {

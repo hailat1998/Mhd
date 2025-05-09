@@ -7,6 +7,9 @@
 -keep @dagger.hilt.InstallIn class * { *; }
 -keep @dagger.hilt.components.SingletonComponent class * { *; }
 
+-dontwarn java.lang.management.ManagementFactory
+-dontwarn java.lang.management.RuntimeMXBean
+
 # Jetpack Compose
 -keep class androidx.compose.** { *; }
 -keep class kotlin.** { *; }

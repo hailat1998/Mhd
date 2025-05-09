@@ -78,7 +78,7 @@ fun MisaleAwiOnboardingScreen(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Skip",
                             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            modifier = Modifier.shadow(shape = CircleShape, elevation = 4.dp, )
+                            modifier = Modifier.shadow(shape = CircleShape, elevation = 4.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
@@ -99,6 +99,7 @@ fun MisaleAwiOnboardingScreen(
                         activeDotColor = MaterialTheme.colorScheme.primary,
                         dotColor = MaterialTheme.colorScheme.onPrimary,
                         dotCount = 3,
+                        space = 12.dp,
                         orientation = PagerIndicatorOrientation.Horizontal
                     )
                 }
@@ -139,7 +140,7 @@ fun MisaleAwiOnboardingScreen(
 }
 
 @Composable
-fun TextButton(text: String, onClick: () -> Unit,) {
+fun TextButton(text: String, onClick: () -> Unit) {
     Box(Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center) {
         Text(
@@ -156,6 +157,8 @@ fun TextButton(text: String, onClick: () -> Unit,) {
         )
     }
 }
+
+
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000) // Preview with dark background
 @Composable

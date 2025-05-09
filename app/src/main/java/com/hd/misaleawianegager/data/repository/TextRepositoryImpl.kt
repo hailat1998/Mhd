@@ -13,7 +13,6 @@ import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.domain.remote.ProverbApi
 import com.hd.misaleawianegager.domain.remote.ProverbResponse
 import com.hd.misaleawianegager.domain.repository.TextRepository
-import com.hd.misaleawianegager.enMap
 import com.hd.misaleawianegager.utils.CacheManager
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -120,7 +119,6 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
             } catch (ex: Exception) {
                 emit(Resources.Error("Error fetching proverb meaning: ${ex.localizedMessage}"))
             } finally {
-                // Only emit Loading(false) once, at the end
                 emit(Resources.Loading(false))
             }
         }.catch { e ->
@@ -157,7 +155,7 @@ class TextRepositoryImpl @Inject constructor(private val assetsTextService: Asse
 
             try {
 
-                val amharicText = enMap[englishText]!!
+                val amharicText = api.en2am(englishText)
 
                 emit(Resources.Success(amharicText))
             } catch (ex: IOException) {

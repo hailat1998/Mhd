@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -5,6 +8,21 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
     id("kotlinx-serialization")
     alias(libs.plugins.compose.compiler)
+}
+
+
+
+val localProperties = Properties()
+
+
+val localPropertiesFile = rootProject.file("local.properties")
+
+
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+} else {
+
+    logger.warn("local.properties file not found. Build might use default or fail if BASE_URL is critical.")
 }
 
 android {
@@ -15,14 +33,36 @@ android {
         applicationId = "com.hd.misaleawianegager"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         testInstrumentationRunner = "com.hd.misaleawianegager.HiltTestRunner"
 
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Use only the local.properties loading mechanism
+        val localProperties = Properties() // Use fully qualified name or import
+        val localPropertiesFile = rootProject.file("local.properties")
+        var finalBaseUrl = "\"https://misale-latest.onrender.com\"" // Default value
+
+        if (localPropertiesFile.exists()) {
+            try {
+                localProperties.load(localPropertiesFile.inputStream())
+                val urlFromProperties = localProperties.getProperty("BASE_URL")
+                if (urlFromProperties != null && urlFromProperties.isNotBlank()) {
+                    finalBaseUrl = "\"$urlFromProperties\"" // Add quotes
+                } else {
+                    logger.warn("BASE_URL found in local.properties but is empty. Using default.")
+                }
+            } catch (e: Exception) {
+                logger.warn("Error loading local.properties. Using default BASE_URL.", e)
+            }
+        } else {
+            logger.warn("local.properties not found. Using default BASE_URL.")
+        }
+        buildConfigField("String", "BASE_URL", finalBaseUrl)
     }
 
     buildTypes {
@@ -45,6 +85,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // This is essential
     }
 //    composeOptions {
 //        kotlinCompilerExtensionVersion = "1.5.12"
