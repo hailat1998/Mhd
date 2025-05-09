@@ -35,11 +35,11 @@ fun ShimmerEffect(
         )
     } else {
         listOf(
-            Color.White.copy(alpha = 0.3f),
-            Color.White.copy(alpha = 0.5f),
+            Color.LightGray.copy(alpha = 0.6f),
+            Color.LightGray.copy(alpha = 0.9f),
             Color.White.copy(alpha = 1.0f),
-            Color.White.copy(alpha = 0.5f),
-            Color.White.copy(alpha = 0.3f),
+            Color.LightGray.copy(alpha = 0.9f),
+            Color.LightGray.copy(alpha = 0.6f),
         )
     }
 
