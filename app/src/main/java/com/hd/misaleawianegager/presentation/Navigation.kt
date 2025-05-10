@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -69,21 +70,18 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     val prevIndex = if (prevRoute != null) orderMapNav[prevRoute] ?: -1 else -1
                     val currentIndex = orderMapNav[MisaleScreen.Home.route] ?: 2 // Default to its known position
 
-                    if (prevIndex > currentIndex) {
+                    if (prevIndex >= currentIndex) {
 
                         slideIntoContainer(
                             AnimatedContentTransitionScope.SlideDirection.Right,
                             animationSpec = tween(ANIMATION_DURATION)
                         )
-                    } else if (prevIndex < currentIndex) {
+                    } else {
 
                         slideIntoContainer(
                             AnimatedContentTransitionScope.SlideDirection.Left,
                             animationSpec = tween(ANIMATION_DURATION)
                         )
-                    } else {
-
-                        EnterTransition.None
                     }
                 },
                 exitTransition = {
@@ -221,7 +219,9 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     navArgument("arg2") { type = NavType.StringType },
                     navArgument("arg3") { type = NavType.StringType }),
                 deepLinks = listOf(
-                    navDeepLink { uriPattern = "misale://selected/{from}/{arg2}/{arg3}" }
+                    navDeepLink {
+                        uriPattern = "misale://selected/{from}/{arg2}/{arg3}"
+                    }
                 ),
                 enterTransition = {
                     slideIntoContainer(
@@ -253,6 +253,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 if (arg1 == "የቅርብ") {
                     viewModelDetail.onEvent(DetailEvent.LoadRecent)
                 }
+
 
                 val favListHere = remember { favList.toMutableStateList() }
 

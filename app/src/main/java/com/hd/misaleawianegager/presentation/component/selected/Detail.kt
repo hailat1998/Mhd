@@ -99,6 +99,7 @@ fun Selected(
     onFavoriteToggle: (String) -> Unit
 ) {
 
+
     val textAi = textAiFlow.collectAsStateWithLifecycle()
     var str by remember { mutableStateOf("") }
 

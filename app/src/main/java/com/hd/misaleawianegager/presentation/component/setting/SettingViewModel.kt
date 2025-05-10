@@ -45,7 +45,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "01Ha.txt" )
 
     val boardingShown = settingRepository.onBoardingShown
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), true)
 
    private fun setFont(font: String){
        viewModelScope.launch {
