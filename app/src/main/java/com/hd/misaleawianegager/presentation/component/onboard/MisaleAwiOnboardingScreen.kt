@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.onboard
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,15 +10,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -26,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +41,7 @@ import kotlinx.coroutines.launch
 import mx.platacard.pagerindicator.PagerIndicator
 import mx.platacard.pagerindicator.PagerIndicatorOrientation
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MisaleAwiOnboardingScreen(
     onSettingEvent: (SettingEvent) -> Unit,
@@ -57,39 +64,6 @@ fun MisaleAwiOnboardingScreen(
     )
 
     Scaffold(
-        topBar = {
-            if (!isLastPage) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .clickable {
-                                onSettingEvent.invoke(SettingEvent.ShowBoarding(true))
-                                onOnboardingComplete.invoke()
-                            }
-                            .padding(13.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Skip",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            modifier = Modifier.shadow(shape = CircleShape, elevation = 4.dp)
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Skip",
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    }
-                }
-            }
-        },
         bottomBar = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Spacer(Modifier.height(15.dp))
@@ -137,6 +111,34 @@ fun MisaleAwiOnboardingScreen(
             }
         }
     }
+    if (!isLastPage) {
+        Box(Modifier.fillMaxSize().background(Color.Transparent)) {
+            Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .statusBarsPadding()
+                .padding(top = 16.dp, end = 26.dp)
+                .clickable {
+                    onSettingEvent.invoke(SettingEvent.ShowBoarding(true))
+                    onOnboardingComplete.invoke()
+                }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Skip",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.shadow(shape = CircleShape, elevation = 4.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Skip",
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
 }
 
 @Composable
@@ -160,7 +162,7 @@ fun TextButton(text: String, onClick: () -> Unit) {
 
 
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000) // Preview with dark background
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 fun MisaleAwiOnboardingScreenMultiPagePreview() {
     MaterialTheme {
