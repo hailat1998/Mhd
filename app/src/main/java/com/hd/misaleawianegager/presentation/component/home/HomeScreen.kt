@@ -27,13 +27,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -71,6 +67,8 @@ import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.presentation.DataProvider
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.compose.Chip
+import com.hd.misaleawianegager.utils.compose.ChipDefaultsM3
 import com.hd.misaleawianegager.utils.compose.TextCard
 import kotlinx.coroutines.delay
 
@@ -192,8 +190,7 @@ fun HomeContent(homeData: State<List<String>>,
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
-    ExperimentalMaterialApi::class
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class
 )
 @Composable
 fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
@@ -226,11 +223,12 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
                  dismissReq.value = !dismissReq.value
 
             },
-                 colors = ChipDefaults.chipColors(backgroundColor =MaterialTheme.colorScheme.background),
+                 colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.background),
 
-                 border = BorderStroke(2.dp, Color(0xFFFFD700))
+                 border = BorderStroke(2.dp, Color(0xFFFFD700)),
+
              ){
-                 Box(modifier = Modifier.size(35.dp), contentAlignment = Alignment.Center) {
+                 Box(modifier = Modifier.size(37.dp).padding(end = 4.dp, start = 4.dp), contentAlignment = Alignment.Center) {
                      Text(text = it, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onPrimary)
                  }
              }

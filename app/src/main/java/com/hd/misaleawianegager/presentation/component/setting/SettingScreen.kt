@@ -16,11 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DropdownMenuItem
@@ -28,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
@@ -53,6 +49,9 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hd.misaleawianegager.R
+import com.hd.misaleawianegager.utils.compose.Chip
+import com.hd.misaleawianegager.utils.compose.ChipDefaultsM3
+import com.hd.misaleawianegager.utils.compose.Divider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +71,8 @@ fun SettingScreen(
             onDismissRequest = { showModalBottomSheet.value = false },
             containerColor = MaterialTheme.colorScheme.background,
             dragHandle = null,
-            shape = RectangleShape
+            shape = RectangleShape,
+            modifier = Modifier.background(Color.Transparent)
         ) {
             Box(
                 Modifier
@@ -253,7 +253,6 @@ fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOther
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
     Box(Modifier.padding(8.dp)) {
@@ -264,26 +263,29 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
             ) {
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.FontSize(2)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
+                    colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                     shape =  MaterialTheme.shapes. small. copy(CornerSize(percent = 20)),
                     modifier = Modifier.padding(end = 20.dp)
                 ) {
-                    Text(text = "A+", style = MaterialTheme.typography.titleLarge)
+                    Box(modifier = Modifier.size(30.dp), contentAlignment = Alignment.Center) {
+                        Text(text = "A+", style = MaterialTheme.typography.titleLarge)
+                    }
                 }
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.FontSize(-2)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
+                    colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                     shape =  MaterialTheme.shapes. small. copy(CornerSize(percent = 20),),
                     modifier = Modifier.padding(start = 20.dp)
                 ) {
-                    Text(text = "A-", style = MaterialTheme.typography.titleLarge)
+                    Box(modifier = Modifier.size(30.dp), contentAlignment = Alignment.Center) {
+                        Text(text = "A-", style = MaterialTheme.typography.titleLarge)
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
     Box(Modifier.padding(8.dp)) {
@@ -295,30 +297,50 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
             Row(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 45.dp),
             ) {
-                Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
-                    modifier = Modifier.padding(end = 20.dp, top = 15.dp)) {
-                    Row {
-                        Icon(
-                            painter = painterResource(id = R.drawable.space_bar_24px),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.surfaceContainerLow,
-                            modifier = Modifier.size(50.dp)
-                        )
-                        Text(text = "+", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =11.dp ))
+                Chip(
+                    onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
+                    colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.padding(end = 20.dp, top = 15.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.size(45.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row {
+                            Icon(
+                                painter = painterResource(id = R.drawable.space_bar_24px),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.surfaceContainerLow,
+                                modifier = Modifier.size(30.dp).padding(top = 5.dp)
+                            )
+                            Text(
+                                text = "+",
+                                style = MaterialTheme.typography.headlineMedium
+                            )
+                        }
                     }
                 }
-                Chip(onClick = { onEvent.invoke(SettingEvent.LetterSpace(-1.0)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.primaryContainer),
-                    modifier = Modifier.padding(start = 20.dp, top = 15.dp)) {
-                    Row {
-                        Icon(
-                            painter = painterResource(id = R.drawable.space_bar_24px),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.surfaceContainerLow,
-                            modifier = Modifier.size(50.dp)
-                        )
-                        Text(text = "-", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(top =10.dp ))
+                Chip(
+                    onClick = { onEvent.invoke(SettingEvent.LetterSpace(-1.0)) },
+                    colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.padding(start = 20.dp, top = 15.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.size(45.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row {
+                            Icon(
+                                painter = painterResource(id = R.drawable.space_bar_24px),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.surfaceContainerLow,
+                                modifier = Modifier.size(30.dp).padding(top = 5.dp)
+                            )
+                            Text(
+                                text = "-",
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                        }
                     }
                 }
             }
@@ -326,7 +348,6 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LineHeightContent(onEvent: (SettingEvent) -> Unit) {
     Box {
@@ -341,7 +362,7 @@ fun LineHeightContent(onEvent: (SettingEvent) -> Unit) {
             ) {
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.background)
+                    colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.background)
                 ) {
 
                     Row {
@@ -357,7 +378,7 @@ fun LineHeightContent(onEvent: (SettingEvent) -> Unit) {
 
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
-                    colors = ChipDefaults.chipColors(backgroundColor = MaterialTheme.colorScheme.background)
+                    colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.background)
                 ) {
 
                     Row {
