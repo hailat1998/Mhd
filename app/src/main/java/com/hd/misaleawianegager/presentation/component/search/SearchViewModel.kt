@@ -57,7 +57,7 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
            textRepository.search( context, query).collect{
                list.add(it.data!!)
             }
-            _searchResult.value = list
+            _searchResult.update { list }
         }
     }
 

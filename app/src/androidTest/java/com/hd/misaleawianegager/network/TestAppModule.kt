@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @Module
 @TestInstallIn(
     components = [SingletonComponent::class],
-    replaces = [NetworkModule::class] // Replace your actual network module
+    replaces = [NetworkModule::class]
 )
 object TestAppModule {
 
@@ -35,14 +35,14 @@ object TestAppModule {
     @Provides
     @Singleton
     fun provideMockEngine(testMockEngineConfig: TestMockEngineConfig): HttpClientEngine {
-        return MockEngine { request -> // 'this' here is MockRequestHandleScope
+        return MockEngine { request ->
             Log.d("MockEngine", "Handling request: ${request.method.value} ${request.url.encodedPath}")
-            // Correctly invoke the responseHandler with the MockRequestHandleScope
+
             testMockEngineConfig.responseHandler.invoke(this, request)
         }
     }
 
-    // provideHttpClient, provideJson, provideProverbApi, provideCoroutineDispatcher remain the same
+
     @Provides
     @Singleton
     fun provideHttpClient(engine: HttpClientEngine, json: Json): HttpClient {

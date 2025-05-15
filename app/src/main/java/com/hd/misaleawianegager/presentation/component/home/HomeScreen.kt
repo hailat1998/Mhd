@@ -145,7 +145,8 @@ fun HomeContent(homeData: State<List<String>>,
         },
 
         floatingActionButton = {
-            AnimatedVisibility(visible = showFloatButton,
+            AnimatedVisibility(
+                visible = showFloatButton,
                 enter = slideInVertically { it },
                 exit = slideOutVertically { it }) {
             FloatingActionButton(onClick = { showBottomSheet.value = true }, modifier = Modifier.testTag("FLOAT")
@@ -164,8 +165,8 @@ fun HomeContent(homeData: State<List<String>>,
             if (homeData.value.isEmpty()) {
                 CircularProgressIndicator()
             } else {
-                val arg3 = if (homeData.value[0][0].toString() == "ኃ") "ኀ"
-                else if (homeData.value[0][0].toString() == "ጳ") "ጰ"
+                val arg3 = if (homeData.value[0][0].toString() == "ኃ" )  "ኀ"
+                else if (homeData.value[0][0].toString() == "ጳ")  "ጰ"
                 else homeData.value[0][0].toString()
 
                 floatLetter = arg3
@@ -198,25 +199,40 @@ fun HomeContent(homeData: State<List<String>>,
 fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
                   loadLetter: (HomeEvent) -> Unit,
                   onSettingEvent: (SettingEvent) -> Unit) {
-    ModalBottomSheet(onDismissRequest = {
+    ModalBottomSheet(
+        onDismissRequest = {
         dismissReq.value = !dismissReq.value
     },
-        dragHandle = null) {
+        dragHandle = null
+    ) {
         Box(modifier = Modifier.heightIn( max= 250.dp)){
+
         Image(painterResource(id = R.drawable.drawing_dun), null,
+
         contentScale = ContentScale.FillBounds)
+
         FlowRow(modifier = Modifier
             .padding(8.dp)
-            .background(Color.Transparent)) {
+            .background(Color.Transparent)
+        ) {
          DataProvider.letterMap.keys.forEach { it ->
+
              Chip(onClick = {
+
                  onSettingEvent.invoke(SettingEvent.LetterType(DataProvider.letterMap[it]!!))
+
                  loadLetter.invoke(HomeEvent.LoadLetter(DataProvider.letterMap[it]!!))
-                 dismissReq.value = !dismissReq.value },
+
+                 dismissReq.value = !dismissReq.value
+
+            },
                  colors = ChipDefaults.chipColors(backgroundColor =MaterialTheme.colorScheme.background),
+
                  border = BorderStroke(2.dp, Color(0xFFFFD700))
              ){
-                 Text(text = it, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onPrimary)
+                 Box(modifier = Modifier.size(35.dp), contentAlignment = Alignment.Center) {
+                     Text(text = it, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onPrimary)
+                 }
              }
            }
         }

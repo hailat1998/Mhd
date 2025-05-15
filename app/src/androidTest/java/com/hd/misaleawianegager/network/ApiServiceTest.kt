@@ -42,6 +42,9 @@ import io.ktor.client.request.HttpResponseData
 import io.ktor.utils.io.core.readBytes
 import io.ktor.utils.io.readRemaining
 
+//Before Running this tests make sure you commented the the custom WorkManager initializer in Manifest.
+
+
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class ApiServiceTest {
