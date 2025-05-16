@@ -202,7 +202,7 @@ fun HomeBottomSheet(dismissReq : MutableState<Boolean>,
     },
         dragHandle = null
     ) {
-        Box(modifier = Modifier.heightIn( max= 250.dp)){
+        Box(modifier = Modifier.heightIn( max= 300.dp)){
 
         Image(painterResource(id = R.drawable.drawing_dun), null,
 

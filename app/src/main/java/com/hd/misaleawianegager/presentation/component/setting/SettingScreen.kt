@@ -129,7 +129,7 @@ fun SettingScreen(
                 Row {
                     Row(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                            .background(Color.Transparent)
                             .clickable { onEvent.invoke(SettingEvent.Theme("system")) },
                     ) {
                         RadioButton(
@@ -145,9 +145,8 @@ fun SettingScreen(
                     }
                     Row(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                            .background(Color.Transparent)
                             .clickable { onEvent.invoke(SettingEvent.Theme("dark")) }
-                            .background(Color.Transparent),
                     ) {
                         RadioButton(
                             selected = theme.value == "dark",
@@ -163,9 +162,8 @@ fun SettingScreen(
 
                     Row(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                            .background(Color.Transparent)
                             .clickable { onEvent.invoke(SettingEvent.Theme("light")) }
-                            .background(Color.Transparent),
 
                         ) {
                         RadioButton(

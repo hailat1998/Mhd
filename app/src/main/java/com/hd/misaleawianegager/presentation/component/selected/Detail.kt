@@ -86,6 +86,8 @@ import com.hd.misaleawianegager.utils.compose.favList
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import mx.platacard.pagerindicator.PagerIndicator
+import mx.platacard.pagerindicator.PagerIndicatorOrientation
 
 
 @Composable
@@ -98,7 +100,6 @@ fun Selected(
     favListHere: List<String>,
     onFavoriteToggle: (String) -> Unit
 ) {
-
 
     val textAi = textAiFlow.collectAsStateWithLifecycle()
     var str by remember { mutableStateOf("") }
@@ -115,17 +116,21 @@ fun Selected(
         }
     }
 
-
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-
 
     val list = if (from == "search") {
         remember { mutableStateListOf<String>().apply { add(page) } }
     } else {
         listFlow.collectAsStateWithLifecycle().value
     }
+
+    val pager = rememberPagerState(
+        initialPage = 0,
+        pageCount = { if (list.isNotEmpty())list.size else 0 }
+    )
+
  SelectionContainer {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -141,10 +146,10 @@ fun Selected(
             if (list.isEmpty()) {
                 CircularProgressIndicator()
             } else {
-                val pager = rememberPagerState(
-                    initialPage = 0,
-                    pageCount = { list.size }
-                )
+//                val pager = rememberPagerState(
+//                    initialPage = 0,
+//                    pageCount = { list.size }
+//                )
 
                 LaunchedEffect(Unit) {
                     pager.scrollToPage(list.indexOf(page))
@@ -178,14 +183,15 @@ fun Selected(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
                         ) {
                             Box(
-                                modifier = Modifier.padding(10.dp),
+                                modifier = Modifier.fillMaxWidth().padding(10.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = list[page],
                                     fontSize = 21.sp,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                         }
@@ -261,7 +267,18 @@ fun Selected(
                 }
             )
         }
-    }
+                Box(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp), contentAlignment = Alignment.Center) {
+                    PagerIndicator(
+                        pagerState = pager,
+                        activeDotColor = MaterialTheme.colorScheme.primary,
+                        dotColor = MaterialTheme.colorScheme.onPrimary,
+                        dotCount = 6,
+                        space = 12.dp,
+                        orientation = PagerIndicatorOrientation.Horizontal
+                    )
+                }
+
+            }
  }
 }
 
