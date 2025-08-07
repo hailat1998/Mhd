@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.recent
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -76,6 +77,8 @@ fun Recent(recentData: State<List<String>>,
             .padding(it),
             contentAlignment = Alignment.Center
         ) {
+
+
             if (loading && recentData.value.isEmpty()) {
                 CircularProgressIndicator()
             }else{

@@ -71,23 +71,22 @@ fun SettingScreen(
             onDismissRequest = { showModalBottomSheet.value = false },
             containerColor = MaterialTheme.colorScheme.background,
             dragHandle = null,
-            shape = RectangleShape,
-            modifier = Modifier.background(Color.Transparent)
+            shape = RectangleShape
         ) {
             Box(
                 Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
-                    .background(Color.Transparent)
+                    .background(MaterialTheme.colorScheme.surface)
                     .heightIn(max = 500.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column(Modifier.background(Color.Transparent)) {
+                Column(Modifier.background(MaterialTheme.colorScheme.surface)) {
                     Row {
                         Text(
                             text = "Setting",
                             style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.padding(10.dp).background(Color.Transparent)
+                            modifier = Modifier.padding(10.dp).background(MaterialTheme.colorScheme.surface)
                         )
                         Spacer(modifier = Modifier.weight(0.8f))
                         Icon(Icons.Default.Close, null, modifier = Modifier
@@ -129,7 +128,6 @@ fun SettingScreen(
                 Row {
                     Row(
                         modifier = Modifier
-                            .background(Color.Transparent)
                             .clickable { onEvent.invoke(SettingEvent.Theme("system")) },
                     ) {
                         RadioButton(
@@ -145,7 +143,6 @@ fun SettingScreen(
                     }
                     Row(
                         modifier = Modifier
-                            .background(Color.Transparent)
                             .clickable { onEvent.invoke(SettingEvent.Theme("dark")) }
                     ) {
                         RadioButton(
@@ -162,7 +159,6 @@ fun SettingScreen(
 
                     Row(
                         modifier = Modifier
-                            .background(Color.Transparent)
                             .clickable { onEvent.invoke(SettingEvent.Theme("light")) }
 
                         ) {
@@ -188,7 +184,7 @@ fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOther
         "abyssinica_gentium", "andikaafr_r", "charterbr_roman", "desta_gentium", "gfzemen_regular",
         "jiret", "nyala", "washrasb", "wookianos", "yebse", "serif", "Default"
     )
-    Box(Modifier.padding(8.dp).background(Color.Transparent)) {
+    Box(Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
         var expanded by remember { mutableStateOf(false) }
         Column(Modifier.padding(bottom= if(showOthers.value)0.dp else 48.dp)) {
             Text(text = "FontFamily",
@@ -255,11 +251,11 @@ fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOther
 
 @Composable
 fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
-    Box(Modifier.padding(8.dp).background(Color.Transparent)) {
+    Box(Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
         Column {
             Text(text = "FontSize", style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold))
             Row(
-                modifier = Modifier.fillMaxWidth().background(Color.Transparent),
+                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
             ) {
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.FontSize(2)) },
@@ -288,8 +284,8 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
 
 @Composable
 fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
-    Box(Modifier.padding(8.dp).background(Color.Transparent)) {
-        Column(Modifier.background(Color.Transparent)) {
+    Box(Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
+        Column(Modifier.background(MaterialTheme.colorScheme.surface)) {
             Text(
                 text = "Word Space",
                 style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)

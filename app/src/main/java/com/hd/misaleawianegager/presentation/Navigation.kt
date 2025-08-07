@@ -24,6 +24,7 @@ import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
 import com.hd.misaleawianegager.presentation.component.home.HomeContent
 import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.presentation.component.home.HomeViewModel
+import com.hd.misaleawianegager.presentation.component.home.HomeWrapper
 import com.hd.misaleawianegager.presentation.component.onboard.MisaleAwiOnboardingScreen
 import com.hd.misaleawianegager.presentation.component.recent.Recent
 import com.hd.misaleawianegager.presentation.component.recent.RecentViewModel
@@ -111,7 +112,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 viewModelHome.onEvent(HomeEvent.LoadLetter(letterType))
                 val list = viewModelHome.homeStateFlow.collectAsStateWithLifecycle()
                 val scrollPos = viewModelHome.scrollValue.collectAsStateWithLifecycle()
-                HomeContent(
+                HomeWrapper(
                     homeData = list,
                     onHomeEvent = viewModelHome::onEvent,
                     onSettingEvent,
@@ -253,7 +254,6 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 if (arg1 == "የቅርብ") {
                     viewModelDetail.onEvent(DetailEvent.LoadRecent)
                 }
-
 
                 val favListHere = remember { favList.toMutableStateList() }
 

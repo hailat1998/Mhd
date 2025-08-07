@@ -15,6 +15,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -62,6 +66,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -206,11 +211,14 @@ fun Selected(
                                     if (uiState.isLoading == true) {
                                         ShimmerEffect(
                                             modifier = Modifier
-                                                .fillMaxSize()
-                                                .height(420.dp)
+                                                .fillMaxWidth()
+                                                .height(480.dp)
+                                                .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp)
                                         )
                                     } else if (uiState.isLoading != true && uiState.error != null) {
-                                        AnimatedPreloader(Modifier.fillMaxSize().height(420.dp), R.raw.animation_error)
+                                        AnimatedPreloader(Modifier.fillMaxWidth().height(480.dp)
+                                            .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp),
+                                            R.raw.animation_error)
                                     } else if (uiState.isLoading != true && uiState.amMeaning != null) {
                                         MarkdownContent(uiState.amMeaning!!)
                                     }
@@ -222,10 +230,13 @@ fun Selected(
                                         ShimmerEffect(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .height(420.dp)
+                                                .height(480.dp)
+                                                .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp)
                                         )
                                     } else if (uiState.isLoading != true && uiState.error != null) {
-                                        AnimatedPreloader(Modifier.fillMaxWidth().height(420.dp), R.raw.animation_error)
+                                        AnimatedPreloader(Modifier.fillMaxWidth().height(480.dp)
+                                            .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp),
+                                            R.raw.animation_error)
                                     } else if (uiState.isLoading != true && uiState.enMeaning != null) {
                                         MarkdownContent(uiState.enMeaning!!)
                                     }
@@ -277,9 +288,8 @@ fun Selected(
                         orientation = PagerIndicatorOrientation.Horizontal
                     )
                 }
-
             }
- }
+      }
 }
 
 @Composable
@@ -433,22 +443,23 @@ fun FootInteraction(
     onShare: () -> Unit
 ) {
 
+    val rememberedOnFavChanged by rememberUpdatedState(onFavChanged)
+    val rememberedOnCopy by rememberUpdatedState(onCopy)
+    val rememberedOnShare by rememberUpdatedState(onShare)
+
     Log.i("FOOTINT", "Recomposed")
 
-        val rememberedOnFavChanged = rememberUpdatedState(onFavChanged)
-        val rememberedOnCopy = rememberUpdatedState(onCopy)
-        val rememberedOnShare = rememberUpdatedState(onShare)
     key(isFavorite) {
+
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .fillMaxWidth(),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 4.dp,
                 pressedElevation = 8.dp,
                 focusedElevation = 6.dp
             ),
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(15.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
             )
@@ -456,27 +467,26 @@ fun FootInteraction(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-
                 InteractionButton(
                     icon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = "Favorite",
                     tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                     onClick = {
-                        rememberedOnFavChanged.value.invoke()
+                        rememberedOnFavChanged.invoke()
                     },
                     label = "Like",
                     isSelected = isFavorite
                 )
+
                 InteractionButton(
                     icon = null,
                     painter = painterResource(R.drawable.baseline_content_copy_24),
                     contentDescription = "Copy",
                     onClick = {
-                        rememberedOnCopy.value.invoke()
+                        rememberedOnCopy.invoke()
                     },
                     label = "Copy"
                 )
@@ -485,7 +495,7 @@ fun FootInteraction(
                     icon = Icons.Default.Share,
                     contentDescription = "Share",
                     onClick = {
-                        rememberedOnShare.value.invoke()
+                        rememberedOnShare.invoke()
                     },
                     label = "Share"
                 )
@@ -504,7 +514,7 @@ private fun InteractionButton(
     tintColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     isSelected: Boolean = false
 ) {
-    // Remember the onClick callback to prevent recreation
+
     val rememberedOnClick = rememberUpdatedState(onClick)
 
     val scale by animateFloatAsState(
@@ -527,16 +537,16 @@ private fun InteractionButton(
 
     Surface(
         modifier = Modifier.padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
         color = Color.Transparent
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
         ) {
             IconButton(
                 onClick = { rememberedOnClick.value() },
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(30.dp)
             ) {
                 when {
                     icon != null -> Icon(
@@ -544,7 +554,7 @@ private fun InteractionButton(
                         contentDescription = contentDescription,
                         tint = animatedTint,
                         modifier = Modifier
-                            .size(28.dp)
+                            .size(25.dp)
                             .scale(scale)
                     )
                     painter != null -> Icon(
@@ -552,7 +562,7 @@ private fun InteractionButton(
                         contentDescription = contentDescription,
                         tint = animatedTint,
                         modifier = Modifier
-                            .size(28.dp)
+                            .size(25.dp)
                             .scale(scale)
                     )
                 }
@@ -560,10 +570,9 @@ private fun InteractionButton(
 
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
                 color = animatedTint,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                modifier = Modifier.padding(top = 4.dp)
             )
         }
     }
