@@ -93,7 +93,7 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>, toBoarding: () -> Unit) {
             text = {
                 SelectionContainer {
                     Column(horizontalAlignment = Alignment.Start) {
-                        InfoRow("Version:", "2.0")
+                        InfoRow("Version:", "2.5")
                         InfoRow("Developer:", "Haile Temesgen")
                         InfoRow("Email:", "htemesgen400@gmail.com")
 
