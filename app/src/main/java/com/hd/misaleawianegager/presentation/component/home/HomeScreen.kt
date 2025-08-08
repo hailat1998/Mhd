@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.TextCard
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(homeData: State<List<String>>,
                 modifier: Modifier,
@@ -45,15 +44,12 @@ fun HomeContent(homeData: State<List<String>>,
                 lazyListState: LazyListState,
                 arg3: MutableState<String>
                   ) {
-
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
         ) {
-            val list = homeData.value.distinct()
-
                 LazyColumn(state = lazyListState, modifier = Modifier.padding(8.dp)) {
-                    items(list, { item -> item }) { it ->
+                    items(items = homeData.value, key = { item -> item }) { it ->
                         TextCard(item = it, from = "ዋና", first = arg3.value, toDetail = toDetail)
                     }
                 }

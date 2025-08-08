@@ -109,8 +109,6 @@ fun HomeWrapper(homeData: State<List<String>>,
         context.finish()
     }
 
-
-
     val draggableState = rememberDraggableState(onDelta = { dragAmount ->
         coroutineScope.launch {
             translationY.snapTo(translationY.value + dragAmount)
@@ -149,15 +147,16 @@ fun HomeWrapper(homeData: State<List<String>>,
     fun toggleHomeContent() {
         val prevLetter =  floatLetter.value
         coroutineScope.launch {
-            if (prevLetter != floatLetter.value) {
-                lazyListState.scrollToItem(0)
-            }
+
             if (showBottomSheet.value) {
                 showBottomSheet.value = false
                 translationY.animateTo(0f)
             } else {
                 showBottomSheet.value = true
                 translationY.animateTo(sheetHeightInPx)
+            }
+            if (prevLetter != floatLetter.value) {
+                lazyListState.scrollToItem(0)
             }
         }
     }
@@ -219,9 +218,9 @@ fun HomeWrapper(homeData: State<List<String>>,
             if (homeData.value.isEmpty()) {
                 CircularProgressIndicator()
             } else {
-
+                 val list = remember { derivedStateOf { homeData.value.distinct() } }
                 HomeContent(
-                    homeData = homeData,
+                    homeData = list,
                     toDetail = toDetail,
                     lazyListState = lazyListState,
                     arg3 = floatLetter,
@@ -239,37 +238,37 @@ fun HomeWrapper(homeData: State<List<String>>,
                         .draggable(
                             state = draggableState,
                             orientation = Orientation.Vertical,
-                            onDragStarted = { velocity ->
-                                val targetOffsetX = decay.calculateTargetValue(
+                            onDragStopped = { velocity ->
+                                val targetOffsetY = decay.calculateTargetValue(
                                     translationY.value,
-                                    velocity.y
+                                    velocity
                                 )
                                 coroutineScope.launch {
-                                    val actualTargetX = if (targetOffsetX > sheetHeightInPx * 0.5) {
+                                    val actualTargetY = if (targetOffsetY > sheetHeightInPx * 0.5) {
                                         sheetHeightInPx
                                     } else {
                                         0f
                                     }
 
-                                    val targetDifference = (actualTargetX - targetOffsetX)
+                                    val targetDifference = (actualTargetY - targetOffsetY)
                                     val canReachTargetWithDecay =
                                         (
-                                                targetOffsetX > actualTargetX && velocity.y > 0f &&
+                                                targetOffsetY > actualTargetY && velocity > 0f &&
                                                         targetDifference > 0f
                                                 ) ||
                                                 (
-                                                        targetOffsetX < actualTargetX && velocity.y < 0 &&
+                                                        targetOffsetY < actualTargetY && velocity < 0 &&
                                                                 targetDifference < 0f
                                                         )
                                     if (canReachTargetWithDecay) {
                                         translationY.animateDecay(
-                                            initialVelocity = velocity.y,
+                                            initialVelocity = velocity,
                                             animationSpec = decay
                                         )
                                     } else {
                                         translationY.animateTo(
-                                            actualTargetX,
-                                            initialVelocity = velocity.y
+                                            actualTargetY,
+                                            initialVelocity = velocity
                                         )
                                     }
                                 }
