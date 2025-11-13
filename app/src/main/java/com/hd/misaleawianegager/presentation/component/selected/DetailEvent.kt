@@ -5,4 +5,5 @@ sealed class DetailEvent {
     data object LoadFav: DetailEvent()
     data class LoadLetter(val q: String): DetailEvent()
     data class LoadAIContent(val proverb: String): DetailEvent()
+    data object LoadSingle: DetailEvent()
 }

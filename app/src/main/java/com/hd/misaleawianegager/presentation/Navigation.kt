@@ -272,6 +272,9 @@ fun MisaleBodyContent(navHostController: NavHostController,
                         } else {
                             favListHere.add(item)
                         }
+                    },
+                    getSingleText = {
+                        viewModelDetail.onEvent(DetailEvent.LoadSingle)
                     })
             }
         }

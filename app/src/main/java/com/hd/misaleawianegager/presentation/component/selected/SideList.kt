@@ -1,7 +1,10 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -15,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,16 +33,13 @@ import com.hd.misaleawianegager.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun SideList(selected: Int, list: List<String>, scroll: () -> Unit) {
+fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
 
     val translationX = remember {
         Animatable(0f)
     }
 
-
-    val selectedString = list[selected]
-
-    val showBottomSheet = remember { mutableStateOf(false) }
+    val showList = remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -48,25 +47,31 @@ fun SideList(selected: Int, list: List<String>, scroll: () -> Unit) {
 
     translationX.updateBounds(0f, exitWidthInPx)
 
-    fun toggleHomeContent() {
+    fun toggleListContent() {
         coroutineScope.launch {
-            if (showBottomSheet.value) {
-                showBottomSheet.value = false
+            if (showList.value) {
+                showList.value = false
                 translationX.animateTo(0f)
             } else {
-                showBottomSheet.value = true
+                showList.value = true
                 translationX.animateTo(exitWidthInPx)
             }
-            scroll.invoke()
         }
     }
+    val density = LocalDensity.current
+    val offsetX = animateDpAsState(
+        targetValue = if (showList.value) 0.dp else (-10).dp,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    val offsetXPx = with(density) { offsetX.value.toPx() }
 
   Box(modifier = Modifier
       .fillMaxSize()
       .background(Color.Transparent)
       .graphicsLayer(translationX = translationX.value)
    ) {
-      IconButton(onClick = { toggleHomeContent() },
+      IconButton(onClick = { toggleListContent() },
           Modifier
               .offset(x = 37.dp, y = 560.dp)
               .size(50.dp, 70.dp)
@@ -78,7 +83,8 @@ fun SideList(selected: Int, list: List<String>, scroll: () -> Unit) {
               .background(
                   color = MaterialTheme.colorScheme.surface,
                   shape = RoundedCornerShape(20.dp)
-              ),
+              )
+              .graphicsLayer(translationX = offsetXPx),
       ) {
           if (translationX.value == 0f) {
               Icon(
@@ -94,16 +100,16 @@ fun SideList(selected: Int, list: List<String>, scroll: () -> Unit) {
               )
           }
       }
-      LazyColumn(Modifier.offset(x = 60.dp, y = 0.dp).background(MaterialTheme.colorScheme.surface)) {
+      LazyColumn(Modifier.offset(x = 60.dp, y = 0.dp).background(MaterialTheme.colorScheme.surface).fillMaxSize()) {
           items(
              items =  list,
               key = null,
               contentType = { null }
           ) {
-              if (it == selectedString) {
-                  Text(text = it, style = MaterialTheme.typography.displayMedium.copy(color = MaterialTheme.colorScheme.secondary))
+              if (it == selected) {
+                  Text(text = it, style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.secondary))
               } else {
-                  Text(text = it, style = MaterialTheme.typography.displayMedium)
+                  Text(text = it, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.clickable { scroll.invoke(it) })
               }
           }
       }
@@ -122,7 +128,7 @@ fun SideListPreview(){
     }
     MaterialTheme{
         Surface(color = Color.Gray, modifier = Modifier.fillMaxSize()) {
-            SideList(6, list) { }
+            SideList("I love watching football7", list) { }
         }
     }
 }

@@ -29,7 +29,6 @@ class HomeViewModel @Inject constructor(private val repository: TextRepository,
     val scrollValue = MutableStateFlow(savedStateHandle.get<Int>(SCROLLINDEX) ?:0)
 
     private fun setScroll(value: Int){
-
         scrollValue.value = value
         savedStateHandle[SCROLLINDEX] = value
     }
