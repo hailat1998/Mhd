@@ -113,7 +113,8 @@ fun HomeWrapper(homeData: State<List<String>>,
         coroutineScope.launch {
             translationY.snapTo(translationY.value + dragAmount)
         }
-    })
+    }
+    )
 
     val decay = rememberSplineBasedDecay<Float>()
 
@@ -131,8 +132,7 @@ fun HomeWrapper(homeData: State<List<String>>,
                 }
                 firstVisibleItemIndex.intValue = currentIndex
             }
-    }
-
+     }
 
     val floatLetter = remember { mutableStateOf("") }
 
