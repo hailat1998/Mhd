@@ -15,6 +15,8 @@ class WorkerTextServiceImp @Inject constructor() : WorkerTextService {
     override fun readSingleText(context: Context): String {
         val assets = context.assets
 
+        weightedList.shuffle()
+
         val randomIndex = Random.nextInt(weightedList.size)
         val randomFile = weightedList[randomIndex]
 
@@ -32,7 +34,6 @@ class WorkerTextServiceImp @Inject constructor() : WorkerTextService {
 
         return randomLine
     }
-
 
     companion object {
         val weightedList = arrayOf(
@@ -138,5 +139,6 @@ class WorkerTextServiceImp @Inject constructor() : WorkerTextService {
             "32Fe.txt",
             "32Fe.txt",
             )
+
     }
 }

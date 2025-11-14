@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -169,7 +170,7 @@ fun MisaleApp(
     LaunchedEffect(currentBackStackEntry?.destination) {
         val route = currentBackStackEntry?.destination?.route
         showOthers.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ"
-        showBottomBar.value = route != "onboard"
+        showBottomBar.value = route != "selected"
     }
 
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet, showBottomBar)} ) {
@@ -218,15 +219,15 @@ fun MisaleBottomAppBar(
     ) {
         BottomAppBar(
             modifier = Modifier
-                .height(56.dp)
                 .shadow(
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
                     elevation = 4.dp
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surface,
+                    color = Color.Transparent,
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
+                .height(56.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

@@ -8,6 +8,7 @@ import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.repository.AITextRepository
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.presentation.DataProvider
+import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.utils.Resources
 import com.hd.misaleawianegager.utils.compose.favList
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,6 +52,9 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
             }
             is DetailEvent.LoadSingle -> {
                 readSingle()
+            }
+            is DetailEvent.WriteText -> {
+                writeText(context, 1 , e.text)
             }
         }
     }
@@ -127,6 +131,13 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                 list.add(it.data!!)
             }
             _detailStateFlow.update { list }
+        }
+    }
+
+    private fun writeText(context: Context, type: Int, text: String){
+        Log.i("DETAIL", "added")
+        viewModelScope.launch(coroutineDispatcher) {
+            textRepository.writeTextFile(context, type, text)
         }
     }
 }

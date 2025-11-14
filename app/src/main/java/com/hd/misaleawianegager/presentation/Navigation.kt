@@ -264,6 +264,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     from = arg1!!,
                     favListHere = favListHere,
                      onNextPage =  {
+                    viewModelDetail.onEvent(DetailEvent.WriteText(it))
                     viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
                    },
                     onFavoriteToggle = { item ->
@@ -275,8 +276,15 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     },
                     getSingleText = {
                         viewModelDetail.onEvent(DetailEvent.LoadSingle)
-                    })
-            }
+                    },
+                    goBack = {
+                        val popped = navHostController.popBackStack()
+                        if(!popped) {
+                            navHostController.navigate(MisaleScreen.Home.route)
+                        }
+                      }
+                    )
+             }
         }
     }
 

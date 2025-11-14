@@ -27,15 +27,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -105,7 +109,8 @@ fun Selected(
     onNextPage: (String) -> Unit,
     favListHere: List<String>,
     onFavoriteToggle: (String) -> Unit,
-    getSingleText:() -> Unit
+    getSingleText:() -> Unit,
+    goBack: () -> Unit
 ) {
 
     val textAi = textAiFlow.collectAsStateWithLifecycle()
@@ -299,8 +304,29 @@ fun Selected(
                  pager.scrollToPage(list.indexOf(it))
              }
           }
+         Back(goBack = { goBack.invoke() })
        }
-      }
+   }
+}
+
+@Composable
+private fun Back(goBack: () -> Unit) {
+    IconButton(
+        onClick = { goBack.invoke() },
+        modifier = Modifier
+            .statusBarsPadding()
+            .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 32.dp)
+            .size(36.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.32f),
+                shape = CircleShape
+            )
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable
@@ -502,7 +528,7 @@ fun FloatingInteraction(
             AnimatedContent(
                 targetState = expanded,
                 transitionSpec = {
-                    // Custom transition that slides in from right and slides out to left
+
                     if (targetState) {
                         (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
                             slideOutHorizontally { width -> -width / 2 } + fadeOut()
@@ -551,7 +577,6 @@ fun FloatingInteraction(
                         )
                     }
                 } else {
-                    // Collapsed content (just the more button)
                     InteractionButton(
                         painter = painterResource(R.drawable.more_horiz_24px),
                         contentDescription = "More Options",
@@ -568,74 +593,6 @@ fun FloatingInteraction(
     }
 }
 
-@Composable
-fun FootInteraction(
-    isFavorite : Boolean,
-    onFavChanged: () -> Unit,
-    onCopy: () -> Unit,
-    onShare: () -> Unit
-) {
-
-    val rememberedOnFavChanged by rememberUpdatedState(onFavChanged)
-    val rememberedOnCopy by rememberUpdatedState(onCopy)
-    val rememberedOnShare by rememberUpdatedState(onShare)
-
-    Log.i("FOOTINT", "Recomposed")
-
-    key(isFavorite) {
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 4.dp,
-                pressedElevation = 8.dp,
-                focusedElevation = 6.dp
-            ),
-            shape = RoundedCornerShape(15.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-            )
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                InteractionButton(
-                    icon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                    onClick = {
-                        rememberedOnFavChanged.invoke()
-                    },
-                    label = "Like",
-                    isSelected = isFavorite
-                )
-
-                InteractionButton(
-                    icon = null,
-                    painter = painterResource(R.drawable.baseline_content_copy_24),
-                    contentDescription = "Copy",
-                    onClick = {
-                        rememberedOnCopy.invoke()
-                    },
-                    label = "Copy"
-                )
-
-                InteractionButton(
-                    icon = Icons.Default.Share,
-                    contentDescription = "Share",
-                    onClick = {
-                        rememberedOnShare.invoke()
-                    },
-                    label = "Share"
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun InteractionButton(
@@ -771,7 +728,7 @@ fun getMarkDown() = "# Contributing to Virtual Book Store\n" +
 @Preview(showBackground = true)
 @Composable
 fun SelectedPreview() {
-    Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {}, {})
+    Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {}, {}, {})
 }
 
 
