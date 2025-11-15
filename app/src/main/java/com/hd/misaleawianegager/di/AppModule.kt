@@ -9,6 +9,7 @@ import com.hd.misaleawianegager.data.local.AssetsTextServiceImp
 import com.hd.misaleawianegager.data.local.FileServiceImp
 import com.hd.misaleawianegager.data.local.WorkerTextServiceImp
 import com.hd.misaleawianegager.data.remote.ProverbApiImpl
+import com.hd.misaleawianegager.data.repository.AITextRepositoryImpl
 import com.hd.misaleawianegager.data.repository.SettingRepositoryImpl
 import com.hd.misaleawianegager.data.repository.TextRepositoryImpl
 import com.hd.misaleawianegager.domain.datastoremanager.DataStoreManager
@@ -16,6 +17,7 @@ import com.hd.misaleawianegager.domain.local.AssetsTextService
 import com.hd.misaleawianegager.domain.local.FileService
 import com.hd.misaleawianegager.domain.local.WorkerTextService
 import com.hd.misaleawianegager.domain.remote.ProverbApi
+import com.hd.misaleawianegager.domain.repository.AITextRepository
 import com.hd.misaleawianegager.domain.repository.SettingRepository
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.utils.CacheManager
@@ -106,6 +108,7 @@ object AppModule {
     @Singleton
     fun provideCacheManager(): CacheManager = CacheManagerImp(hashMapOf())
 
+
 }
 
 
@@ -167,5 +170,17 @@ abstract class SpellCheckerModule {
     abstract fun bindMisaleSpellChecker(
         misaleSpellCheckerImpl: MisaleSpellCheckerImpl
     ): MisaleSpellChecker
+
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class AIRepositoryModule{
+
+    @Binds
+    @Singleton
+    abstract fun bindAITextRepository(
+        aITextRepositoryImpl: AITextRepositoryImpl
+    ): AITextRepository
 
 }

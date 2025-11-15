@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -93,7 +91,7 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>, toBoarding: () -> Unit) {
             text = {
                 SelectionContainer {
                     Column(horizontalAlignment = Alignment.Start) {
-                        InfoRow("Version:", "2.5")
+                        InfoRow("Version:", "2.9")
                         InfoRow("Developer:", "Haile Temesgen")
                         InfoRow("Email:", "htemesgen400@gmail.com")
 

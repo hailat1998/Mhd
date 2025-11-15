@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -104,6 +105,7 @@ class MainActivity : ComponentActivity() {
             val font = viewModel.font.collectAsStateWithLifecycle()
             val letterType = viewModel.letterType.collectAsStateWithLifecycle()
             val onboardShown = viewModel.boardingShown.collectAsStateWithLifecycle()
+            val showBtmBarInDetail = viewModel.showBtmBarInDetail.collectAsStateWithLifecycle()
 
 
 
@@ -141,7 +143,8 @@ class MainActivity : ComponentActivity() {
               theme = theme,
               font = font,
               letterType =  letterTypeLatest,
-              onboardShown = onboardShown
+              onboardShown = onboardShown,
+              bottomBarShownDetails = showBtmBarInDetail
               )
                 }
             }
@@ -156,8 +159,10 @@ fun MisaleApp(
     theme: State<String?>,
     font: State<String?>,
     letterType: String,
-    onboardShown: State<Boolean>
+    onboardShown: State<Boolean>,
+    bottomBarShownDetails: State<Boolean>
              ) {
+
     val viewModel = hiltViewModel<MainViewModel>()
     val showOthers = remember { mutableStateOf(true) }
    val showModalBottomSheet = remember{ mutableStateOf(false) }
@@ -169,20 +174,22 @@ fun MisaleApp(
     LaunchedEffect(currentBackStackEntry?.destination) {
         val route = currentBackStackEntry?.destination?.route
         showOthers.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ"
-        showBottomBar.value = route != "onboard"
+        showBottomBar.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ" || (bottomBarShownDetails.value && route != "onboard")
     }
 
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet, showBottomBar)} ) {
 
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, startDestination)
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, startDestination, bottomBarShownDetails)
 
         if(showModalBottomSheet.value){
-            SettingScreen( showModalBottomSheet ,
+            SettingScreen(
+                showModalBottomSheet,
                 onEvent = onEvent,
                 theme = theme,
                 font = font,
-                showOthers = showOthers
-                )
+                showOthers = showOthers,
+                showBtmBarInDetail = bottomBarShownDetails,
+            )
              }
            }
 
@@ -218,15 +225,15 @@ fun MisaleBottomAppBar(
     ) {
         BottomAppBar(
             modifier = Modifier
-                .height(56.dp)
                 .shadow(
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
                     elevation = 4.dp
                 )
                 .background(
-                    color = MaterialTheme.colorScheme.surface,
+                    color = Color.Transparent,
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
+                .height(56.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

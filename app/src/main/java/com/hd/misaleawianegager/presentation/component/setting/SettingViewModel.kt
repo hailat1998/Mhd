@@ -13,7 +13,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(private val settingRepository: SettingRepository) : ViewModel() {
 
-
     fun onEvent(event: SettingEvent){
         when(event){
             is SettingEvent.FontSize ->  setFontSize(event.value)
@@ -23,6 +22,7 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
             is SettingEvent.LineHeight -> setLetterHeight(event.value)
             is SettingEvent.LetterType -> setLetterType(event.value)
             is SettingEvent.ShowBoarding -> setBoarding(event.isShown)
+            is SettingEvent.ToggleBottomBar -> setBottomBarOnDetails(event.isShown)
         }
     }
 
@@ -47,11 +47,15 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     val boardingShown = settingRepository.onBoardingShown
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), true)
 
-   private fun setFont(font: String){
-       viewModelScope.launch {
-           settingRepository.setFont(font)
+    val showBtmBarInDetail = settingRepository.showBottomBarOnDetails
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), true)
+
+
+       private fun setFont(font: String){
+           viewModelScope.launch {
+               settingRepository.setFont(font)
+           }
        }
-   }
 
     private fun setLetterSpace(space: Double) {
         if (letterSpace.value + space in 0.1 .. 7.0) {
@@ -77,7 +81,6 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
     }
 
     private fun setLetterHeight(height: Int) {
-
         if (letterHeight.value + height in 10..40) {
             viewModelScope.launch {
                 settingRepository.setLineHeight(letterHeight.value + height)
@@ -97,4 +100,9 @@ class SettingViewModel @Inject constructor(private val settingRepository: Settin
         }
     }
 
+    private fun setBottomBarOnDetails(isShown: Boolean) {
+        viewModelScope.launch {
+            settingRepository.setBottomBarOnDetails(isShown)
+        }
+    }
 }

@@ -10,11 +10,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun ShimmerEffect(
@@ -22,7 +24,8 @@ fun ShimmerEffect(
     widthOfShadowBrush: Int = 500,
     angleOfAxisY: Float = 90f,
     durationMillis: Int = 1000,
-    isDarkTheme: Boolean = isSystemInDarkTheme()
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    cornerShapeDpValue: Int = 0
 ) {
 
     val shimmerColors = if (isDarkTheme) {
@@ -70,7 +73,7 @@ fun ShimmerEffect(
         Spacer(
             modifier = Modifier
                 .matchParentSize()
-                .background(brush)
+                .background(brush, shape = RoundedCornerShape(cornerShapeDpValue.dp))
         )
     }
 }

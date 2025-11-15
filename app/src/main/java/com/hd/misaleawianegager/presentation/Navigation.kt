@@ -6,6 +6,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
@@ -21,7 +22,6 @@ import androidx.navigation.navDeepLink
 import com.hd.misaleawianegager.presentation.DataProvider.orderMapNav
 import com.hd.misaleawianegager.presentation.component.fav.FavScreen
 import com.hd.misaleawianegager.presentation.component.fav.FavViewModel
-import com.hd.misaleawianegager.presentation.component.home.HomeContent
 import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.presentation.component.home.HomeViewModel
 import com.hd.misaleawianegager.presentation.component.home.HomeWrapper
@@ -43,7 +43,8 @@ fun MisaleBodyContent(navHostController: NavHostController,
                       modifier: Modifier,
                       letterType: String ,
                       onSettingEvent: (SettingEvent) -> Unit,
-                      startDestination: String
+                      startDestination: String,
+                      bottomBarShownDetails: State<Boolean>
                       ) {
 
             val viewModelHome: HomeViewModel = hiltViewModel()
@@ -263,17 +264,29 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     page = arg2!!,
                     from = arg1!!,
                     favListHere = favListHere,
-                     onNextPage =  {
-                    viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
-                   },
+                    onNextPage = {
+                        viewModelDetail.onEvent(DetailEvent.WriteText(it))
+                        viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
+                    },
                     onFavoriteToggle = { item ->
                         if (favListHere.contains(item)) {
                             favListHere.remove(item)
                         } else {
                             favListHere.add(item)
                         }
-                    })
-            }
+                    },
+                    getSingleText = {
+                        viewModelDetail.onEvent(DetailEvent.LoadSingle)
+                    },
+                    goBack = {
+                        val popped = navHostController.popBackStack()
+                        if (!popped) {
+                            navHostController.navigate(MisaleScreen.Home.route)
+                        }
+                    },
+                    showBtmBarInDetail = bottomBarShownDetails
+                )
+             }
         }
     }
 

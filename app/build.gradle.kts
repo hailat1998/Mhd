@@ -34,7 +34,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 223
-        versionName = "2.5"
+        versionName = "2.9"
 
         testInstrumentationRunner = "com.hd.misaleawianegager.HiltTestRunner"
 

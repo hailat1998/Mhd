@@ -27,11 +27,13 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,12 +48,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.Chip
 import com.hd.misaleawianegager.utils.compose.ChipDefaultsM3
 import com.hd.misaleawianegager.utils.compose.Divider
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +65,8 @@ fun SettingScreen(
     onEvent: (SettingEvent) -> Unit,
     theme: State<String?>,
     font: State<String?> ,
-    showOthers: State<Boolean>
+    showOthers: State<Boolean>,
+    showBtmBarInDetail: State<Boolean>
    ) {
 
     val localFont = FontFamily.Default
@@ -78,7 +84,7 @@ fun SettingScreen(
                     .fillMaxWidth()
                     .padding(10.dp)
                     .background(MaterialTheme.colorScheme.surface)
-                    .heightIn(max = 500.dp),
+                    .heightIn(max = 600.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -106,6 +112,8 @@ fun SettingScreen(
                             item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
                             item { LetterSpaceContent(onEvent) }
                         }
+                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                        item{ ShowBtmBarOnDetails(showBtmBarInDetail, onEvent) }
                     }
                 }
             }
@@ -283,7 +291,7 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
 }
 
 @Composable
-fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
+fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit) {
     Box(Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
         Column(Modifier.background(MaterialTheme.colorScheme.surface)) {
             Text(
@@ -291,7 +299,7 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
                 style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)
             )
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 45.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
             ) {
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.LetterSpace(1.0)) },
@@ -342,6 +350,40 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit){
             }
         }
     }
+}
+
+
+@Composable
+fun ShowBtmBarOnDetails(isShown: State<Boolean>, onEvent: (SettingEvent) -> Unit) {
+    Box(Modifier.padding(top = 8.dp, bottom = 100.dp, start = 8.dp, end = 8.dp).background(MaterialTheme.colorScheme.surface)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Show BottomBar on Details",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f)
+            )
+
+            Switch(
+                checked = isShown.value,
+                onCheckedChange = { onEvent(SettingEvent.ToggleBottomBar(!isShown.value)) },
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun S(){
+    val state = MutableStateFlow(false)
+    val readValue = state.asStateFlow().collectAsState()
+    ShowBtmBarOnDetails(readValue , {})
 }
 
 @Composable

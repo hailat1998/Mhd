@@ -235,9 +235,6 @@ fun SearchTopBar(query: MutableState<String>,
                     Icon(painterResource(R.drawable.swap_vert_24px), null)
                  }
               }
-            IconButton(onClick = { onSearchEvent.invoke(SearchEvent.LoadSingle ) }, Modifier.padding(end = 8.dp))  {
-                Icon(painterResource(R.drawable.baseline_shuffle_24), null)
-            }
            },
            modifier = Modifier.height(49.dp)
     )

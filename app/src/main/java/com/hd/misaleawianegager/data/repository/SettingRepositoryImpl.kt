@@ -16,6 +16,8 @@ class SettingRepositoryImpl @Inject constructor(private val dataStoreManager: Da
     override val fontSize: Flow<Int> = dataStoreManager.fontSize
     override val letterHeight: Flow<Int> = dataStoreManager.lineHeight
     override val onBoardingShown: Flow<Boolean> = dataStoreManager.onBoardShown
+    override val showBottomBarOnDetails: Flow<Boolean> = dataStoreManager.showBottomBarOnDetails
+
 
     override suspend fun setTheme(theme: String) {
         dataStoreManager.setTheme(theme)
@@ -41,8 +43,12 @@ class SettingRepositoryImpl @Inject constructor(private val dataStoreManager: Da
        dataStoreManager.setOnBoarding(isShown)
     }
 
+    override suspend fun setBottomBarOnDetails(isShown: Boolean) {
+        dataStoreManager.setShowBottomBarOnDetails(isShown)
+    }
+
     override suspend fun setFontSize(fontSize: Int){
       dataStoreManager.setFontSize(fontSize)
-  }
+    }
 
 }

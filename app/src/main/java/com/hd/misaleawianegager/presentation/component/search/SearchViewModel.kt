@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
+import com.hd.misaleawianegager.domain.repository.AITextRepository
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.utils.Resources
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(private val textRepository: TextRepository ,
                             @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
                             @ApplicationContext private val context: Context,
+                             private val aiTextRepository: AITextRepository
                             ) : ViewModel() {
 
    private var _searchResult = MutableStateFlow(emptyList<String>())
@@ -63,7 +65,7 @@ class SearchViewModel @Inject constructor(private val textRepository: TextReposi
 
     private fun convert(word: String) {
         viewModelScope.launch(coroutineDispatcher) {
-            textRepository.laOren2am(word).collect { result ->
+            aiTextRepository.laOren2am(word).collect { result ->
                 _wordResult.update { currentState ->
                     when (result) {
                         is Resources.Loading -> currentState.copy(isLoading = result.isLoading)

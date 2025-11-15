@@ -3,6 +3,7 @@ package com.hd.misaleawianegager.domain.repository
 import kotlinx.coroutines.flow.Flow
 
 interface SettingRepository {
+
     val theme: Flow<String?>
     val font: Flow<String?>
     val letterSpace: Flow<Double>
@@ -10,6 +11,7 @@ interface SettingRepository {
     val fontSize: Flow<Int>
     val letterHeight: Flow<Int>
     val onBoardingShown: Flow<Boolean>
+    val showBottomBarOnDetails: Flow<Boolean>
 
     suspend fun setTheme(theme: String)
 
@@ -24,4 +26,7 @@ interface SettingRepository {
     suspend fun setFontSize(fontSize: Int)
 
     suspend fun setOnBoarding(isShown: Boolean)
+
+    suspend fun setBottomBarOnDetails(isShown: Boolean)
+
 }

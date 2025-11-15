@@ -3,6 +3,7 @@ package com.hd.misaleawianegager.presentation.component.selected
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -15,7 +16,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,17 +24,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -51,8 +56,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -61,6 +64,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -89,8 +93,10 @@ import com.hd.misaleawianegager.utils.compose.AnimatedPreloader
 import com.hd.misaleawianegager.utils.compose.ShimmerEffect
 import com.hd.misaleawianegager.utils.compose.favList
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import mx.platacard.pagerindicator.PagerIndicator
 import mx.platacard.pagerindicator.PagerIndicatorOrientation
 
@@ -103,7 +109,10 @@ fun Selected(
     from: String,
     onNextPage: (String) -> Unit,
     favListHere: List<String>,
-    onFavoriteToggle: (String) -> Unit
+    onFavoriteToggle: (String) -> Unit,
+    getSingleText:() -> Unit,
+    goBack: () -> Unit,
+    showBtmBarInDetail: State<Boolean>
 ) {
 
     val textAi = textAiFlow.collectAsStateWithLifecycle()
@@ -114,6 +123,8 @@ fun Selected(
     val isFavorite by remember(currentPage, favListHere) {
         derivedStateOf { favListHere.contains(currentPage) }
     }
+
+    val scope = rememberCoroutineScope()
 
     DisposableEffect(Unit) {
         onDispose {
@@ -137,159 +148,193 @@ fun Selected(
     )
 
  SelectionContainer {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+     Box(Modifier.fillMaxSize()) {
+     Column(
+         modifier = Modifier.fillMaxSize()
+     ) {
 
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(1f, fill = true)
-                .fillMaxWidth()
-                .background(Color.Transparent)
-        ) {
-            if (list.isEmpty()) {
-                CircularProgressIndicator()
-            } else {
-//                val pager = rememberPagerState(
-//                    initialPage = 0,
-//                    pageCount = { list.size }
-//                )
+         Box(
+             contentAlignment = Alignment.Center,
+             modifier = Modifier
+                 .weight(1f, fill = true)
+                 .fillMaxWidth()
+                 .background(Color.Transparent)
+         ) {
+             if (list.isEmpty()) {
+                 CircularProgressIndicator()
+             } else {
 
-                LaunchedEffect(Unit) {
-                    pager.scrollToPage(list.indexOf(page))
-                }
+                 LaunchedEffect(Unit) {
+                     pager.scrollToPage(list.indexOf(page))
+                 }
 
-                LaunchedEffect(pager.currentPage) {
-                    val newPage = list[pager.targetPage]
-                    currentPage = newPage
-                    onNextPage.invoke(newPage)
-                }
+                 LaunchedEffect(pager.currentPage) {
+                     val newPage = list[pager.targetPage]
+                     currentPage = newPage
+                     onNextPage.invoke(newPage)
+                 }
 
-                HorizontalPager(
-                    state = pager,
-                    modifier = Modifier.fillMaxWidth(),
-                ) { page ->
+                 LaunchedEffect(list) {
+                     if (list.isNotEmpty())
+                      onNextPage.invoke(list[0])
+                 }
 
-                    str = list[page]
+                 HorizontalPager(
+                     state = pager,
+                     modifier = Modifier.fillMaxWidth(),
+                 ) { page ->
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(bottom = 8.dp, top = 25.dp)
-                            .background(Color.Transparent)
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
-                        ) {
-                            Box(
-                                modifier = Modifier.fillMaxWidth().padding(10.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = list[page],
-                                    fontSize = 21.sp,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        }
+                     str = list[page]
 
-                        TwoTabLayout(
-                            selectedTabIndex = selectedTabIndex,
-                            onTabSelected = { selectedTabIndex = it },
-                            firstTabTitle = "አማርኛ",
-                            secondTabTitle = "English",
-                            firstTabContent = {
-                                textAi.value.let { uiState ->
-                                    if (uiState.isLoading == true) {
-                                        ShimmerEffect(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(480.dp)
-                                                .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp)
-                                        )
-                                    } else if (uiState.isLoading != true && uiState.error != null) {
-                                        AnimatedPreloader(Modifier.fillMaxWidth().height(480.dp)
-                                            .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp),
-                                            R.raw.animation_error)
-                                    } else if (uiState.isLoading != true && uiState.amMeaning != null) {
-                                        MarkdownContent(uiState.amMeaning!!)
-                                    }
-                                }
-                            },
-                            secondTabContent = {
-                                textAi.value.let { uiState ->
-                                    if (uiState.isLoading == true) {
-                                        ShimmerEffect(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(480.dp)
-                                                .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp)
-                                        )
-                                    } else if (uiState.isLoading != true && uiState.error != null) {
-                                        AnimatedPreloader(Modifier.fillMaxWidth().height(480.dp)
-                                            .shadow(shape = RoundedCornerShape(20.dp), elevation = 0.dp).padding(5.dp),
-                                            R.raw.animation_error)
-                                    } else if (uiState.isLoading != true && uiState.enMeaning != null) {
-                                        MarkdownContent(uiState.enMeaning!!)
-                                    }
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-        }
+                     Column(
+                         modifier = Modifier
+                             .fillMaxSize()
+                             .verticalScroll(rememberScrollState())
+                             .padding(bottom = 8.dp, top = 40.dp)
+                             .background(Color.Transparent)
+                     ) {
+                         Card(
+                             modifier = Modifier
+                                 .fillMaxWidth()
+                                 .padding(10.dp),
+                             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                             colors = CardDefaults.cardColors(
+                                 containerColor = MaterialTheme.colorScheme.surface.copy(
+                                     alpha = 0.95f
+                                 )
+                             )
+                         ) {
+                             Box(
+                                 modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                 contentAlignment = Alignment.Center
+                             ) {
+                                 Text(
+                                     text = list[page],
+                                     fontSize = 21.sp,
+                                     style = MaterialTheme.typography.bodyLarge,
+                                     textAlign = TextAlign.Center,
+                                     color = MaterialTheme.colorScheme.onPrimary
+                                 )
+                             }
+                         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp, top = 8.dp)
-                .background(Color.Transparent),
-            contentAlignment = Alignment.Center
-        ) {
-            FootInteraction(
-                isFavorite,
-                onFavChanged = {
-                    onFavoriteToggle(currentPage)
-                },
-                onCopy = {
-                    val annotatedString = buildAnnotatedString {
-                        withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
-                            append(str)
-                        }
-                    }
-                    clipboardManager.setText(annotatedString)
-                },
-                onShare = {
-                    val shareText = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"  // Fixed content type
-                        putExtra(Intent.EXTRA_TEXT, str)
-                    }
-                    val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
-                    context.startActivity(chooserIntent)
-                }
+                         TwoTabLayout(
+                             selectedTabIndex = selectedTabIndex,
+                             onTabSelected = { selectedTabIndex = it },
+                             firstTabTitle = "አማርኛ",
+                             secondTabTitle = "English",
+                             firstTabContent = {
+                                 textAi.value.let { uiState ->
+                                     if (uiState.isLoading == true) {
+                                         ShimmerEffectWrapper()
+                                     } else if (uiState.isLoading != true && uiState.error != null) {
+                                         AnimatedPreloader(
+                                             Modifier.fillMaxWidth().height(480.dp)
+                                                 .shadow(
+                                                     shape = RoundedCornerShape(20.dp),
+                                                     elevation = 0.dp
+                                                 ).padding(5.dp),
+                                             R.raw.animation_error
+                                         )
+                                     } else if (uiState.isLoading != true && uiState.amMeaning != null) {
+                                         MarkdownContent(uiState.amMeaning!!)
+                                     }
+                                 }
+                             },
+                             secondTabContent = {
+                                 textAi.value.let { uiState ->
+                                     if (uiState.isLoading == true) {
+                                         ShimmerEffectWrapper()
+                                     } else if (uiState.isLoading != true && uiState.error != null) {
+                                         AnimatedPreloader(
+                                             Modifier.fillMaxWidth().height(480.dp)
+                                                 .shadow(
+                                                     shape = RoundedCornerShape(20.dp),
+                                                     elevation = 0.dp
+                                                 ).padding(5.dp),
+                                             R.raw.animation_error
+                                         )
+                                     } else if (uiState.isLoading != true && uiState.enMeaning != null) {
+                                         MarkdownContent(uiState.enMeaning!!)
+                                     }
+                                 }
+                             }
+                         )
+                     }
+                 }
+             }
+         }
+         Box(
+             Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
+             contentAlignment = Alignment.Center
+          ) {
+             PagerIndicator(
+                 pagerState = pager,
+                 activeDotColor = MaterialTheme.colorScheme.primary,
+                 dotColor = MaterialTheme.colorScheme.onPrimary,
+                 dotCount = 6,
+                 space = 12.dp,
+                 orientation = PagerIndicatorOrientation.Horizontal
+             )
+         }
+     }
+         FloatingInteraction(
+             isFavorite,
+             onFavChanged = {
+                 onFavoriteToggle(currentPage)
+             },
+             onCopy = {
+                 val annotatedString = buildAnnotatedString {
+                     withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
+                         append(str)
+                     }
+                 }
+                 clipboardManager.setText(annotatedString)
+             },
+             onShare = {
+                 val shareText = Intent(Intent.ACTION_SEND).apply {
+                     type = "text/plain"  // Fixed content type
+                     putExtra(Intent.EXTRA_TEXT, str)
+                 }
+                 val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
+                 context.startActivity(chooserIntent)
+             },
+             getRandom = {
+                 getSingleText.invoke()
+
+                         },
+             modifier = Modifier.offset(30.dp, 660.dp)
+         )
+         SideList(currentPage, list) {
+             scope.launch {
+                 pager.scrollToPage(list.indexOf(it))
+             }
+          }
+         if (!showBtmBarInDetail.value) {
+             Back(goBack = { goBack.invoke() })
+         }
+       }
+   }
+}
+
+@Composable
+fun Back(goBack: () -> Unit) {
+    IconButton(
+        onClick = { goBack.invoke() },
+        modifier = Modifier
+            .statusBarsPadding()
+            .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 32.dp)
+            .size(36.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.32f),
+                shape = CircleShape
             )
-        }
-                Box(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp), contentAlignment = Alignment.Center) {
-                    PagerIndicator(
-                        pagerState = pager,
-                        activeDotColor = MaterialTheme.colorScheme.primary,
-                        dotColor = MaterialTheme.colorScheme.onPrimary,
-                        dotCount = 6,
-                        space = 12.dp,
-                        orientation = PagerIndicatorOrientation.Horizontal
-                    )
-                }
-            }
-      }
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable
@@ -435,74 +480,127 @@ fun TwoTabLayout(
     }
 }
 
+
 @Composable
-fun FootInteraction(
-    isFavorite : Boolean,
+fun FloatingInteraction(
+    isFavorite: Boolean,
     onFavChanged: () -> Unit,
     onCopy: () -> Unit,
-    onShare: () -> Unit
+    onShare: () -> Unit,
+    getRandom: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var interacted by remember { mutableStateOf(false) }
 
     val rememberedOnFavChanged by rememberUpdatedState(onFavChanged)
     val rememberedOnCopy by rememberUpdatedState(onCopy)
     val rememberedOnShare by rememberUpdatedState(onShare)
+    val rememberedGetRandom by rememberUpdatedState(getRandom)
 
-    Log.i("FOOTINT", "Recomposed")
+    LaunchedEffect(expanded, interacted) {
+        if (expanded) {
+            delay(7000L)
+            expanded = !expanded
+        }
+    }
 
-    key(isFavorite) {
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 4.dp,
-                pressedElevation = 8.dp,
-                focusedElevation = 6.dp
-            ),
-            shape = RoundedCornerShape(15.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-            )
+    Card(
+        shape = RoundedCornerShape(15.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+        ),
+        modifier = modifier,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp,
+           // pressedElevation = 8.dp,
+           // focusedElevation = 6.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                InteractionButton(
-                    icon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                    onClick = {
-                        rememberedOnFavChanged.invoke()
-                    },
-                    label = "Like",
-                    isSelected = isFavorite
-                )
+            InteractionButton(
+                icon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = "Favorite",
+                tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                onClick = {
+                    interacted = !interacted
+                    rememberedOnFavChanged.invoke()
+                },
+                label = null,
+                isSelected = isFavorite
+            )
 
-                InteractionButton(
-                    icon = null,
-                    painter = painterResource(R.drawable.baseline_content_copy_24),
-                    contentDescription = "Copy",
-                    onClick = {
-                        rememberedOnCopy.invoke()
-                    },
-                    label = "Copy"
-                )
+            AnimatedContent(
+                targetState = expanded,
+                transitionSpec = {
 
-                InteractionButton(
-                    icon = Icons.Default.Share,
-                    contentDescription = "Share",
-                    onClick = {
-                        rememberedOnShare.invoke()
-                    },
-                    label = "Share"
-                )
+                    if (targetState) {
+                        (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
+                            slideOutHorizontally { width -> -width / 2 } + fadeOut()
+                        )
+                    } else {
+                        (slideInHorizontally { width -> -width / 2 } + fadeIn()).togetherWith(
+                            slideOutHorizontally { width -> width } + fadeOut()
+                        )
+                    }
+                },
+                label = "Expanded Content Animation"
+            ) { isExpanded ->
+                if (isExpanded) {
+                    // Expanded content
+                    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                        InteractionButton(
+                            icon = Icons.Default.Share,
+                            contentDescription = "Share",
+                            onClick = {
+                                interacted = !interacted
+                                rememberedOnShare.invoke()
+                            },
+                            label = null
+                        )
+
+                        InteractionButton(
+                            icon = null,
+                            painter = painterResource(R.drawable.baseline_content_copy_24),
+                            contentDescription = "Copy",
+                            onClick = {
+                                interacted = !interacted
+                                rememberedOnCopy.invoke()
+                            },
+                            label = null
+                        )
+
+                        InteractionButton(
+                            icon = null,
+                            painter = painterResource(R.drawable.baseline_shuffle_24),
+                            contentDescription = "GetRandom",
+                            onClick = {
+                                interacted = !interacted
+                                rememberedGetRandom.invoke()
+                            },
+                            label = null
+                        )
+                    }
+                } else {
+                    InteractionButton(
+                        painter = painterResource(R.drawable.more_horiz_24px),
+                        contentDescription = "More Options",
+                        tintColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        onClick = {
+                            expanded = !expanded
+                        },
+                        label = null,
+                        isSelected = false
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 private fun InteractionButton(
@@ -510,7 +608,7 @@ private fun InteractionButton(
     painter: Painter? = null,
     contentDescription: String,
     onClick: () -> Unit,
-    label: String,
+    label: String?,
     tintColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     isSelected: Boolean = false
 ) {
@@ -567,13 +665,14 @@ private fun InteractionButton(
                     )
                 }
             }
-
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = animatedTint,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-            )
+            label?.let{
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = animatedTint,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                )
+            }
         }
     }
 }
@@ -637,7 +736,7 @@ fun getMarkDown() = "# Contributing to Virtual Book Store\n" +
 @Preview(showBackground = true)
 @Composable
 fun SelectedPreview() {
-    Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {})
+  //  Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {}, {}, {})
 }
 
 

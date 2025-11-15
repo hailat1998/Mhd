@@ -18,12 +18,5 @@ interface TextRepository {
 
     fun enqueueWork(): Flow<String>
 
-
-    fun getFromNetwork(proverb: String): Flow<Resources<ProverbResponse>>
-
-    fun laOren2am(latinAmharicText: String): Flow<Resources<String>>
-
-    fun en2am(englishText: String): Flow<Resources<String>>
-
     fun readSingle(): Flow<Resources<String>>
 }

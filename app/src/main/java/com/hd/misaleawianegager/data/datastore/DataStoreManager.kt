@@ -29,6 +29,7 @@ class DataStoreManagerImpl @Inject constructor(@ApplicationContext private val c
         val FONT_SIZE_KEY = intPreferencesKey("font size")
         val LINE_HEIGHT_KEY = intPreferencesKey("line height")
         val ONBOARD_SHOWN = booleanPreferencesKey("onBoard")
+        val SHOW_BOTTOM_BAR_ON_DETAILS = booleanPreferencesKey("show btm bar detail")
     }
 
     override val theme: Flow<String> = context.dataStore.data
@@ -68,6 +69,11 @@ class DataStoreManagerImpl @Inject constructor(@ApplicationContext private val c
         .map { preferences ->
             preferences[ONBOARD_SHOWN] ?: false
         }
+    override val showBottomBarOnDetails: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[SHOW_BOTTOM_BAR_ON_DETAILS] ?: false
+        }
+
 
     override suspend fun setTheme(theme: String) {
         context.dataStore.edit { preferences ->
@@ -102,6 +108,12 @@ class DataStoreManagerImpl @Inject constructor(@ApplicationContext private val c
     override suspend fun setOnBoarding(isShown: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[ONBOARD_SHOWN] =  isShown
+        }
+    }
+
+    override suspend fun setShowBottomBarOnDetails(isShown: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[SHOW_BOTTOM_BAR_ON_DETAILS] =  isShown
         }
     }
 

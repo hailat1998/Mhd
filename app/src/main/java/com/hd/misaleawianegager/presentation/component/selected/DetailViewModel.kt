@@ -5,8 +5,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
+import com.hd.misaleawianegager.domain.repository.AITextRepository
 import com.hd.misaleawianegager.domain.repository.TextRepository
 import com.hd.misaleawianegager.presentation.DataProvider
+import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.utils.Resources
 import com.hd.misaleawianegager.utils.compose.favList
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(private val textRepository: TextRepository,
                                           @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
-                                          @ApplicationContext private val context: Context
+                                          @ApplicationContext private val context: Context,
+                                private val aiTextRepository: AITextRepository
 ) : ViewModel() {
 
     private val _detailStateFlow = MutableStateFlow(emptyList<String>())
@@ -46,6 +49,12 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
             }
             is DetailEvent.LoadAIContent -> {
                 detailAIFeed(e.proverb)
+            }
+            is DetailEvent.LoadSingle -> {
+                readSingle()
+            }
+            is DetailEvent.WriteText -> {
+                writeText(context, 1 , e.text)
             }
         }
     }
@@ -85,10 +94,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
     private fun detailAIFeed(proverb: String) {
 
         viewModelScope.launch(coroutineDispatcher) {
-            textRepository.getFromNetwork(proverb)
-                .onStart { }
-                .onCompletion {  }
-                .catch { }
+            aiTextRepository.getFromNetwork(proverb)
                 .collect { resource ->
                     _detailsAITextStateFlow.update { currentState ->
                         val newState = when (resource) {
@@ -116,5 +122,22 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                     }
                 }
           }
+    }
+
+    private fun readSingle() {
+        viewModelScope.launch(coroutineDispatcher) {
+            val list = mutableListOf<String>()
+            textRepository.readSingle().collect{
+                list.add(it.data!!)
+            }
+            _detailStateFlow.update { list }
+        }
+    }
+
+    private fun writeText(context: Context, type: Int, text: String){
+        Log.i("DETAIL", "added")
+        viewModelScope.launch(coroutineDispatcher) {
+            textRepository.writeTextFile(context, type, text)
+        }
     }
 }

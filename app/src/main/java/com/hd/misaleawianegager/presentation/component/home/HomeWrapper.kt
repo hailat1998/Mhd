@@ -2,8 +2,6 @@ package com.hd.misaleawianegager.presentation.component.home
 
 import android.app.Activity
 import android.os.Build
-import android.util.Log
-import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -43,7 +41,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -113,7 +110,8 @@ fun HomeWrapper(homeData: State<List<String>>,
         coroutineScope.launch {
             translationY.snapTo(translationY.value + dragAmount)
         }
-    })
+    }
+    )
 
     val decay = rememberSplineBasedDecay<Float>()
 
@@ -131,8 +129,7 @@ fun HomeWrapper(homeData: State<List<String>>,
                 }
                 firstVisibleItemIndex.intValue = currentIndex
             }
-    }
-
+     }
 
     val floatLetter = remember { mutableStateOf("") }
 
