@@ -56,6 +56,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -110,7 +111,8 @@ fun Selected(
     favListHere: List<String>,
     onFavoriteToggle: (String) -> Unit,
     getSingleText:() -> Unit,
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    showBtmBarInDetail: State<Boolean>
 ) {
 
     val textAi = textAiFlow.collectAsStateWithLifecycle()
@@ -161,10 +163,6 @@ fun Selected(
              if (list.isEmpty()) {
                  CircularProgressIndicator()
              } else {
-//                val pager = rememberPagerState(
-//                    initialPage = 0,
-//                    pageCount = { list.size }
-//                )
 
                  LaunchedEffect(Unit) {
                      pager.scrollToPage(list.indexOf(page))
@@ -174,6 +172,11 @@ fun Selected(
                      val newPage = list[pager.targetPage]
                      currentPage = newPage
                      onNextPage.invoke(newPage)
+                 }
+
+                 LaunchedEffect(list) {
+                     if (list.isNotEmpty())
+                      onNextPage.invoke(list[0])
                  }
 
                  HorizontalPager(
@@ -187,7 +190,7 @@ fun Selected(
                          modifier = Modifier
                              .fillMaxSize()
                              .verticalScroll(rememberScrollState())
-                             .padding(bottom = 8.dp, top = 25.dp)
+                             .padding(bottom = 8.dp, top = 40.dp)
                              .background(Color.Transparent)
                      ) {
                          Card(
@@ -264,7 +267,7 @@ fun Selected(
          Box(
              Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
              contentAlignment = Alignment.Center
-         ) {
+          ) {
              PagerIndicator(
                  pagerState = pager,
                  activeDotColor = MaterialTheme.colorScheme.primary,
@@ -296,7 +299,10 @@ fun Selected(
                  val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
                  context.startActivity(chooserIntent)
              },
-             getRandom = { getSingleText.invoke() },
+             getRandom = {
+                 getSingleText.invoke()
+
+                         },
              modifier = Modifier.offset(30.dp, 660.dp)
          )
          SideList(currentPage, list) {
@@ -304,13 +310,15 @@ fun Selected(
                  pager.scrollToPage(list.indexOf(it))
              }
           }
-         Back(goBack = { goBack.invoke() })
+         if (!showBtmBarInDetail.value) {
+             Back(goBack = { goBack.invoke() })
+         }
        }
    }
 }
 
 @Composable
-private fun Back(goBack: () -> Unit) {
+fun Back(goBack: () -> Unit) {
     IconButton(
         onClick = { goBack.invoke() },
         modifier = Modifier
@@ -728,7 +736,7 @@ fun getMarkDown() = "# Contributing to Virtual Book Store\n" +
 @Preview(showBackground = true)
 @Composable
 fun SelectedPreview() {
-    Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {}, {}, {})
+  //  Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {}, {}, {})
 }
 
 

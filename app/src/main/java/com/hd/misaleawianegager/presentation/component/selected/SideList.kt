@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,11 +65,13 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
         }
     }
 
+
     val density = LocalDensity.current
     val offsetX = animateDpAsState(
         targetValue = if (showList.value) 0.dp else (-10).dp,
         animationSpec = tween(durationMillis = 300), label = "internal"
     )
+
 
     val offsetXPx = with(density) { offsetX.value.toPx() }
 
@@ -83,11 +84,12 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
           Modifier
              .offset(x = 37.dp, y = 560.dp)
               .graphicsLayer(translationX = offsetXPx)
+              .clickable {  }
       ) {
       IconButton(
           onClick = { toggleListContent() },
           Modifier
-              .size(50.dp, 70.dp)
+             .size(50.dp, 70.dp)
               .shadow(
                   elevation = 4.dp,
                   shape = RoundedCornerShape(topStart = 27.dp, topEnd = 27.dp),

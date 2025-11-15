@@ -105,6 +105,7 @@ class MainActivity : ComponentActivity() {
             val font = viewModel.font.collectAsStateWithLifecycle()
             val letterType = viewModel.letterType.collectAsStateWithLifecycle()
             val onboardShown = viewModel.boardingShown.collectAsStateWithLifecycle()
+            val showBtmBarInDetail = viewModel.showBtmBarInDetail.collectAsStateWithLifecycle()
 
 
 
@@ -142,7 +143,8 @@ class MainActivity : ComponentActivity() {
               theme = theme,
               font = font,
               letterType =  letterTypeLatest,
-              onboardShown = onboardShown
+              onboardShown = onboardShown,
+              bottomBarShownDetails = showBtmBarInDetail
               )
                 }
             }
@@ -157,8 +159,10 @@ fun MisaleApp(
     theme: State<String?>,
     font: State<String?>,
     letterType: String,
-    onboardShown: State<Boolean>
+    onboardShown: State<Boolean>,
+    bottomBarShownDetails: State<Boolean>
              ) {
+
     val viewModel = hiltViewModel<MainViewModel>()
     val showOthers = remember { mutableStateOf(true) }
    val showModalBottomSheet = remember{ mutableStateOf(false) }
@@ -170,20 +174,22 @@ fun MisaleApp(
     LaunchedEffect(currentBackStackEntry?.destination) {
         val route = currentBackStackEntry?.destination?.route
         showOthers.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ"
-        showBottomBar.value = route != "selected"
+        showBottomBar.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ" || (bottomBarShownDetails.value && route != "onboard")
     }
 
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet, showBottomBar)} ) {
 
-        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, startDestination)
+        MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, startDestination, bottomBarShownDetails)
 
         if(showModalBottomSheet.value){
-            SettingScreen( showModalBottomSheet ,
+            SettingScreen(
+                showModalBottomSheet,
                 onEvent = onEvent,
                 theme = theme,
                 font = font,
-                showOthers = showOthers
-                )
+                showOthers = showOthers,
+                showBtmBarInDetail = bottomBarShownDetails,
+            )
              }
            }
 
