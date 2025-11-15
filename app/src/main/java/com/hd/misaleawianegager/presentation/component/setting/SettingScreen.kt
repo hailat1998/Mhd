@@ -111,9 +111,9 @@ fun SettingScreen(
                             item { FontSizeContent(onEvent) }
                             item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
                             item { LetterSpaceContent(onEvent) }
+                            item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                            item{ ShowBtmBarOnDetails(showBtmBarInDetail, onEvent) }
                         }
-                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                        item{ ShowBtmBarOnDetails(showBtmBarInDetail, onEvent) }
                     }
                 }
             }
