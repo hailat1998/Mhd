@@ -71,7 +71,7 @@ class DataStoreManagerImpl @Inject constructor(@ApplicationContext private val c
         }
     override val showBottomBarOnDetails: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
-            preferences[SHOW_BOTTOM_BAR_ON_DETAILS] ?: false
+            preferences[SHOW_BOTTOM_BAR_ON_DETAILS] ?: true
         }
 
 
