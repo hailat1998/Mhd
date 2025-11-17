@@ -28,28 +28,63 @@ class FileServiceImp @Inject constructor(@ApplicationContext context: Context) :
     }
     override fun readTexts(context: Context, type: Int): Flow<String>{
 
-            val readType = if (type == 1) RECENT else FAV
+        val readType = if (type == 1) RECENT else FAV
 
         return flow {
             context.openFileInput(readType).bufferedReader().useLines { lines ->
                 lines.forEach { line ->
-                    println(line)
+              //      println(line)
                     emit(line)
                 }
             }
         }.distinctUntilChanged()
     }
 
-    override fun writeTexts(context: Context , type: Int  , text : String): Boolean {
-       val writeType = if(type == 1) RECENT else FAV
+    override fun writeTexts(context: Context, type: Int, text: String): Boolean {
+        val writeType = if (type == 1) RECENT else FAV
+
         try {
-            context.openFileOutput(writeType,  if(type == 1 )Context.MODE_APPEND else Context.MODE_PRIVATE).use {
-                it.write(text.plus("\n").toByteArray())
+
+            val existingContent = readExistingContent(context, writeType)
+
+            if (!existingContent.contains(text)) {
+
+                val updatedContent = if (existingContent.isEmpty()) {
+                    text
+                } else {
+                    "$existingContent\n$text"
+                }
+
+                context.openFileOutput(writeType, Context.MODE_PRIVATE).use { outputStream ->
+                    outputStream.write(updatedContent.toByteArray())
+                }
+            } else {
+
+                val list = existingContent.split("\n").toMutableList()
+                list.remove(text)
+                list.add(text)
+
+                val updatedContent = list.joinToString("\n")
+
+                context.openFileOutput(writeType, Context.MODE_PRIVATE).use { outputStream ->
+                    outputStream.write(updatedContent.toByteArray())
+                }
             }
-        }catch(e : IOException){
+        } catch (e: IOException) {
             println(e)
             return false
         }
+
         return true
+    }
+
+    // Helper function to read existing content
+    private fun readExistingContent(context: Context, fileName: String): String {
+        return try {
+            context.openFileInput(fileName).bufferedReader().use { it.readText() }
+        } catch (e: IOException) {
+            // Return empty string if file doesn't exist or can't be read
+            ""
+        }
     }
 }

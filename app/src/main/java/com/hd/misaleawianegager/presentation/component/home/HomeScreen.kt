@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,22 +39,41 @@ import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.TextCard
 
 @Composable
-fun HomeContent(homeData: State<List<String>>,
-                modifier: Modifier,
-                toDetail: ( from: String, text: String, first: String) -> Unit,
-                lazyListState: LazyListState,
-                arg3: MutableState<String>
-                  ) {
-        Box(
-            modifier = modifier,
-            contentAlignment = Alignment.Center
+fun HomeContent(
+    homeData: State<List<String>>,
+    modifier: Modifier,
+    toDetail: (from: String, text: String, first: String) -> Unit,
+    lazyListState: LazyListState,
+    arg3: MutableState<String>
+) {
+
+    val items by homeData
+
+    val first by arg3
+
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        LazyColumn(
+            state = lazyListState,
+            contentPadding = PaddingValues(8.dp)
         ) {
-                LazyColumn(state = lazyListState, modifier = Modifier.padding(8.dp)) {
-                    items(items = homeData.value, key = { item -> item }) { it ->
-                        TextCard(item = it, from = "ዋና", first = arg3.value, toDetail = toDetail)
-                    }
+            items(
+                items = items,
+                key = { item -> item.hashCode() }
+            ) { item ->
+                key(item, first) {
+                    TextCard(
+                        item = item,
+                        from = "ዋና",
+                        first = first,
+                        toDetail = toDetail
+                    )
                 }
             }
+        }
+    }
 }
 
 

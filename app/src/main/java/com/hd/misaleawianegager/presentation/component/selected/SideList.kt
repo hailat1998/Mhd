@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,8 +45,14 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
 
     val exitWidthInPx = with(LocalDensity.current) { 320.dp.toPx() }
 
+    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = if (list.isNotEmpty() && list.size > 1) list.indexOf(selected) else 0)
+
     val translationX = remember {
         Animatable(exitWidthInPx)
+    }
+
+    LaunchedEffect(selected) {
+        lazyListState.scrollToItem(if (list.isNotEmpty() && list.size > 1) list.indexOf(selected) else 0)
     }
 
     val showList = remember { mutableStateOf(true) }
@@ -65,13 +73,11 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
         }
     }
 
-
     val density = LocalDensity.current
     val offsetX = animateDpAsState(
         targetValue = if (showList.value) 0.dp else (-10).dp,
         animationSpec = tween(durationMillis = 300), label = "internal"
     )
-
 
     val offsetXPx = with(density) { offsetX.value.toPx() }
 
@@ -115,16 +121,27 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
           }
       }
   }
-      val set = list.distinct()
-      LazyColumn(Modifier.offset(x = 60.dp, y = 0.dp).background(MaterialTheme.colorScheme.surface).fillMaxSize(), verticalArrangement = Arrangement.Center) {
+      LazyColumn(
+          modifier = Modifier.offset(x = 60.dp, y = 0.dp)
+              .fillMaxSize()
+              .graphicsLayer(
+                  scaleY = 0.95f,
+                  shadowElevation = 32f,
+                  clip = true,
+                  shape = RoundedCornerShape(20.dp)
+              )
+              .background(MaterialTheme.colorScheme.surface),
+          verticalArrangement = Arrangement.Center,
+         state = lazyListState
+      ) {
           items(
-             items =  set,
+             items =  list,
               key = { it },
               contentType = { null }
           ) { s ->
               TextWrapper(s, { s == selected }) {
                   toggleListContent()
-                  scroll.invoke( s )
+                  scroll.invoke(s)
               }
               HorizontalDivider(
                   Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer),

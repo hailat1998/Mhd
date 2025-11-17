@@ -124,6 +124,8 @@ fun Selected(
         derivedStateOf { favListHere.contains(currentPage) }
     }
 
+    var checkAssignment by remember { mutableStateOf(false) }
+
     val scope = rememberCoroutineScope()
 
     DisposableEffect(Unit) {
@@ -136,10 +138,14 @@ fun Selected(
     val context = LocalContext.current
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    val list = if (from == "search") {
+    var list = if (from == "search") {
         remember { mutableStateListOf<String>().apply { add(page) } }
     } else {
         listFlow.collectAsStateWithLifecycle().value
+    }
+
+    if (checkAssignment) {
+        list = listFlow.collectAsStateWithLifecycle().value
     }
 
     val pager = rememberPagerState(
@@ -175,8 +181,8 @@ fun Selected(
                  }
 
                  LaunchedEffect(list) {
-                     if (list.isNotEmpty())
-                      onNextPage.invoke(list[0])
+                     if (list.isNotEmpty() && list.size == 1)
+                       onNextPage.invoke(list[0])
                  }
 
                  HorizontalPager(
@@ -300,16 +306,20 @@ fun Selected(
                  context.startActivity(chooserIntent)
              },
              getRandom = {
+                 if (from == "search") {
+                     checkAssignment = true
+                 }
                  getSingleText.invoke()
-
                          },
              modifier = Modifier.offset(30.dp, 660.dp)
          )
-         SideList(currentPage, list) {
-             scope.launch {
-                 pager.scrollToPage(list.indexOf(it))
+         if (list.isNotEmpty()) {
+             SideList(currentPage, list) {
+                 scope.launch {
+                     pager.scrollToPage(list.indexOf(it))
+                 }
              }
-          }
+         }
          if (!showBtmBarInDetail.value) {
              Back(goBack = { goBack.invoke() })
          }

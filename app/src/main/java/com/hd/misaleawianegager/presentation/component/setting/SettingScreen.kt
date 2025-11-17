@@ -83,16 +83,15 @@ fun SettingScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
-                    .background(MaterialTheme.colorScheme.surface)
                     .heightIn(max = 600.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column(Modifier.background(MaterialTheme.colorScheme.surface)) {
+                Column() {
                     Row {
                         Text(
                             text = "Setting",
                             style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.padding(10.dp).background(MaterialTheme.colorScheme.surface)
+                            modifier = Modifier.padding(10.dp)
                         )
                         Spacer(modifier = Modifier.weight(0.8f))
                         Icon(Icons.Default.Close, null, modifier = Modifier
@@ -101,21 +100,18 @@ fun SettingScreen(
                     }
                     LazyColumn(
                         modifier = Modifier
-                            .background(Color.Transparent)
                     ) {
                         item { ThemeContent(theme = theme, onEvent) }
-                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                        item { Divider(modifier = Modifier) }
                         item { FontContent(font = font, onEvent, showOthers) }
                         if (showOthers.value) {
-                            item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                            item { Divider(modifier = Modifier) }
                             item { FontSizeContent(onEvent) }
-                            item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                            item { Divider(modifier = Modifier) }
                             item { LetterSpaceContent(onEvent) }
-                            item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
+                            item { Divider(modifier = Modifier) }
                             item{ ShowBtmBarOnDetails(showBtmBarInDetail, onEvent) }
                         }
-                        item { Divider(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) }
-                        item{ ShowBtmBarOnDetails(showBtmBarInDetail, onEvent) }
                     }
                 }
             }
@@ -194,7 +190,7 @@ fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOther
         "abyssinica_gentium", "andikaafr_r", "charterbr_roman", "desta_gentium", "gfzemen_regular",
         "jiret", "nyala", "washrasb", "wookianos", "yebse", "serif", "Default"
     )
-    Box(Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
+    Box(Modifier.padding(8.dp)) {
         var expanded by remember { mutableStateOf(false) }
         Column(Modifier.padding(bottom= if(showOthers.value)0.dp else 48.dp)) {
             Text(text = "FontFamily",
@@ -220,7 +216,7 @@ fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOther
                         .menuAnchor()
                         .fillMaxWidth()
                         .background(
-                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.colorScheme.background,
                             RoundedCornerShape(10.dp)
                         )
                         .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -261,11 +257,11 @@ fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOther
 
 @Composable
 fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
-    Box(Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
+    Box(Modifier.padding(8.dp)) {
         Column {
             Text(text = "FontSize", style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold))
             Row(
-                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Chip(
                     onClick = { onEvent.invoke(SettingEvent.FontSize(2)) },
@@ -294,8 +290,8 @@ fun FontSizeContent(onEvent: (SettingEvent) -> Unit){
 
 @Composable
 fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit) {
-    Box(Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
-        Column(Modifier.background(MaterialTheme.colorScheme.surface)) {
+    Box(Modifier.padding(8.dp)) {
+        Column {
             Text(
                 text = "Word Space",
                 style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold)
@@ -357,7 +353,7 @@ fun LetterSpaceContent(onEvent: (SettingEvent) -> Unit) {
 
 @Composable
 fun ShowBtmBarOnDetails(isShown: State<Boolean>, onEvent: (SettingEvent) -> Unit) {
-    Box(Modifier.padding(top = 8.dp, bottom = 100.dp, start = 8.dp, end = 8.dp).background(MaterialTheme.colorScheme.surface)) {
+    Box(Modifier.padding(top = 8.dp, bottom = 100.dp, start = 8.dp, end = 8.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

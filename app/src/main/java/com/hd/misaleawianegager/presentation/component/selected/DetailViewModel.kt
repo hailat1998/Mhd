@@ -68,7 +68,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                         list.add(data.trim())
                     }
                 }
-                _detailStateFlow.update { list }
+                _detailStateFlow.update { list.distinct() }
             } ?: run {
                 _detailStateFlow.update { emptyList() }
             }
@@ -81,14 +81,14 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
             textRepository.readTextFile(context, 1).collect {
                 list.add(it.data!!)
             }
-            _detailStateFlow.update { list.reversed() }
+            _detailStateFlow.update { list.distinct().reversed() }
         }
     }
 
     private fun detailFeedFav(){
         val list = mutableListOf<String>()
         list.addAll(favList)
-        _detailStateFlow.update { list }
+        _detailStateFlow.update { list.distinct() }
     }
 
     private fun detailAIFeed(proverb: String) {

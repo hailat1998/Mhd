@@ -265,7 +265,9 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     from = arg1!!,
                     favListHere = favListHere,
                     onNextPage = {
-                        viewModelDetail.onEvent(DetailEvent.WriteText(it))
+                        if (arg1 != "የቅርብ"){
+                            viewModelDetail.onEvent(DetailEvent.WriteText(it))
+                        }
                         viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
                     },
                     onFavoriteToggle = { item ->

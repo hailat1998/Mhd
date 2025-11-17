@@ -29,19 +29,18 @@ class RecentViewModel @Inject constructor(private val textRepository: TextReposi
 
     val scrollValue = MutableStateFlow(savedStateHandle.get<Int>(SCROLLINDEX) ?:0)
 
-     fun setScroll(value: Int){
+     fun setScroll(value: Int) {
          scrollValue.update { value }
         savedStateHandle[SCROLLINDEX] = value
     }
 
-     fun readText(context: Context){
+     fun readText(context: Context) {
         viewModelScope.launch(coroutineDispatcher) {
             val list = mutableListOf<String>()
             textRepository.readTextFile(context, 1).collect{
                 list.add(it.data!!.trim())
             }
-            _recentStateFlow.update { list }
+            _recentStateFlow.update { list.reversed() }
         }
     }
-
 }

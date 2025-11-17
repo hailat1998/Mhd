@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -98,7 +99,7 @@ fun SearchScreen(
 
         val list2 = list.value.distinct()
 
-        LazyColumn(modifier = Modifier.padding(8.dp),
+        LazyColumn(contentPadding = PaddingValues(8.dp),
           state = lazyListState) {
             itemsIndexed(list2, key = { _, item -> item }) { _, item ->
 
