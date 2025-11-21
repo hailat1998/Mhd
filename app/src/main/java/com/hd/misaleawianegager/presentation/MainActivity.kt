@@ -68,6 +68,7 @@ import com.hd.misaleawianegager.presentation.component.setting.SettingViewModel
 import com.hd.misaleawianegager.presentation.theme.MisaleawiAnegagerTheme
 import com.hd.misaleawianegager.utils.compose.LifeCycleObserver
 import com.hd.misaleawianegager.utils.compose.favList
+import com.hd.misaleawianegager.utils.compose.recentList
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 
@@ -194,8 +195,14 @@ fun MisaleApp(
            }
 
     LifeCycleObserver(
-        onStart = {viewModel.readFavList(favList) },
-        onPause = { viewModel.writeFavList(favList) },
+        onStart = {
+            viewModel.readFavList(favList)
+            viewModel.readRecentList(recentList)
+        },
+        onPause = {
+            viewModel.writeFavList(favList)
+            viewModel.writeRecentList(recentList)
+                  },
     )
 
     val worker = viewModel.working.collectAsState(initial = "RUNNING")
