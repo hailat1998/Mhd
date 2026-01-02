@@ -1,11 +1,13 @@
 package com.hd.misaleawianegager.presentation.component.recent
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hd.misaleawianegager.di.IoDispatcher
 import com.hd.misaleawianegager.domain.repository.TextRepository
+import com.hd.misaleawianegager.utils.compose.recentList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,13 +36,7 @@ class RecentViewModel @Inject constructor(private val textRepository: TextReposi
         savedStateHandle[SCROLLINDEX] = value
     }
 
-     fun readText(context: Context) {
-        viewModelScope.launch(coroutineDispatcher) {
-            val list = mutableListOf<String>()
-            textRepository.readTextFile(context, 1).collect{
-                list.add(it.data!!.trim())
-            }
-            _recentStateFlow.update { list.reversed() }
-        }
+     fun readText() {
+         _recentStateFlow.update { recentList.reversed().distinct() }
     }
 }

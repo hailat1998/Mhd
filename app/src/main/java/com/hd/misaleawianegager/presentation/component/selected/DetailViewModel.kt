@@ -11,6 +11,7 @@ import com.hd.misaleawianegager.presentation.DataProvider
 import com.hd.misaleawianegager.presentation.component.home.HomeEvent
 import com.hd.misaleawianegager.utils.Resources
 import com.hd.misaleawianegager.utils.compose.favList
+import com.hd.misaleawianegager.utils.compose.recentList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -76,13 +77,7 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
     }
 
     private fun detailFeedRecent(context: Context) {
-        viewModelScope.launch(coroutineDispatcher) {
-            val list = mutableListOf<String>()
-            textRepository.readTextFile(context, 1).collect {
-                list.add(it.data!!)
-            }
-            _detailStateFlow.update { list.distinct().reversed() }
-        }
+        _detailStateFlow.update { recentList.reversed().distinct()  }
     }
 
     private fun detailFeedFav(){

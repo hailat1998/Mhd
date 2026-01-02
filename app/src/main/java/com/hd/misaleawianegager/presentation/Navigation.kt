@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,6 +36,9 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
 import com.hd.misaleawianegager.utils.compose.favList
+import com.hd.misaleawianegager.utils.compose.recentList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val ANIMATION_DURATION = 500
 
@@ -187,8 +191,8 @@ fun MisaleBodyContent(navHostController: NavHostController,
                         animationSpec = tween(ANIMATION_DURATION)
                     )
                 }) {
-                val context = LocalContext.current
-                viewModelDetailRecent.readText(context)
+
+                viewModelDetailRecent.readText()
                 val list = viewModelDetailRecent.recentStateFlow.collectAsStateWithLifecycle()
                 val scrollIndex = viewModelDetailRecent.scrollValue.collectAsStateWithLifecycle()
                 Recent(recentData = list, toDetail = { from, text, first ->
@@ -239,6 +243,8 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 }
             ) { backStackEntry ->
 
+                val scope = rememberCoroutineScope()
+
                 val viewModelDetail: DetailViewModel = hiltViewModel()
 
                 val arg1 = backStackEntry.arguments?.getString("from")
@@ -265,8 +271,19 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     from = arg1!!,
                     favListHere = favListHere,
                     onNextPage = {
-                        if (arg1 != "የቅርብ"){
-                            viewModelDetail.onEvent(DetailEvent.WriteText(it))
+
+                        if (arg1 != "የቅርብ") {
+
+                            while (recentList.size > 150) {
+                                recentList.removeAt(0)
+                            }
+
+                            if (!recentList.contains(it)) {
+                                recentList.add(it)
+                            } else {
+                                recentList.remove(it)
+                                recentList.add(it)
+                            }
                         }
                         viewModelDetail.onEvent(DetailEvent.LoadAIContent(it))
                     },
