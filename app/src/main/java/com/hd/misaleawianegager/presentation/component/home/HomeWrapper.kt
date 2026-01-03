@@ -19,11 +19,15 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -52,7 +56,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -146,8 +152,9 @@ fun HomeWrapper(homeData: State<List<String>>,
         coroutineScope.launch {
 
             if (showBottomSheet.value) {
-                showBottomSheet.value = false
+
                 translationY.animateTo(0f)
+                showBottomSheet.value = false
             } else {
                 showBottomSheet.value = true
                 translationY.animateTo(sheetHeightInPx)
@@ -177,7 +184,8 @@ fun HomeWrapper(homeData: State<List<String>>,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Info,
-                            contentDescription = "INFO"
+                            contentDescription = "INFO",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
@@ -301,12 +309,15 @@ fun HomeWrapper(homeData: State<List<String>>,
             },
             dragHandle = null
         ) {
-            Box(modifier = Modifier.heightIn(max = 300.dp)) {
-
+            Box(
+                modifier = Modifier.heightIn(max = 238.dp).fillMaxSize()
+            ) {
                 Image(
-                    painterResource(id = R.drawable.drawing_dun), null,
-
-                    contentScale = ContentScale.FillBounds
+                    painterResource(id = R.drawable.drawing_dun),
+                    null,
+                    contentScale = ContentScale.Crop,
+                    colorFilter = ColorFilter.tint(Color.Black.copy(alpha = 0.4f), BlendMode.SrcOver),
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 FlowRow(
@@ -315,7 +326,7 @@ fun HomeWrapper(homeData: State<List<String>>,
                         .background(Color.Transparent)
                 ) {
                     DataProvider.letterMap.keys.forEach { it ->
-
+                        Row {
                         Chip(
                             onClick = {
 
@@ -329,10 +340,9 @@ fun HomeWrapper(homeData: State<List<String>>,
                             colors = ChipDefaultsM3.chipColors(containerColor = MaterialTheme.colorScheme.background),
 
                             border = BorderStroke(2.dp, Color(0xFFFFD700)),
-
-                            ) {
+                        ) {
                             Box(
-                                modifier = Modifier.size(37.dp).padding(end = 4.dp, start = 4.dp),
+                                modifier = Modifier.size(34.dp).padding(end = 4.dp, start = 4.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -342,7 +352,9 @@ fun HomeWrapper(homeData: State<List<String>>,
                                 )
                             }
                         }
+                     Spacer(Modifier.width(3.dp))
                     }
+                  }
                 }
             }
         }
