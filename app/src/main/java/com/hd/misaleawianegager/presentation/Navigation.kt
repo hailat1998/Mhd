@@ -35,6 +35,7 @@ import com.hd.misaleawianegager.presentation.component.selected.DetailEvent
 import com.hd.misaleawianegager.presentation.component.selected.DetailViewModel
 import com.hd.misaleawianegager.presentation.component.selected.Selected
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.DIRECTION
 import com.hd.misaleawianegager.utils.compose.favList
 import com.hd.misaleawianegager.utils.compose.recentList
 import kotlinx.coroutines.Dispatchers
@@ -108,6 +109,13 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     scrollIndex = scrollPos,
                     toBoarding = {
                         navHostController.navigateSingleTopTo(MisaleScreen.Onboarding.route)
+                    },
+                    slide = {
+                        if (it == DIRECTION.LEFT) {
+                            navHostController.navigateSingleTopTo(MisaleScreen.Fav.route)
+                        } else {
+                            navHostController.navigateSingleTopTo(MisaleScreen.Search.route)
+                        }
                     }
                 )
             }
@@ -140,7 +148,16 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 val scrollIndex = viewModelDetailFav.scrollValue.collectAsStateWithLifecycle()
                 FavScreen(list, toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-                     }, setScroll = viewModelDetailFav::setScroll, scrollIndex = scrollIndex,
+                     },
+                    setScroll = viewModelDetailFav::setScroll,
+                    scrollIndex = scrollIndex,
+                    slide = {
+                        if (it == DIRECTION.LEFT) {
+                            navHostController.navigateSingleTopTo(MisaleScreen.Recent.route)
+                        } else {
+                            navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
+                        }
+                    }
                    )
             }
 
@@ -162,9 +179,15 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 viewModelDetailRecent.readText()
                 val list = viewModelDetailRecent.recentStateFlow.collectAsStateWithLifecycle()
                 val scrollIndex = viewModelDetailRecent.scrollValue.collectAsStateWithLifecycle()
-                Recent(recentData = list, toDetail = { from, text, first ->
+                Recent(recentData = list,
+                    toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-                }, setScroll = viewModelDetailRecent::setScroll, scrollIndex = scrollIndex,
+                     },
+                    setScroll = viewModelDetailRecent::setScroll,
+                    scrollIndex = scrollIndex,
+                    slide = {
+                      navHostController.navigateSingleTopTo(MisaleScreen.Fav.route)
+                    }
                   )
             }
 
@@ -186,11 +209,16 @@ fun MisaleBodyContent(navHostController: NavHostController,
                 val list = viewModelSearch.searchResult.collectAsStateWithLifecycle()
                 val word = viewModelSearch.wordResult
 
-                SearchScreen(list = list, wordFlow = word, from = "ዋና", onSearchEvent = viewModelSearch::onEvent, toDest = {
+                SearchScreen(list = list, wordFlow = word, from = "ዋና", onSearchEvent = viewModelSearch::onEvent,
+                    toDest = {
                     navHostController.popBackStack()
-                }, toDetail = { from, text, first ->
+                },
+                    toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
-                 }
+                 },
+                 slide = {
+                     navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
+                    }
                )
             }
 
@@ -265,7 +293,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                         if (favListHere.contains(item)) {
                             favListHere.remove(item)
                         } else {
-                            favListHere.add(item)
+                            favListHere.add(java.lang.String(item).toString())
                         }
                     },
                     getSingleText = {
@@ -284,7 +312,6 @@ fun MisaleBodyContent(navHostController: NavHostController,
     }
 
 fun getRouteIndex(route: String?): Int = orderMapNav[route] ?: 2
-
 
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) {

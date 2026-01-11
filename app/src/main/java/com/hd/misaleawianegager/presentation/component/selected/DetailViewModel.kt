@@ -82,7 +82,8 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
 
     private fun detailFeedFav(){
         val list = mutableListOf<String>()
-        list.addAll(favList)
+        // We have to create a copy of each string to avoid referencing the same string due to string pooling
+        list.addAll(favList.map { it -> java.lang.String(it).toString() })
         _detailStateFlow.update { list.distinct() }
     }
 

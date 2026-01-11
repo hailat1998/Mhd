@@ -1,10 +1,12 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,7 +47,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
 
-    val exitWidthInPx = with(LocalDensity.current) { 320.dp.toPx() }
+    val config = LocalConfiguration.current
+
+    val exitWidthInPx = with(LocalDensity.current) { if (config.orientation == ORIENTATION_PORTRAIT) 320.dp.toPx() else 768.dp.toPx() }
 
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = if (list.isNotEmpty() && list.size > 1) list.indexOf(selected) else 0)
 
@@ -85,10 +91,17 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
       .fillMaxSize()
       .background(Color.Transparent)
       .graphicsLayer(translationX = translationX.value)
+      .pointerInput(Unit) {
+          detectDragGestures { _, dragAmount ->
+              if (translationX.value == 0f && dragAmount.x > 20.dp.toPx()) {
+                  toggleListContent()
+              }
+          }
+      }
    ) {
       Box(
           Modifier
-             .offset(x = 37.dp, y = 560.dp)
+             .offset(x = 37.dp, y = if (config.orientation == ORIENTATION_PORTRAIT) 560.dp else 200.dp)
               .graphicsLayer(translationX = offsetXPx)
               .clickable {  }
       ) {
@@ -144,7 +157,7 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
                   scroll.invoke(s)
               }
               HorizontalDivider(
-                  Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer),
+                  Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer).padding(start = 8.dp),
                   thickness = 1.dp
                   )
           }

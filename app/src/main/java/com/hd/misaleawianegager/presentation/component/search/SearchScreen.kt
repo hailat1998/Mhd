@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation.component.search
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,6 +44,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -58,6 +60,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.TextCardAnnotated
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.abs
 
 @Composable
 fun SearchScreen(
@@ -67,6 +70,7 @@ fun SearchScreen(
     onSearchEvent: (s: SearchEvent) -> Unit,
     toDest: (from: String) -> Unit,
     toDetail: (from: String, text: String, first:String) -> Unit,
+    slide: () -> Unit
                 ) {
 
     val word = wordFlow.collectAsStateWithLifecycle()
@@ -92,19 +96,32 @@ fun SearchScreen(
         query.value = currentWord
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()
+    ) {
         CompositionLocalProvider(LocalTextStyle provides textStyle) {
             SearchTopBar(query, focusRequester, onSearchEvent, word)
-         }
+        }
 
         val list2 = list.value.distinct()
 
-        LazyColumn(contentPadding = PaddingValues(8.dp),
-          state = lazyListState) {
+        Box(Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectDragGestures { _, dragAmount ->
+                    if (dragAmount.x > 10) {
+                        slide.invoke()
+                    }
+                }
+            }
+        ) {
+        LazyColumn(
+            contentPadding = PaddingValues(8.dp),
+            state = lazyListState
+        ) {
             itemsIndexed(list2, key = { _, item -> item }) { _, item ->
 
                 j = item.indexOf(query.value)
-                k =  j + query.value.length
+                k = j + query.value.length
 
                 val annotatedString = buildAnnotatedString {
                     append(item)
@@ -116,12 +133,14 @@ fun SearchScreen(
                         end = k
                     )
                 }
-               TextCardAnnotated(item = annotatedString,
-                   from = "search", first = "  " ,
-                   toDetail = toDetail,
-                  )
+                TextCardAnnotated(
+                    item = annotatedString,
+                    from = "search", first = "  ",
+                    toDetail = toDetail,
+                )
             }
         }
+    }
     }
 }
 

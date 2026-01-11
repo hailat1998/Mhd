@@ -2,6 +2,7 @@ package com.hd.misaleawianegager.presentation.component.home
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -14,6 +15,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
@@ -60,6 +62,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -71,10 +74,13 @@ import androidx.compose.ui.util.lerp
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.presentation.DataProvider
 import com.hd.misaleawianegager.presentation.component.setting.SettingEvent
+import com.hd.misaleawianegager.utils.DIRECTION
 import com.hd.misaleawianegager.utils.compose.Chip
 import com.hd.misaleawianegager.utils.compose.ChipDefaultsM3
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.R)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,7 +90,8 @@ fun HomeWrapper(homeData: State<List<String>>,
                 onSettingEvent: (SettingEvent) -> Unit,
                 scrollIndex: State<Int>,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
-                toBoarding: () -> Unit) {
+                toBoarding: () -> Unit,
+                slide: (DIRECTION) -> Unit) {
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -122,7 +129,7 @@ fun HomeWrapper(homeData: State<List<String>>,
     val decay = rememberSplineBasedDecay<Float>()
 
     LaunchedEffect(lazyListState) {
-        snapshotFlow { lazyListState.firstVisibleItemIndex }
+        snapshotFlow { lazyListState.firstVisibleItemIndex }.distinctUntilChanged()
             .collect { currentIndex ->
                 onHomeEvent.invoke(HomeEvent.ScrollPos(currentIndex))
                 if (lazyListState.isScrollInProgress) {
@@ -217,7 +224,20 @@ fun HomeWrapper(homeData: State<List<String>>,
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectDragGestures { _, dragAmount ->
+                        val xAmount = dragAmount.x
+                        if (abs(xAmount) > 10 ) {
+                            Log.i("HOME", "clicked")
+                            if (xAmount > 0) {
+                                slide.invoke(DIRECTION.LEFT)
+                            } else {
+                                slide.invoke(DIRECTION.RIGHT)
+                            }
+                        }
+                    }
+                },
             contentAlignment = Alignment.Center
         ) {
             if (homeData.value.isEmpty()) {
@@ -352,7 +372,9 @@ fun HomeWrapper(homeData: State<List<String>>,
                                 )
                             }
                         }
-                     Spacer(Modifier.width(3.dp))
+                    if (it != "ረ" && it != "ዐ" && it !=  "ቸ" && it != "ጠ") {
+                        Spacer(Modifier.width(3.dp))
+                     }
                     }
                   }
                 }

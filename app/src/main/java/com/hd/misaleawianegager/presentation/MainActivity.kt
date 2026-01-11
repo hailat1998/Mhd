@@ -178,6 +178,8 @@ fun MisaleApp(
         showBottomBar.value = route == "ዋና"  || route == "ምርጥ" || route == "የቅርብ" || route == "ፈልግ" || (bottomBarShownDetails.value && route != "onboard")
     }
 
+
+
     Scaffold(bottomBar = { MisaleBottomAppBar(navController = navHostController, showModalBottomSheet, showBottomBar)} ) {
 
         MisaleBodyContent(navHostController = navHostController, modifier = Modifier.padding(it), letterType, onEvent, startDestination, bottomBarShownDetails)

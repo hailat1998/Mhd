@@ -120,10 +120,6 @@ fun Selected(
 
     var currentPage by remember { mutableStateOf(page) }
 
-    val isFavorite by remember(currentPage, favListHere) {
-        derivedStateOf { favListHere.contains(currentPage) }
-    }
-
     var checkAssignment by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
@@ -142,6 +138,10 @@ fun Selected(
         remember { mutableStateListOf<String>().apply { add(page) } }
     } else {
         listFlow.collectAsStateWithLifecycle().value
+    }
+
+    val isFavorite by remember(currentPage, favListHere, list) {
+        derivedStateOf { if (list.size == 1) favListHere.contains(list[0]) else favListHere.contains(currentPage) }
     }
 
     if (checkAssignment) {
@@ -518,17 +518,17 @@ fun FloatingInteraction(
     Card(
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
         ),
         modifier = modifier,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-           // pressedElevation = 8.dp,
-           // focusedElevation = 6.dp
-        )
+//        elevation = CardDefaults.cardElevation(
+//            defaultElevation = 4.dp,
+//           // pressedElevation = 8.dp,
+//           // focusedElevation = 6.dp
+//        )
     ) {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(8.dp).background(Color.Transparent),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             InteractionButton(
