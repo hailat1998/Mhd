@@ -110,7 +110,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     toBoarding = {
                         navHostController.navigateSingleTopTo(MisaleScreen.Onboarding.route)
                     },
-                    slide = {
+                    drag = {
                         if (it == DIRECTION.LEFT) {
                             navHostController.navigateSingleTopTo(MisaleScreen.Fav.route)
                         } else {
@@ -151,7 +151,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                      },
                     setScroll = viewModelDetailFav::setScroll,
                     scrollIndex = scrollIndex,
-                    slide = {
+                    drag = {
                         if (it == DIRECTION.LEFT) {
                             navHostController.navigateSingleTopTo(MisaleScreen.Recent.route)
                         } else {
@@ -185,7 +185,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                      },
                     setScroll = viewModelDetailRecent::setScroll,
                     scrollIndex = scrollIndex,
-                    slide = {
+                    drag = {
                       navHostController.navigateSingleTopTo(MisaleScreen.Fav.route)
                     }
                   )
@@ -216,7 +216,7 @@ fun MisaleBodyContent(navHostController: NavHostController,
                     toDetail = { from, text, first ->
                     navHostController.navigateSingleTopTo(MisaleScreen.Detail.route.plus("/$from/$text/$first"))
                  },
-                 slide = {
+                 drag = {
                      navHostController.navigateSingleTopTo(MisaleScreen.Home.route)
                     }
                )

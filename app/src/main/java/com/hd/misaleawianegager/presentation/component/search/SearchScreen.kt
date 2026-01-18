@@ -36,8 +36,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -70,7 +73,7 @@ fun SearchScreen(
     onSearchEvent: (s: SearchEvent) -> Unit,
     toDest: (from: String) -> Unit,
     toDetail: (from: String, text: String, first:String) -> Unit,
-    slide: () -> Unit
+    drag: () -> Unit
                 ) {
 
     val word = wordFlow.collectAsStateWithLifecycle()
@@ -95,6 +98,12 @@ fun SearchScreen(
     if (!word.value.isLoading && !currentWord.isNullOrEmpty()) {
         query.value = currentWord
     }
+    var xAmount by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(xAmount) {
+        if (xAmount > 10) {
+            drag.invoke()
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()
     ) {
@@ -107,10 +116,9 @@ fun SearchScreen(
         Box(Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
-                detectDragGestures { _, dragAmount ->
-                    if (dragAmount.x > 10) {
-                        slide.invoke()
-                    }
+                var xAmountLocal = 0f
+                detectDragGestures(onDragEnd = { xAmount = xAmountLocal }) { _, dragAmount ->
+                    xAmountLocal = dragAmount.x
                 }
             }
         ) {
@@ -244,7 +252,7 @@ fun SearchTopBar(query: MutableState<String>,
                 IconButton(onClick = {}) {
                     CircularProgressIndicator(modifier = Modifier.padding(8.dp))
                 }
-            }else {
+            } else {
                 IconButton(onClick = {
                     if(query.value.isEmpty()) {
                        Toast.makeText(context,  "Type in English/Amharic (Latin) to convert to Amharic fidel.", Toast.LENGTH_SHORT).show()

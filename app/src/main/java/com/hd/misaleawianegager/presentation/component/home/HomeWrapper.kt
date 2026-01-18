@@ -50,6 +50,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,7 +92,7 @@ fun HomeWrapper(homeData: State<List<String>>,
                 scrollIndex: State<Int>,
                 toDetail: ( from: String, text: String, first: String) -> Unit,
                 toBoarding: () -> Unit,
-                slide: (DIRECTION) -> Unit) {
+                drag: (DIRECTION) -> Unit) {
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -125,6 +126,18 @@ fun HomeWrapper(homeData: State<List<String>>,
         }
     }
     )
+
+    var xAmount by remember { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(xAmount) {
+        if (abs(xAmount) > 10 ) {
+            if (xAmount > 0) {
+                drag.invoke(DIRECTION.LEFT)
+            } else {
+                drag.invoke(DIRECTION.RIGHT)
+            }
+        }
+    }
 
     val decay = rememberSplineBasedDecay<Float>()
 
@@ -226,16 +239,9 @@ fun HomeWrapper(homeData: State<List<String>>,
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
-                    detectDragGestures { _, dragAmount ->
-                        val xAmount = dragAmount.x
-                        if (abs(xAmount) > 10 ) {
-                            Log.i("HOME", "clicked")
-                            if (xAmount > 0) {
-                                slide.invoke(DIRECTION.LEFT)
-                            } else {
-                                slide.invoke(DIRECTION.RIGHT)
-                            }
-                        }
+                    var xAmountLocal = 0f
+                    detectDragGestures(onDragEnd = { xAmount = xAmountLocal })  { _, dragAmount ->
+                        xAmountLocal = dragAmount.x
                     }
                 },
             contentAlignment = Alignment.Center

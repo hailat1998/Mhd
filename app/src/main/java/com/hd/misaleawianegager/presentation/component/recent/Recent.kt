@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,7 +44,7 @@ fun Recent(
     toDetail: (from: String, text: String, first: String) -> Unit,
     scrollIndex: State<Int>,
     setScroll: (Int) -> Unit,
-    slide: () -> Unit
+    drag: () -> Unit
 ) {
 
     val lazyListState = rememberLazyListState(
@@ -61,7 +62,13 @@ fun Recent(
                 setScroll(index)
             }
     }
+    var xAmount by remember { mutableFloatStateOf(0f) }
 
+    LaunchedEffect(xAmount) {
+        if (xAmount < 0f && abs(xAmount) > 10f) {
+            drag.invoke()
+        }
+    }
 
     LaunchedEffect(Unit) {
         delay(1000L)
@@ -94,10 +101,9 @@ fun Recent(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .pointerInput(Unit) {
-                    detectDragGestures { _, dragAmount ->
-                        if (dragAmount.x < 0f && abs(dragAmount.x) > 10) {
-                            slide.invoke()
-                        }
+                    var xAmountLocal = 0f
+                    detectDragGestures(onDragEnd = { xAmount = xAmountLocal } ) { _, dragAmount ->
+                        xAmountLocal = dragAmount.x
                     }
                 }
             ,

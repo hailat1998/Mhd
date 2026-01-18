@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,7 +45,7 @@ fun FavScreen(
     toDetail: (from: String, s: String, first: String) -> Unit,
     scrollIndex: State<Int>,
     setScroll: (Int) -> Unit,
-    slide: (DIRECTION) -> Unit
+    drag: (DIRECTION) -> Unit
 ) {
 
     val lazyListState = rememberLazyListState(
@@ -69,6 +70,17 @@ fun FavScreen(
         loading = false
     }
 
+    var xAmount by remember { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(xAmount) {
+        if (abs(xAmount) > 10 ) {
+            if (xAmount > 0) {
+                drag.invoke(DIRECTION.LEFT)
+            } else {
+                drag.invoke(DIRECTION.RIGHT)
+            }
+        }
+    }
 
     val items by favList
 
@@ -101,15 +113,9 @@ fun FavScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .pointerInput(Unit) {
-                    detectDragGestures { _, dragAmount ->
-                        val xAmount = dragAmount.x
-                        if (abs(xAmount) > 10 ) {
-                            if (xAmount > 0) {
-                                slide.invoke(DIRECTION.LEFT)
-                            } else {
-                                slide.invoke(DIRECTION.RIGHT)
-                            }
-                        }
+                    var xAmountLocal = 0f
+                    detectDragGestures(onDragEnd = { xAmount = xAmountLocal} ) { _, dragAmount ->
+                        xAmountLocal = dragAmount.x
                     }
                 },
             contentAlignment = Alignment.Center
