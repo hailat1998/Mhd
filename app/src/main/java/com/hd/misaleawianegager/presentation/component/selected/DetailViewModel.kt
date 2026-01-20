@@ -107,13 +107,22 @@ class DetailViewModel @Inject constructor(private val textRepository: TextReposi
                                 )
                             }
                             is Resources.Error -> {
+                                var mappedError = ""
+                                resource.message?.let {
+                                     mappedError = if (it.startsWith("Network error")) {
+                                        "Network error"
+                                    } else if (it.startsWith("Error fetching proverb meaning")) {
+                                        "Error fetching proverb meaning"
+                                    } else {
+                                        "Unexpected error"
+                                    }
+                                }
                                 currentState.copy(
                                     isLoading = false,
-                                    error = resource.message
+                                    error = mappedError
                                 )
                             }
                         }
-
                       newState
                     }
                 }

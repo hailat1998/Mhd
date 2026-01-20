@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -15,7 +16,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +44,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -71,11 +75,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -85,8 +93,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.AnimatedPreloader
@@ -99,6 +109,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import mx.platacard.pagerindicator.PagerIndicator
 import mx.platacard.pagerindicator.PagerIndicatorOrientation
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -153,12 +164,14 @@ fun Selected(
         pageCount = { if (list.isNotEmpty())list.size else 0 }
     )
 
+    val offsetY = remember { mutableStateOf(-150f) }
+
  SelectionContainer {
-     Box(Modifier.fillMaxSize()) {
+   Box(Modifier.fillMaxSize()
+   ) {
      Column(
          modifier = Modifier.fillMaxSize()
      ) {
-
          Box(
              contentAlignment = Alignment.Center,
              modifier = Modifier
@@ -176,13 +189,15 @@ fun Selected(
 
                  LaunchedEffect(pager.currentPage) {
                      val newPage = list[pager.targetPage]
-                     currentPage = newPage
                      onNextPage.invoke(newPage)
+                     currentPage = newPage
                  }
 
                  LaunchedEffect(list) {
-                     if (list.isNotEmpty() && list.size == 1)
-                       onNextPage.invoke(list[0])
+                     if (list.isNotEmpty() && list.size == 1) {
+                         onNextPage.invoke(list[0])
+                         currentPage = list[0]
+                     }
                  }
 
                  HorizontalPager(
@@ -234,14 +249,37 @@ fun Selected(
                                      if (uiState.isLoading == true) {
                                          ShimmerEffectWrapper()
                                      } else if (uiState.isLoading != true && uiState.error != null) {
-                                         AnimatedPreloader(
-                                             Modifier.fillMaxWidth().height(480.dp)
-                                                 .shadow(
-                                                     shape = RoundedCornerShape(20.dp),
-                                                     elevation = 0.dp
-                                                 ).padding(5.dp),
-                                             R.raw.animation_error
-                                         )
+                                         Box(
+                                             Modifier.fillMaxSize(),
+                                             contentAlignment = Alignment.Center) {
+                                             Column(modifier = Modifier.fillMaxSize()) {
+                                                 AnimatedPreloader(
+                                                     Modifier.fillMaxWidth().height(480.dp)
+                                                         .shadow(
+                                                             shape = RoundedCornerShape(20.dp),
+                                                             elevation = 0.dp
+                                                         ).padding(5.dp),
+                                                     R.raw.animation_error
+                                                 )
+                                                 Text(
+                                                     text = uiState.error!!,
+                                                     fontSize = 10.sp,
+                                                     color = Color.Red.copy(red = 0.9f),
+                                                     modifier = Modifier.padding(top = 4.dp).fillMaxWidth()
+                                                 )
+                                             }
+                                             Button(onClick = {
+                                                 if (list.size == 1) {
+                                                     onNextPage.invoke(list[0])
+                                                 } else if (list.isNotEmpty()) {
+                                                     onNextPage.invoke(currentPage)
+                                                 }
+                                             },
+                                                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary)
+                                             ) {
+                                                 Text(text = "refresh")
+                                             }
+                                         }
                                      } else if (uiState.isLoading != true && uiState.amMeaning != null) {
                                          MarkdownContent(uiState.amMeaning!!)
                                      }
@@ -252,7 +290,11 @@ fun Selected(
                                      if (uiState.isLoading == true) {
                                          ShimmerEffectWrapper()
                                      } else if (uiState.isLoading != true && uiState.error != null) {
-                                         AnimatedPreloader(
+                                         Box(
+                                             Modifier.fillMaxSize(),
+                                             contentAlignment = Alignment.Center) {
+                                         Column(modifier = Modifier.fillMaxSize()) {
+                                             AnimatedPreloader(
                                              Modifier.fillMaxWidth().height(480.dp)
                                                  .shadow(
                                                      shape = RoundedCornerShape(20.dp),
@@ -260,12 +302,32 @@ fun Selected(
                                                  ).padding(5.dp),
                                              R.raw.animation_error
                                          )
+                                             Text(
+                                                 text = uiState.error!!,
+                                                 fontSize = 10.sp,
+                                                 color = Color.Red.copy(red = 0.9f),
+                                                 modifier = Modifier.padding(top = 4.dp).fillMaxWidth()
+                                             )
+                                             }
+                                             Button(onClick = {
+                                                 if (list.size == 1) {
+                                                     onNextPage.invoke(list[0])
+                                                 } else if (list.isNotEmpty()) {
+                                                     onNextPage.invoke(currentPage)
+                                                 }
+                                             },
+                                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary)
+                                                 ) {
+                                                 Text(text = "refresh")
+                                             }
+                                     }
                                      } else if (uiState.isLoading != true && uiState.enMeaning != null) {
                                          MarkdownContent(uiState.enMeaning!!)
                                      }
                                  }
                              }
                          )
+
                      }
                  }
              }
@@ -313,6 +375,9 @@ fun Selected(
                          },
              modifier = Modifier.offset(30.dp, 660.dp)
          )
+       if (textAi.value.isLoading != true && textAi.value.error != null) {
+
+       }
          if (list.isNotEmpty()) {
              SideList(currentPage, list) {
                  scope.launch {
@@ -323,9 +388,10 @@ fun Selected(
          if (!showBtmBarInDetail.value) {
              Back(goBack = { goBack.invoke() })
          }
-       }
+      }
    }
 }
+
 
 @Composable
 fun Back(goBack: () -> Unit) {

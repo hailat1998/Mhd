@@ -52,6 +52,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -351,6 +352,7 @@ fun HomeWrapper(homeData: State<List<String>>,
                         .padding(8.dp)
                         .background(Color.Transparent)
                 ) {
+                    val borderLetters = remember { mutableStateListOf("ረ", "ዐ", "ቸ", "ጠ") }
                     DataProvider.letterMap.keys.forEach { it ->
                         Row {
                         Chip(
@@ -378,7 +380,7 @@ fun HomeWrapper(homeData: State<List<String>>,
                                 )
                             }
                         }
-                    if (it != "ረ" && it != "ዐ" && it !=  "ቸ" && it != "ጠ") {
+                    if (!borderLetters.contains(it)) {
                         Spacer(Modifier.width(3.dp))
                      }
                     }
