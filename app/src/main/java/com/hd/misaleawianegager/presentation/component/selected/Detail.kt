@@ -164,7 +164,6 @@ fun Selected(
         pageCount = { if (list.isNotEmpty())list.size else 0 }
     )
 
-    val offsetY = remember { mutableStateOf(-150f) }
 
  SelectionContainer {
    Box(Modifier.fillMaxSize()
@@ -265,15 +264,12 @@ fun Selected(
                                                      text = uiState.error!!,
                                                      fontSize = 10.sp,
                                                      color = Color.Red.copy(red = 0.9f),
-                                                     modifier = Modifier.padding(top = 4.dp).fillMaxWidth()
+                                                     modifier = Modifier.padding(top = 4.dp).fillMaxWidth(),
+                                                     textAlign = TextAlign.Right
                                                  )
                                              }
                                              Button(onClick = {
-                                                 if (list.size == 1) {
-                                                     onNextPage.invoke(list[0])
-                                                 } else if (list.isNotEmpty()) {
                                                      onNextPage.invoke(currentPage)
-                                                 }
                                              },
                                                  border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary)
                                              ) {
@@ -306,15 +302,12 @@ fun Selected(
                                                  text = uiState.error!!,
                                                  fontSize = 10.sp,
                                                  color = Color.Red.copy(red = 0.9f),
-                                                 modifier = Modifier.padding(top = 4.dp).fillMaxWidth()
+                                                 modifier = Modifier.padding(top = 4.dp).fillMaxWidth(),
+                                                 textAlign = TextAlign.Right
                                              )
                                              }
                                              Button(onClick = {
-                                                 if (list.size == 1) {
-                                                     onNextPage.invoke(list[0])
-                                                 } else if (list.isNotEmpty()) {
                                                      onNextPage.invoke(currentPage)
-                                                 }
                                              },
                                                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary)
                                                  ) {
@@ -375,9 +368,7 @@ fun Selected(
                          },
              modifier = Modifier.offset(30.dp, 660.dp)
          )
-       if (textAi.value.isLoading != true && textAi.value.error != null) {
 
-       }
          if (list.isNotEmpty()) {
              SideList(currentPage, list) {
                  scope.launch {
@@ -609,25 +600,6 @@ fun FloatingInteraction(
                 isSelected = isFavorite
             )
 
-            AnimatedContent(
-                targetState = expanded,
-                transitionSpec = {
-
-                    if (targetState) {
-                        (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
-                            slideOutHorizontally { width -> -width / 2 } + fadeOut()
-                        )
-                    } else {
-                        (slideInHorizontally { width -> -width / 2 } + fadeIn()).togetherWith(
-                            slideOutHorizontally { width -> width } + fadeOut()
-                        )
-                    }
-                },
-                label = "Expanded Content Animation"
-            ) { isExpanded ->
-                if (isExpanded) {
-                    // Expanded content
-                    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                         InteractionButton(
                             icon = Icons.Default.Share,
                             contentDescription = "Share",
@@ -660,22 +632,10 @@ fun FloatingInteraction(
                             label = null
                         )
                     }
-                } else {
-                    InteractionButton(
-                        painter = painterResource(R.drawable.more_horiz_24px),
-                        contentDescription = "More Options",
-                        tintColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        onClick = {
-                            expanded = !expanded
-                        },
-                        label = null,
-                        isSelected = false
-                    )
-                }
-            }
-        }
+
+              }
     }
-}
+
 
 
 @Composable

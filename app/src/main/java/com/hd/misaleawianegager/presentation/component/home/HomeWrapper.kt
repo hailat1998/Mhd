@@ -337,7 +337,7 @@ fun HomeWrapper(homeData: State<List<String>>,
             dragHandle = null
         ) {
             Box(
-                modifier = Modifier.heightIn(max = 238.dp).fillMaxSize()
+                modifier = Modifier.heightIn(max = 260.dp).fillMaxSize()
             ) {
                 Image(
                     painterResource(id = R.drawable.drawing_dun),

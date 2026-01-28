@@ -1,6 +1,7 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -26,9 +27,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -87,14 +90,25 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
 
     val offsetXPx = with(density) { offsetX.value.toPx() }
 
+    var toggleList by remember { mutableStateOf(false) }
+
+    var draggedLocally by remember { mutableStateOf(false) }
+
+    var initial by remember { mutableStateOf(true) }
+
+    if (draggedLocally) {
+        toggleListContent()
+        draggedLocally = false
+    }
+
   Box(modifier = Modifier
       .fillMaxSize()
       .background(Color.Transparent)
       .graphicsLayer(translationX = translationX.value)
       .pointerInput(Unit) {
-          detectDragGestures { _, dragAmount ->
-              if (translationX.value == 0f && dragAmount.x > 20.dp.toPx()) {
-                  toggleListContent()
+          detectDragGestures(onDragEnd = { if (draggedLocally) toggleList = !toggleList } ) { _, dragAmount ->
+              if (translationX.value == 0f && dragAmount.x > 2) {
+                  draggedLocally = true
               }
           }
       }
@@ -103,7 +117,6 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
           Modifier
              .offset(x = 37.dp, y = if (config.orientation == ORIENTATION_PORTRAIT) 560.dp else 200.dp)
               .graphicsLayer(translationX = offsetXPx)
-              .clickable {  }
       ) {
       IconButton(
           onClick = { toggleListContent() },
@@ -135,7 +148,7 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
       }
   }
       LazyColumn(
-          modifier = Modifier.offset(x = 60.dp, y = 0.dp)
+          modifier = Modifier.offset(x = 64.dp, y = 0.dp)
               .fillMaxSize()
               .graphicsLayer(
                   scaleY = 0.95f,
@@ -157,7 +170,7 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
                   scroll.invoke(s)
               }
               HorizontalDivider(
-                  Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer).padding(start = 8.dp),
+                  Modifier.padding(start = 8.dp).fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer),
                   thickness = 1.dp
                   )
           }
@@ -190,7 +203,7 @@ fun TextWrapper(s: String, isSelected: () -> Boolean, scroll: (String) -> Unit) 
 @Composable
 fun SideListPreview(){
     var j = 0
-    val list = buildList<String>{
+    val list = buildList{
         repeat(30){
             add("I love watching football$j")
             j++
