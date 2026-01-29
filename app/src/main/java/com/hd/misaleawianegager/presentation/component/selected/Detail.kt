@@ -24,13 +24,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -210,13 +214,12 @@ fun Selected(
                          modifier = Modifier
                              .fillMaxSize()
                              .verticalScroll(rememberScrollState())
-                             .padding(bottom = 8.dp, top = 40.dp)
+                             .padding(bottom = 8.dp, top = if (showBtmBarInDetail.value)  20.dp else 40.dp)
                              .background(Color.Transparent)
                      ) {
                          Card(
                              modifier = Modifier
-                                 .fillMaxWidth()
-                                 .padding(10.dp),
+                                 .fillMaxWidth().padding(5.dp),
                              elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                              colors = CardDefaults.cardColors(
                                  containerColor = MaterialTheme.colorScheme.surface.copy(
@@ -366,7 +369,7 @@ fun Selected(
                  }
                  getSingleText.invoke()
                          },
-             modifier = Modifier.offset(30.dp, 660.dp)
+             modifier = Modifier.offset{IntOffset(30.dp.toPx().roundToInt(), if (showBtmBarInDetail.value) 640.dp.toPx().roundToInt() else 660.dp.toPx().roundToInt() )}
          )
 
          if (list.isNotEmpty()) {
@@ -389,9 +392,9 @@ fun Back(goBack: () -> Unit) {
     IconButton(
         onClick = { goBack.invoke() },
         modifier = Modifier
-            .statusBarsPadding()
             .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 32.dp)
             .size(36.dp)
+            .offset(0.dp, (-6).dp)
             .background(
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.32f),
                 shape = CircleShape

@@ -4,12 +4,19 @@ import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -72,7 +79,7 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
 
     fun toggleListContent() {
         coroutineScope.launch {
-            if (showList.value) {
+            if (translationX.value == exitWidthInPx) {
                 showList.value = false
                 translationX.animateTo(0f)
             } else {
@@ -82,67 +89,80 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
         }
     }
 
-    val density = LocalDensity.current
-    val offsetX = animateDpAsState(
-        targetValue = if (showList.value) 0.dp else (-10).dp,
-        animationSpec = tween(durationMillis = 300), label = "internal"
-    )
+    val draggableState = rememberDraggableState(onDelta = { dragAmount ->
+        coroutineScope.launch {
+            translationX.snapTo(translationX.value + dragAmount)
+        }
+    })
 
-    val offsetXPx = with(density) { offsetX.value.toPx() }
-
-    var toggleList by remember { mutableStateOf(false) }
-
-    var draggedLocally by remember { mutableStateOf(false) }
-
-    var initial by remember { mutableStateOf(true) }
-
-    if (draggedLocally) {
-        toggleListContent()
-        draggedLocally = false
-    }
+    val decay = rememberSplineBasedDecay<Float>()
 
   Box(modifier = Modifier
       .fillMaxSize()
       .background(Color.Transparent)
       .graphicsLayer(translationX = translationX.value)
-      .pointerInput(Unit) {
-          detectDragGestures(onDragEnd = { if (draggedLocally) toggleList = !toggleList } ) { _, dragAmount ->
-              if (translationX.value == 0f && dragAmount.x > 2) {
-                  draggedLocally = true
+      .draggable(
+          state = draggableState,
+          orientation =  Orientation.Horizontal,
+          onDragStopped = { velocity ->
+              val targetOffsetX = decay.calculateTargetValue(
+                  translationX.value,
+                  velocity,
+              )
+              coroutineScope.launch {
+                  val actualTargetX = if (targetOffsetX > exitWidthInPx * 0.5) {
+                      exitWidthInPx
+                  } else {
+                      0f
+                  }
+                  // checking if the difference between the target and actual is + or -
+                  val targetDifference = (actualTargetX - targetOffsetX)
+                  val canReachTargetWithDecay =
+                      (
+                              targetOffsetX > actualTargetX &&
+                                      velocity > 0f &&
+                                      targetDifference > 0f
+                              ) ||
+                              (
+                                      targetOffsetX < actualTargetX &&
+                                              velocity < 0 &&
+                                              targetDifference < 0f
+                                      )
+                  if (canReachTargetWithDecay) {
+                      translationX.animateDecay(
+                          initialVelocity = velocity,
+                          animationSpec = decay,
+                      )
+                  } else {
+                      translationX.animateTo(actualTargetX, initialVelocity = velocity)
+                  }
               }
           }
-      }
+      )
    ) {
       Box(
           Modifier
              .offset(x = 37.dp, y = if (config.orientation == ORIENTATION_PORTRAIT) 560.dp else 200.dp)
-              .graphicsLayer(translationX = offsetXPx)
-      ) {
-      IconButton(
-          onClick = { toggleListContent() },
-          Modifier
-             .size(50.dp, 70.dp)
-              .shadow(
-                  elevation = 4.dp,
-                  shape = RoundedCornerShape(topStart = 27.dp, topEnd = 27.dp),
-                  clip = false
-              )
               .background(
-                  color = MaterialTheme.colorScheme.surface,
-                  shape = RoundedCornerShape(topStart = 27.dp, bottomStart = 27.dp)
+                  color = MaterialTheme.colorScheme.background,
+                  shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
               )
+            //  .graphicsLayer(translationX = offsetXPx)
       ) {
+          IconButton(
+              onClick = { toggleListContent() },
+              )  {
           if (translationX.value == 0f) {
               Icon(
                   painterResource(R.drawable.arrow_forward_ios_24px),
                   null,
-                    Modifier.offset((-9).dp, 0.dp)
+                  Modifier.offset((-9).dp, 0.dp)
               )
           } else {
               Icon(
                   painterResource(R.drawable.arrow_back_ios_24px),
                   null,
-                   Modifier.offset((-9).dp, 0.dp)
+                  Modifier.offset((-9).dp, 0.dp)
               )
           }
       }
