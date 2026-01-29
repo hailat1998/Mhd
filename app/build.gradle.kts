@@ -1,6 +1,25 @@
 import java.util.Properties
 import java.io.FileInputStream
 
+
+fun getLocalProperty(key: String, defaultValue: String): String {
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+
+    return if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { localProperties.load(it) }
+        val value = localProperties.getProperty(key)
+
+        if (!value.isNullOrBlank()) {
+            "\"$value\"" // Wrap in quotes for BuildConfig
+        } else {
+            "\"$defaultValue\""
+        }
+    } else {
+        "\"$defaultValue\""
+    }
+}
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -8,21 +27,6 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
     id("kotlinx-serialization")
     alias(libs.plugins.compose.compiler)
-}
-
-
-
-val localProperties = Properties()
-
-
-val localPropertiesFile = rootProject.file("local.properties")
-
-
-if (localPropertiesFile.exists()) {
-    localProperties.load(FileInputStream(localPropertiesFile))
-} else {
-
-    logger.warn("local.properties file not found. Build might use default or fail if BASE_URL is critical.")
 }
 
 android {
@@ -42,27 +46,13 @@ android {
             useSupportLibrary = true
         }
 
-        // Use only the local.properties loading mechanism
-        val localProperties = Properties() // Use fully qualified name or import
-        val localPropertiesFile = rootProject.file("local.properties")
-        var finalBaseUrl = "\"https://misale-latest.onrender.com\"" // Default value
+        buildConfigField(
+            "String",
+            "BASE_URL",
+            getLocalProperty("BASE_URL", "https://misale-latest-kzx7.onrender.com")
+        )      
 
-        if (localPropertiesFile.exists()) {
-            try {
-                localProperties.load(localPropertiesFile.inputStream())
-                val urlFromProperties = localProperties.getProperty("BASE_URL")
-                if (urlFromProperties != null && urlFromProperties.isNotBlank()) {
-                    finalBaseUrl = "\"$urlFromProperties\"" // Add quotes
-                } else {
-                    logger.warn("BASE_URL found in local.properties but is empty. Using default.")
-                }
-            } catch (e: Exception) {
-                logger.warn("Error loading local.properties. Using default BASE_URL.", e)
-            }
-        } else {
-            logger.warn("local.properties not found. Using default BASE_URL.")
-        }
-        buildConfigField("String", "BASE_URL", finalBaseUrl)
+        println("DEBUG: finalBaseUrl is ${getLocalProperty("BASE_URL", "https://misale-latest-kzx7.onrender.com")})")
     }
 
     buildTypes {
