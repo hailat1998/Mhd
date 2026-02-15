@@ -1,5 +1,6 @@
 package com.hd.misaleawianegager.presentation.component.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -140,8 +142,9 @@ fun AppInfoDialog(openDialog: MutableState<Boolean>, toBoarding: () -> Unit) {
                 OutlinedButton(
                     onClick = { openDialog.value = false },
                     shape = RoundedCornerShape(8.dp),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        brush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary)
+                    border = BorderStroke(
+                        width = 1.dp,
+                        brush = SolidColor(MaterialTheme.colorScheme.primary)
                     )
                 ) {
                     Text(

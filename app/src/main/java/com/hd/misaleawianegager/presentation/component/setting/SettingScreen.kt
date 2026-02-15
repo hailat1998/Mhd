@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -213,7 +214,10 @@ fun FontContent(font: State<String?>, onEvent: (SettingEvent) -> Unit, showOther
                         baselineShift = BaselineShift.None
                     ),
                     modifier = Modifier
-                        .menuAnchor()
+                        .menuAnchor(
+                            type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                            enabled = true
+                        )
                         .fillMaxWidth()
                         .background(
                             MaterialTheme.colorScheme.background,

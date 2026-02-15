@@ -31,12 +31,12 @@ plugins {
 
 android {
     namespace = "com.hd.misaleawianegager"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.hd.misaleawianegager"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 223
         versionName = "3.11"
 
@@ -118,6 +118,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.startup.runtime)
     implementation("mx.platacard:compose-pager-indicator:0.0.8")
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
 
     /* *****************************************************
      **** Lifecycle

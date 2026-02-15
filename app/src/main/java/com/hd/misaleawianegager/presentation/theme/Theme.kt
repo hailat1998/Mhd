@@ -65,8 +65,19 @@ fun MisaleawiAnegagerTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            val isDark = theme == "dark" || darkTheme
-            window.statusBarColor = if (isDark) Color.Black.toArgb() else Color.White.toArgb()
+            val isDark = when (theme) {
+                "dark" -> true
+                "light" -> false
+                else -> darkTheme
+            }
+
+            val statusBarColor = if (isDark) {
+                Color.Black.toArgb()
+            } else {
+                Color.White.toArgb()
+            }
+
+            window.statusBarColor = statusBarColor
             WindowCompat.getInsetsController(window, view)?.isAppearanceLightStatusBars = !isDark
         }
     }

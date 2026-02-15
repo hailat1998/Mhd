@@ -1,13 +1,11 @@
 package com.hd.misaleawianegager.presentation.component.selected
 
+import android.content.ClipData
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -18,23 +16,17 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -46,7 +38,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -55,11 +46,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -67,7 +57,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -79,15 +68,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -97,23 +83,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hd.misaleawianegager.R
 import com.hd.misaleawianegager.utils.compose.AnimatedPreloader
-import com.hd.misaleawianegager.utils.compose.ShimmerEffect
 import com.hd.misaleawianegager.utils.compose.favList
 import dev.jeziellago.compose.markdowntext.MarkdownText
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import mx.platacard.pagerindicator.PagerIndicator
 import mx.platacard.pagerindicator.PagerIndicatorOrientation
-import kotlin.math.roundToInt
 
 
 @Composable
@@ -145,7 +125,7 @@ fun Selected(
         }
     }
 
-    val clipboardManager = LocalClipboardManager.current
+    val clipboardManager = LocalClipboard.current
     val context = LocalContext.current
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -356,7 +336,12 @@ fun Selected(
                        append(str)
                    }
                }
-               clipboardManager.setText(annotatedString)
+               val clipEntry = ClipEntry(
+                   ClipData.newPlainText("label", annotatedString)
+               )
+               scope.launch {
+                   clipboardManager.setClipEntry(clipEntry)
+               }
            },
            onShare = {
                val shareText = Intent(Intent.ACTION_SEND).apply {
@@ -480,22 +465,27 @@ fun TwoTabLayout(
 ) {
     Column(modifier = modifier.fillMaxSize()) {
 
-        TabRow(
+
+        SecondaryTabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.primary,
-            indicator = { tabPositions ->
+
+            indicator = {
                 SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+
+                    modifier = Modifier
+                        .tabIndicatorOffset(selectedTabIndex)
                         .padding(horizontal = 24.dp),
                     height = 3.dp,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
         ) {
+
             Tab(
                 selected = selectedTabIndex == 0,
                 onClick = { onTabSelected(0) },
@@ -533,12 +523,11 @@ fun TwoTabLayout(
             )
         }
 
+
         AnimatedContent(
             targetState = selectedTabIndex,
             transitionSpec = {
-
                 val direction = if (targetState > initialState) 1 else -1
-
                 val slideIn = slideInHorizontally(
                     animationSpec = tween(durationMillis = 300),
                     initialOffsetX = { fullWidth -> direction * fullWidth }
@@ -548,7 +537,6 @@ fun TwoTabLayout(
                     animationSpec = tween(durationMillis = 300),
                     targetOffsetX = { fullWidth -> -direction * fullWidth }
                 ) + fadeOut(animationSpec = tween(durationMillis = 300))
-
 
                 slideIn togetherWith slideOut
             },
@@ -564,7 +552,6 @@ fun TwoTabLayout(
         }
     }
 }
-
 
 @Composable
 fun FloatingInteraction(
