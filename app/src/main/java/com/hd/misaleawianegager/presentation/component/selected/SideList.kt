@@ -4,6 +4,7 @@ import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.rememberSplineBasedDecay
@@ -95,6 +96,10 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
         }
     })
 
+    val rotation by animateFloatAsState(
+        targetValue = if (translationX.value == 0f) 180f else 0f, label = "rotate"
+    )
+
     val decay = rememberSplineBasedDecay<Float>()
 
   Box(modifier = Modifier
@@ -147,24 +152,17 @@ fun SideList(selected: String, list: List<String>, scroll: (String) -> Unit) {
                   color = MaterialTheme.colorScheme.background,
                   shape = RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp)
               )
-            //  .graphicsLayer(translationX = offsetXPx)
       ) {
           IconButton(
               onClick = { toggleListContent() },
               )  {
-          if (translationX.value == 0f) {
               Icon(
-                  painterResource(R.drawable.arrow_forward_ios_24px),
-                  null,
-                  Modifier.offset((-9).dp, 0.dp)
+                  painter = painterResource(R.drawable.arrow_back_ios_24px),
+                  contentDescription = null,
+                  modifier = Modifier
+                      .offset((-9).dp, 0.dp)
+                      .graphicsLayer(rotationZ = rotation)
               )
-          } else {
-              Icon(
-                  painterResource(R.drawable.arrow_back_ios_24px),
-                  null,
-                  Modifier.offset((-9).dp, 0.dp)
-              )
-          }
       }
   }
       LazyColumn(

@@ -172,206 +172,221 @@ fun Selected(
  SelectionContainer {
    Box(Modifier.fillMaxSize()
    ) {
-     Column(
-         modifier = Modifier.fillMaxSize()
-     ) {
-         Box(
-             contentAlignment = Alignment.Center,
-             modifier = Modifier
-                 .weight(1f, fill = true)
-                 .fillMaxWidth()
-                 .background(Color.Transparent)
-         ) {
-             if (list.isEmpty()) {
-                 CircularProgressIndicator()
-             } else {
+       Column(
+           modifier = Modifier.fillMaxSize()
+       ) {
+           Box(
+               contentAlignment = Alignment.Center,
+               modifier = Modifier
+                   .weight(1f, fill = true)
+                   .fillMaxWidth()
+                   .background(Color.Transparent)
+           ) {
+               if (list.isEmpty()) {
+                   CircularProgressIndicator()
+               } else {
 
-                 LaunchedEffect(Unit) {
-                     pager.scrollToPage(list.indexOf(page))
-                 }
+                   LaunchedEffect(Unit) {
+                       pager.scrollToPage(list.indexOf(page))
+                   }
 
-                 LaunchedEffect(pager.currentPage) {
-                     val newPage = list[pager.targetPage]
-                     onNextPage.invoke(newPage)
-                     currentPage = newPage
-                 }
+                   LaunchedEffect(pager.currentPage) {
+                       val newPage = list[pager.targetPage]
+                       onNextPage.invoke(newPage)
+                       currentPage = newPage
+                   }
 
-                 LaunchedEffect(list) {
-                     if (list.isNotEmpty() && list.size == 1) {
-                         onNextPage.invoke(list[0])
-                         currentPage = list[0]
-                     }
-                 }
+                   LaunchedEffect(list) {
+                       if (list.isNotEmpty() && list.size == 1) {
+                           onNextPage.invoke(list[0])
+                           currentPage = list[0]
+                       }
+                   }
 
-                 HorizontalPager(
-                     state = pager,
-                     modifier = Modifier.fillMaxWidth(),
-                 ) { page ->
+                   HorizontalPager(
+                       state = pager,
+                       modifier = Modifier.fillMaxWidth(),
+                   ) { page ->
 
-                     str = list[page]
+                       str = list[page]
 
-                     Column(
-                         modifier = Modifier
-                             .fillMaxSize()
-                             .verticalScroll(rememberScrollState())
-                             .padding(bottom = 8.dp, top = if (showBtmBarInDetail.value)  20.dp else 40.dp)
-                             .background(Color.Transparent)
-                     ) {
-                         Card(
-                             modifier = Modifier
-                                 .fillMaxWidth().padding(5.dp),
-                             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                             colors = CardDefaults.cardColors(
-                                 containerColor = MaterialTheme.colorScheme.surface.copy(
-                                     alpha = 0.95f
-                                 )
-                             )
-                         ) {
-                             Box(
-                                 modifier = Modifier.fillMaxWidth().padding(10.dp),
-                                 contentAlignment = Alignment.Center
-                             ) {
-                                 Text(
-                                     text = list[page],
-                                     fontSize = 21.sp,
-                                     style = MaterialTheme.typography.bodyLarge,
-                                     textAlign = TextAlign.Center,
-                                     color = MaterialTheme.colorScheme.onPrimary
-                                 )
-                             }
-                         }
+                       Column(
+                           modifier = Modifier
+                               .fillMaxSize()
+                               .verticalScroll(rememberScrollState())
+                               .padding(
+                                   bottom = 8.dp,
+                                   top = if (showBtmBarInDetail.value) 20.dp else 40.dp
+                               )
+                               .background(Color.Transparent)
+                       ) {
+                           Card(
+                               modifier = Modifier
+                                   .fillMaxWidth().padding(5.dp),
+                               elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                               colors = CardDefaults.cardColors(
+                                   containerColor = MaterialTheme.colorScheme.surface.copy(
+                                       alpha = 0.95f
+                                   )
+                               )
+                           ) {
+                               Box(
+                                   modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                   contentAlignment = Alignment.Center
+                               ) {
+                                   Text(
+                                       text = list[page],
+                                       fontSize = 21.sp,
+                                       style = MaterialTheme.typography.bodyLarge,
+                                       textAlign = TextAlign.Center,
+                                       color = MaterialTheme.colorScheme.onPrimary
+                                   )
+                               }
+                           }
 
-                         TwoTabLayout(
-                             selectedTabIndex = selectedTabIndex,
-                             onTabSelected = { selectedTabIndex = it },
-                             firstTabTitle = "አማርኛ",
-                             secondTabTitle = "English",
-                             firstTabContent = {
-                                 textAi.value.let { uiState ->
-                                     if (uiState.isLoading == true) {
-                                         ShimmerEffectWrapper()
-                                     } else if (uiState.isLoading != true && uiState.error != null) {
-                                         Box(
-                                             Modifier.fillMaxSize(),
-                                             contentAlignment = Alignment.Center) {
-                                             Column(modifier = Modifier.fillMaxSize()) {
-                                                 AnimatedPreloader(
-                                                     Modifier.fillMaxWidth().height(480.dp)
-                                                         .shadow(
-                                                             shape = RoundedCornerShape(20.dp),
-                                                             elevation = 0.dp
-                                                         ).padding(5.dp),
-                                                     R.raw.animation_error
-                                                 )
-                                                 Text(
-                                                     text = uiState.error!!,
-                                                     fontSize = 10.sp,
-                                                     color = Color.Red.copy(red = 0.9f),
-                                                     modifier = Modifier.padding(top = 4.dp).fillMaxWidth(),
-                                                     textAlign = TextAlign.Right
-                                                 )
-                                             }
-                                             Button(onClick = {
-                                                     onNextPage.invoke(currentPage)
-                                             },
-                                                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary)
-                                             ) {
-                                                 Text(text = "refresh")
-                                             }
-                                         }
-                                     } else if (uiState.isLoading != true && uiState.amMeaning != null) {
-                                         MarkdownContent(uiState.amMeaning!!)
-                                     }
-                                 }
-                             },
-                             secondTabContent = {
-                                 textAi.value.let { uiState ->
-                                     if (uiState.isLoading == true) {
-                                         ShimmerEffectWrapper()
-                                     } else if (uiState.isLoading != true && uiState.error != null) {
-                                         Box(
-                                             Modifier.fillMaxSize(),
-                                             contentAlignment = Alignment.Center) {
-                                         Column(modifier = Modifier.fillMaxSize()) {
-                                             AnimatedPreloader(
-                                             Modifier.fillMaxWidth().height(480.dp)
-                                                 .shadow(
-                                                     shape = RoundedCornerShape(20.dp),
-                                                     elevation = 0.dp
-                                                 ).padding(5.dp),
-                                             R.raw.animation_error
-                                         )
-                                             Text(
-                                                 text = uiState.error!!,
-                                                 fontSize = 10.sp,
-                                                 color = Color.Red.copy(red = 0.9f),
-                                                 modifier = Modifier.padding(top = 4.dp).fillMaxWidth(),
-                                                 textAlign = TextAlign.Right
-                                             )
-                                             }
-                                             Button(onClick = {
-                                                     onNextPage.invoke(currentPage)
-                                             },
-                                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary)
-                                                 ) {
-                                                 Text(text = "refresh")
-                                             }
-                                     }
-                                     } else if (uiState.isLoading != true && uiState.enMeaning != null) {
-                                         MarkdownContent(uiState.enMeaning!!)
-                                     }
-                                 }
-                             }
-                         )
+                           TwoTabLayout(
+                               selectedTabIndex = selectedTabIndex,
+                               onTabSelected = { selectedTabIndex = it },
+                               firstTabTitle = "አማርኛ",
+                               secondTabTitle = "English",
+                               firstTabContent = {
+                                   textAi.value.let { uiState ->
+                                       if (uiState.isLoading == true) {
+                                           ShimmerEffectWrapper()
+                                       } else if (uiState.isLoading != true && uiState.error != null) {
+                                           Box(
+                                               Modifier.fillMaxSize(),
+                                               contentAlignment = Alignment.Center
+                                           ) {
+                                               Column(modifier = Modifier.fillMaxSize()) {
+                                                   AnimatedPreloader(
+                                                       Modifier.fillMaxWidth().height(480.dp)
+                                                           .shadow(
+                                                               shape = RoundedCornerShape(20.dp),
+                                                               elevation = 0.dp
+                                                           ).padding(5.dp),
+                                                       R.raw.animation_error
+                                                   )
+                                                   Text(
+                                                       text = uiState.error!!,
+                                                       fontSize = 10.sp,
+                                                       color = Color.Red.copy(red = 0.9f),
+                                                       modifier = Modifier.padding(top = 4.dp)
+                                                           .fillMaxWidth(),
+                                                       textAlign = TextAlign.Right
+                                                   )
+                                               }
+                                               Button(
+                                                   onClick = {
+                                                       onNextPage.invoke(currentPage)
+                                                   },
+                                                   border = BorderStroke(
+                                                       1.dp,
+                                                       MaterialTheme.colorScheme.onPrimary
+                                                   )
+                                               ) {
+                                                   Text(text = "refresh")
+                                               }
+                                           }
+                                       } else if (uiState.isLoading != true && uiState.amMeaning != null) {
+                                           MarkdownContent(uiState.amMeaning!!)
+                                       }
+                                   }
+                               },
+                               secondTabContent = {
+                                   textAi.value.let { uiState ->
+                                       if (uiState.isLoading == true) {
+                                           ShimmerEffectWrapper()
+                                       } else if (uiState.isLoading != true && uiState.error != null) {
+                                           Box(
+                                               Modifier.fillMaxSize(),
+                                               contentAlignment = Alignment.Center
+                                           ) {
+                                               Column(modifier = Modifier.fillMaxSize()) {
+                                                   AnimatedPreloader(
+                                                       Modifier.fillMaxWidth().height(480.dp)
+                                                           .shadow(
+                                                               shape = RoundedCornerShape(20.dp),
+                                                               elevation = 0.dp
+                                                           ).padding(5.dp),
+                                                       R.raw.animation_error
+                                                   )
+                                                   Text(
+                                                       text = uiState.error!!,
+                                                       fontSize = 10.sp,
+                                                       color = Color.Red.copy(red = 0.9f),
+                                                       modifier = Modifier.padding(top = 4.dp)
+                                                           .fillMaxWidth(),
+                                                       textAlign = TextAlign.Right
+                                                   )
+                                               }
+                                               Button(
+                                                   onClick = {
+                                                       onNextPage.invoke(currentPage)
+                                                   },
+                                                   border = BorderStroke(
+                                                       1.dp,
+                                                       MaterialTheme.colorScheme.onPrimary
+                                                   )
+                                               ) {
+                                                   Text(text = "refresh")
+                                               }
+                                           }
+                                       } else if (uiState.isLoading != true && uiState.enMeaning != null) {
+                                           MarkdownContent(uiState.enMeaning!!)
+                                       }
+                                   }
+                               }
+                           )
 
-                     }
-                 }
-             }
-         }
-         Box(
-             Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
-             contentAlignment = Alignment.Center
-          ) {
-             PagerIndicator(
-                 pagerState = pager,
-                 activeDotColor = MaterialTheme.colorScheme.primary,
-                 dotColor = MaterialTheme.colorScheme.onPrimary,
-                 dotCount = 6,
-                 space = 12.dp,
-                 orientation = PagerIndicatorOrientation.Horizontal
-             )
-         }
-     }
-         FloatingInteraction(
-             isFavorite,
-             onFavChanged = {
-                 onFavoriteToggle(currentPage)
-             },
-             onCopy = {
-                 val annotatedString = buildAnnotatedString {
-                     withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
-                         append(str)
-                     }
-                 }
-                 clipboardManager.setText(annotatedString)
-             },
-             onShare = {
-                 val shareText = Intent(Intent.ACTION_SEND).apply {
-                     type = "text/plain"  // Fixed content type
-                     putExtra(Intent.EXTRA_TEXT, str)
-                 }
-                 val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
-                 context.startActivity(chooserIntent)
-             },
-             getRandom = {
-                 if (from == "search") {
-                     checkAssignment = true
-                 }
-                 getSingleText.invoke()
-                         },
-             modifier = Modifier.offset{IntOffset(30.dp.toPx().roundToInt(), if (showBtmBarInDetail.value) 640.dp.toPx().roundToInt() else 660.dp.toPx().roundToInt() )}
-         )
+                       }
+                   }
+               }
+           }
 
+
+       FloatingInteraction(
+           isFavorite,
+           onFavChanged = {
+               onFavoriteToggle(currentPage)
+           },
+           onCopy = {
+               val annotatedString = buildAnnotatedString {
+                   withStyle(style = SpanStyle(textDecoration = TextDecoration.None)) {
+                       append(str)
+                   }
+               }
+               clipboardManager.setText(annotatedString)
+           },
+           onShare = {
+               val shareText = Intent(Intent.ACTION_SEND).apply {
+                   type = "text/plain"  // Fixed content type
+                   putExtra(Intent.EXTRA_TEXT, str)
+               }
+               val chooserIntent = Intent.createChooser(shareText, "Misaleawi Anegager")
+               context.startActivity(chooserIntent)
+           },
+           getRandom = {
+               if (from == "search") {
+                   checkAssignment = true
+               }
+               getSingleText.invoke()
+           },
+       )
+           Box(
+               Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp),
+               contentAlignment = Alignment.Center
+           ) {
+               PagerIndicator(
+                   pagerState = pager,
+                   activeDotColor = MaterialTheme.colorScheme.primary,
+                   dotColor = MaterialTheme.colorScheme.onPrimary,
+                   dotCount = 6,
+                   space = 12.dp,
+                   orientation = PagerIndicatorOrientation.Horizontal
+               )
+           }
+   }
          if (list.isNotEmpty()) {
              SideList(currentPage, list) {
                  scope.launch {
@@ -557,8 +572,7 @@ fun FloatingInteraction(
     onFavChanged: () -> Unit,
     onCopy: () -> Unit,
     onShare: () -> Unit,
-    getRandom: () -> Unit,
-    modifier: Modifier = Modifier
+    getRandom: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var interacted by remember { mutableStateOf(false) }
@@ -568,33 +582,14 @@ fun FloatingInteraction(
     val rememberedOnShare by rememberUpdatedState(onShare)
     val rememberedGetRandom by rememberUpdatedState(getRandom)
 
-    LaunchedEffect(expanded, interacted) {
-        if (expanded) {
-            delay(7000L)
-            expanded = !expanded
-        }
-    }
-
-    Card(
-        shape = RoundedCornerShape(15.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
-        ),
-        modifier = modifier,
-//        elevation = CardDefaults.cardElevation(
-//            defaultElevation = 4.dp,
-//           // pressedElevation = 8.dp,
-//           // focusedElevation = 6.dp
-//        )
-    ) {
         Row(
-            modifier = Modifier.padding(8.dp).background(Color.Transparent),
+            modifier = Modifier.fillMaxWidth().padding(start  = 8.dp, end = 8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             InteractionButton(
                 icon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                 contentDescription = "Favorite",
-                tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                tintColor = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimary,
                 onClick = {
                     interacted = !interacted
                     rememberedOnFavChanged.invoke()
@@ -603,41 +598,44 @@ fun FloatingInteraction(
                 isSelected = isFavorite
             )
 
-                        InteractionButton(
-                            icon = Icons.Default.Share,
-                            contentDescription = "Share",
-                            onClick = {
-                                interacted = !interacted
-                                rememberedOnShare.invoke()
-                            },
-                            label = null
-                        )
+            InteractionButton(
+                icon = Icons.Default.Share,
+                contentDescription = "Share",
+                onClick = {
+                    interacted = !interacted
+                    rememberedOnShare.invoke()
+                },
+                label = null,
+                tintColor = MaterialTheme.colorScheme.onPrimary
+            )
 
-                        InteractionButton(
-                            icon = null,
-                            painter = painterResource(R.drawable.baseline_content_copy_24),
-                            contentDescription = "Copy",
-                            onClick = {
-                                interacted = !interacted
-                                rememberedOnCopy.invoke()
-                            },
-                            label = null
-                        )
+            InteractionButton(
+                icon = null,
+                painter = painterResource(R.drawable.baseline_content_copy_24),
+                contentDescription = "Copy",
+                onClick = {
+                    interacted = !interacted
+                    rememberedOnCopy.invoke()
+                },
+                label = null,
+                tintColor = MaterialTheme.colorScheme.onPrimary
+            )
 
-                        InteractionButton(
-                            icon = null,
-                            painter = painterResource(R.drawable.baseline_shuffle_24),
-                            contentDescription = "GetRandom",
-                            onClick = {
-                                interacted = !interacted
-                                rememberedGetRandom.invoke()
-                            },
-                            label = null
-                        )
+            InteractionButton(
+                icon = null,
+                painter = painterResource(R.drawable.baseline_shuffle_24),
+                contentDescription = "GetRandom",
+                onClick = {
+                    interacted = !interacted
+                    rememberedGetRandom.invoke()
+                },
+                label = null,
+                tintColor = MaterialTheme.colorScheme.onPrimary
+            )
                     }
 
               }
-    }
+
 
 
 
@@ -715,68 +713,75 @@ private fun InteractionButton(
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
-fun TwoTabLayoutPreview() {
-    var selectedTab by remember { mutableIntStateOf(0) }
-
-    MaterialTheme {
-        TwoTabLayout(
-            selectedTabIndex = selectedTab,
-            onTabSelected = { selectedTab = it },
-            firstTabTitle = "Home",
-            secondTabTitle = "Settings",
-            firstTabContent = {
-                Text(
-                    text = "Home Content",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
-            secondTabContent = {
-                Text(
-                    text = "Settings Content",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        )
-    }
+fun FloatingButtonPreview(){
+    FloatingInteraction(false, {}, {}, {}, {})
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun MarkDown(){
-    MarkdownContent(markdownText = getMarkDown())
-}
-
-fun getMarkDown() = "# Contributing to Virtual Book Store\n" +
-        "\n" +
-        "Thank you for considering contributing to Virtual Book Store! We welcome all contributions, whether it's bug fixes, new features, documentation improvements, or other enhancements.\n" +
-        "\n" +
-        "## Getting Started\n" +
-        "\n" +
-        "### 1. Fork the Repository\n" +
-        "Click the **Fork** button on the top right of the repository page to create a copy of the repository under your GitHub account.\n" +
-        "\n" +
-        "### 2. Clone the Repository\n" +
-        "Clone your forked repository to your local machine:\n" +
-        "```sh\n"
-
-
-@Preview(showBackground = true)
-@Composable
-fun SelectedPreview() {
-  //  Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {}, {}, {})
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun TwoTabLayoutPreview() {
+//    var selectedTab by remember { mutableIntStateOf(0) }
+//
+//    MaterialTheme {
+//        TwoTabLayout(
+//            selectedTabIndex = selectedTab,
+//            onTabSelected = { selectedTab = it },
+//            firstTabTitle = "Home",
+//            secondTabTitle = "Settings",
+//            firstTabContent = {
+//                Text(
+//                    text = "Home Content",
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(16.dp),
+//                    textAlign = TextAlign.Center,
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
+//            },
+//            secondTabContent = {
+//                Text(
+//                    text = "Settings Content",
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(16.dp),
+//                    textAlign = TextAlign.Center,
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
+//            }
+//        )
+//    }
+//}
+//
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun MarkDown(){
+//    MarkdownContent(markdownText = getMarkDown())
+//}
+//
+//fun getMarkDown() = "# Contributing to Virtual Book Store\n" +
+//        "\n" +
+//        "Thank you for considering contributing to Virtual Book Store! We welcome all contributions, whether it's bug fixes, new features, documentation improvements, or other enhancements.\n" +
+//        "\n" +
+//        "## Getting Started\n" +
+//        "\n" +
+//        "### 1. Fork the Repository\n" +
+//        "Click the **Fork** button on the top right of the repository page to create a copy of the repository under your GitHub account.\n" +
+//        "\n" +
+//        "### 2. Clone the Repository\n" +
+//        "Clone your forked repository to your local machine:\n" +
+//        "```sh\n"
+//
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun SelectedPreview() {
+//  //  Selected(MutableStateFlow(emptyList()), MutableStateFlow(DetailUiState()), "","", {}, emptyList(), {}, {}, {})
+//}
 
 
 
